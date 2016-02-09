@@ -8,7 +8,6 @@ Feature: Upload load result
     And I click on Upload results
     Then I see page with title "Upload results"
 
-
   Scenario: Visit upload page using navigation bar
     When I visit homepage
     And Click menu Upload results in navigation bar
@@ -42,6 +41,3 @@ Feature: Upload load result
     And I choose perfmon file
     And I Upload results
     Then I see error message "Choose summary file for upload"
-
-
-

@@ -8,3 +8,13 @@
 4. `bundle exec rake db:migrate` to create database schema
 5. `rails server` to run the application
 6. Go to `http://localhost:3000` in a browser
+
+#### Install database
+
+##### OS X
+
+1. `brew install postgres`
+2. `pg_ctl -D /usr/local/var/postgres start`
+3. `psql`
+4. `CREATE USER postgres SUPERUSER;`
+5. `CREATE DATABASE loadtest WITH OWNER postgres;`

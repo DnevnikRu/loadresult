@@ -105,8 +105,11 @@ GEM
     minitest (5.8.4)
     multi_json (1.11.2)
     multi_test (0.1.2)
+    nokogiri (1.6.7.2)
+      mini_portile2 (~> 2.0.0.rc2)
     nokogiri (1.6.7.2-x86-mingw32)
       mini_portile2 (~> 2.0.0.rc2)
+    pg (0.18.4)
     pg (0.18.4-x86-mingw32)
     rack (1.6.4)
     rack-test (0.6.3)
@@ -193,6 +196,7 @@ GEM
       nokogiri (~> 1.3)
 
 PLATFORMS
+  ruby
   x86-mingw32
 
 DEPENDENCIES

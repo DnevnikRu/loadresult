@@ -19,6 +19,7 @@ group :development do
 end
 
 gem 'rspec-rails', :group => [:development, :test]
+gem 'factory_girl_rails', :group => [:development, :test]
 gem 'cucumber-rails', require: false, :group => [:development, :test]
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

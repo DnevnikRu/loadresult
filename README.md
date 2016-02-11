@@ -4,8 +4,7 @@
 
 1. Clone the repo https://stash.dnevnik.ru/projects/TF/repos/loadresult/browse
 2. `bundle install` to install all necessary dependencies
-3. `bundle exec rake db:create` to create database
-4. `bundle exec rake db:migrate` to create database schema
+3. `bundle exec rake db:setup` to create the database, load the schema and initialize it with the seed data
 5. `rails server` to run the application
 6. Go to `http://localhost:3000` in a browser
 

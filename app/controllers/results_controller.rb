@@ -1,5 +1,6 @@
 class ResultsController < ApplicationController
   def index
+    @results = Result.all
   end
 
   def new
@@ -13,4 +14,5 @@ class ResultsController < ApplicationController
       redirect_to({action: :new}, alert: @errors)
     end
   end
+
 end

@@ -1,9 +1,53 @@
-<% if notice %>
-    <div class="alert alert-success" role="alert">
-      <%= notice %>
-    </div>
-<% end %>
-
 <div class="container">
-  <h1>Load Result</h1>
+
+  <% if notice %>
+      <div class="alert alert-success" role="alert">
+        <%= notice %>
+      </div>
+  <% end %>
+
+
+  <div class="page-header">
+    <h1>Load tests results</h1>
+  </div>
+
+  <a class="btn btn-danger btn-lg" href="/results/new" role="button" style="position: relative ;left: 1650px; bottom: -20px; ">Upload
+    results</a>
+  <br>
+  <br>
+  <br>
+
+  <table class="table table-striped table-bordered">
+    <thead>
+    <tr>
+      <th></th>
+      <th>ID</th>
+      <th>Version</th>
+      <th>RPS</th>
+      <th>Duration</th>
+      <th>Profile</th>
+      <th>Test run date</th>
+      <th>Upload date</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <% @results.each do |result| %>
+        <tr>
+          <td style="width: 50px;"><%= check_box_tag 'results', result.id %></td>
+          <td><%= result.id %></td>
+          <td><%= result.version %></td>
+          <td><%= result.rps %></td>
+          <td><%= result.duration %></td>
+          <td><%= result.profile %></td>
+          <td><%= result.test_run_date %></td>
+          <td><%= result.created_at %></td>
+
+        </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <input class="btn btn-info btn-lg" type="submit" value="Compare" style="position: relative ;left: 1650px; bottom: -20px; width:149.063px">
+
 </div>

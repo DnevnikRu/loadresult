@@ -55,5 +55,5 @@ Rails.application.routes.draw do
   #   end
 
   resources :results, only: [:index, :new, :create]
-  root 'results#index'
+
 end

@@ -1,5 +1,13 @@
 require 'rails_helper'
 
-RSpec.describe RequestsResult, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+
+describe RequestsResult do
+
+  it 'belongs to request' do
+    result = create(:result, version: 'test')
+    requests_result = create(:requests_result, result_id: result.id)
+    expect(requests_result.result.version).to eql('test')
+  end
+
 end
+

@@ -29,4 +29,12 @@ describe Result do
     expect{create(:result, :test_run_date => 'das')}.to raise_error(ActiveRecord::RecordInvalid)
   end
 
+  it 'has many requests_result' do
+     result = create(:result)
+     create(:requests_result, result_id: result.id)
+     create(:requests_result, result_id: result.id)
+     expect(result.requests_results.count).to eql(2)
+  end
+
+
 end

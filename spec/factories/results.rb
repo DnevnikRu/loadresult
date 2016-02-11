@@ -4,6 +4,6 @@ FactoryGirl.define do
     duration 600
     rps 150
     profile 'all_site'
-    test_run_date DateTime.parse('01.01.1978 00:00')
+    test_run_date '01.01.1978 00:00'
   end
 end

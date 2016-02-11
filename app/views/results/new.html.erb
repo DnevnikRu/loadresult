@@ -1,7 +1,7 @@
 <div class="container">
   <div class="row">
     <div class="center-block" id="upload-results-container">
-      <%= form_tag(action: "create") do %>
+      <%= form_tag({action: "create"}, multipart: true) do %>
       <legend>Upload results</legend>
       <div class="form-group">
         <%= label_tag :version %>
@@ -24,7 +24,7 @@
         <%= text_field_tag :date, nil, class: "form-control", placeholder: '10.02.2016 18:59' %>
       </div>
       <div class="form-group">
-        <%= label_tag :reqests_data %>
+        <%= label_tag :requests_data %>
         <%= file_field_tag :requests_data %>
       </div>
       <div class="form-group">

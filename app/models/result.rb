@@ -1,4 +1,7 @@
 class Result < ActiveRecord::Base
+  has_many :perfomance_results
+  has_many :requests_results
+
   validates :version, presence: true
   validates :duration, presence: true
   validates :rps, presence: true

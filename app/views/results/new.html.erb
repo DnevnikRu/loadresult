@@ -1,37 +1,45 @@
 <div class="container">
   <div class="row">
     <div class="center-block" id="upload-results-container">
+      <% if alert %>
+          <div class="alert alert-danger" role="alert">
+            <% alert.each do |message| %>
+                <div><%= message %></div>
+            <% end %>
+          </div>
+      <% end %>
+
       <%= form_tag({action: "create"}, multipart: true) do %>
-      <legend>Upload results</legend>
-      <div class="form-group">
-        <%= label_tag :version %>
-        <%= text_field_tag :version, nil, class: "form-control", placeholder: 'edu sharding' %>
-      </div>
-      <div class="form-group">
-        <%= label_tag :rps %>
-        <%= text_field_tag :rps, nil, class: "form-control", placeholder: '600' %>
-      </div>
-      <div class="form-group">
-        <%= label_tag :duration %>
-        <%= text_field_tag :duration, nil, class: "form-control", placeholder: '600' %>
-      </div>
-      <div class="form-group">
-        <%= label_tag :profile %>
-        <%= text_field_tag :profile, nil, class: "form-control", placeholder: 'all_sites' %>
-      </div>
-      <div class="form-group">
-        <%= label_tag :date %>
-        <%= datetime_local_field :date, nil, class: "form-control", placeholder: '10.02.2016 18:59' %>
-      </div>
-      <div class="form-group">
-        <%= label_tag :requests_data %>
-        <%= file_field_tag :requests_data %>
-      </div>
-      <div class="form-group">
-        <%= label_tag :perfmon_data %>
-        <%= file_field_tag :perfmon_data %>
-      </div>
-      <%= submit_tag "Upload", class: "btn btn-primary" %>
+          <legend>Upload results</legend>
+          <div class="form-group">
+            <%= label_tag :version %>
+            <%= text_field_tag :version, nil, class: "form-control", placeholder: 'edu sharding' %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :rps %>
+            <%= text_field_tag :rps, nil, class: "form-control", placeholder: '600' %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :duration %>
+            <%= text_field_tag :duration, nil, class: "form-control", placeholder: '600' %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :profile %>
+            <%= text_field_tag :profile, nil, class: "form-control", placeholder: 'all_sites' %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :date %>
+            <%= datetime_local_field :date, nil, class: "form-control", placeholder: '10.02.2016 18:59' %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :requests_data %>
+            <%= file_field_tag :requests_data %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :perfmon_data %>
+            <%= file_field_tag :perfmon_data %>
+          </div>
+          <%= submit_tag "Upload", class: "btn btn-primary" %>
       <% end %>
     </div>
   </div>

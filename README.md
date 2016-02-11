@@ -17,4 +17,3 @@
 2. `pg_ctl -D /usr/local/var/postgres start`
 3. `psql`
 4. `CREATE USER postgres SUPERUSER;`
-5. `CREATE DATABASE loadtest WITH OWNER postgres;`

@@ -18,11 +18,11 @@ end
 group :development do
   gem 'byebug', '~> 8.2'
   gem 'web-console', '~> 2.0'
-  gem 'page-object', '~> 1.1'
-  gem 'cucumber', '~> 2.3'
 end
 
 group :test, :development do
+  gem 'cucumber', '~> 2.3'
+  gem 'page-object', '~> 1.1'
   gem 'rspec-rails', '~> 3.4'
   gem 'factory_girl_rails', '~> 4.6'
 end

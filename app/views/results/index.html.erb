@@ -6,18 +6,16 @@
       </div>
   <% end %>
 
-
   <div class="page-header">
     <h1>Load tests results</h1>
   </div>
 
-  <a class="btn btn-danger btn-lg" href="/results/new" role="button" style="position: relative ;left: 1650px; bottom: -20px; ">Upload
-    results</a>
-  <br>
-  <br>
-  <br>
-
-  <table class="table table-striped table-bordered">
+  <div class="row">
+    <a id="upload_result" class="btn btn-primary btn-lg pull-right" href="/results/new" role="button">Upload
+      results</a>
+  </div>
+<br>
+  <table id=results class="table table-striped table-bordered">
     <thead>
     <tr>
       <th></th>
@@ -48,6 +46,8 @@
     <% end %>
     </tbody>
   </table>
-  <input class="btn btn-info btn-lg" type="submit" value="Compare" style="position: relative ;left: 1650px; bottom: -20px; width:149.063px">
 
+  <div class="row">
+    <input id="compare" class="btn btn-success btn-lg pull-right" type="submit" value="Compare" style="width:149.063px">
+  </div>
 </div>

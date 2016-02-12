@@ -9,8 +9,9 @@
           </div>
       <% end %>
 
+      <h2>Upload results</h2>
+
       <%= form_tag({action: "create"}, multipart: true) do %>
-          <legend>Upload results</legend>
           <div class="form-group">
             <%= label_tag :version %>
             <%= text_field_tag :version, nil, class: "form-control", placeholder: 'edu sharding' %>

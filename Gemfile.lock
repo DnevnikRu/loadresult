@@ -83,6 +83,7 @@ GEM
     faker (1.6.1)
       i18n (~> 0.5)
     ffi (1.9.10)
+    ffi (1.9.10-x86-mingw32)
     gherkin (3.2.0)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
@@ -106,6 +107,8 @@ GEM
     multi_test (0.1.2)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
+    nokogiri (1.6.7.2-x86-mingw32)
+      mini_portile2 (~> 2.0.0.rc2)
     page-object (1.1.1)
       page_navigation (>= 0.9)
       selenium-webdriver (>= 2.44.0)
@@ -113,6 +116,7 @@ GEM
     page_navigation (0.9)
       data_magic (>= 0.14)
     pg (0.18.4)
+    pg (0.18.4-x86-mingw32)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -190,6 +194,8 @@ GEM
       coffee-rails
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    tzinfo-data (1.2016.1)
+      tzinfo (>= 1.0.0)
     uglifier (2.7.2)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
@@ -205,6 +211,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86-mingw32
 
 DEPENDENCIES
   bootstrap-sass (~> 3.3.6)

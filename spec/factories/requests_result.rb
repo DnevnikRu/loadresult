@@ -3,6 +3,6 @@ FactoryGirl.define do
     timestamp 1455023039547
     label 'children /marks.aspx:GET:tab=subject'
     value  123
-    responce_code 200
+    response_code 200
   end
 end

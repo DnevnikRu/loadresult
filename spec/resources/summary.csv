@@ -1,0 +1,10 @@
+timeStamp,label,responseCode,bytes,grpThreads,allThreads,URL,Latency
+1455023039547,children /marks.aspx:GET:tab=subject,Non HTTP response code: java.net.URISyntaxException,1002,500,500,https://children.lt.dnevnik.ru/marks.aspx?child=<EOF>&tab=subject&subject=<EOF>,0
+1455023037616,root /counters:GET,Non HTTP response code: org.apache.http.conn.HttpHostConnectException,2316,500,500,https://lt.dnevnik.ru/counters,0
+1455023037625,root /invites.aspx:GET,Non HTTP response code: org.apache.http.conn.HttpHostConnectException,2316,500,500,https://lt.dnevnik.ru/invites,0
+1455023037601,root /counters:GET,Non HTTP response code: org.apache.http.conn.HttpHostConnectException,2316,500,500,https://lt.dnevnik.ru/counters,0
+1455023037629,root /user/ajax.ashx:GET:a=unot,Non HTTP response code: org.apache.http.conn.HttpHostConnectException,2316,500,500,https://lt.dnevnik.ru/user/ajax.ashx?a=unot,0
+1455023037612,root /counters:GET,Non HTTP response code: org.apache.http.conn.HttpHostConnectException,2316,500,500,https://lt.dnevnik.ru/counters,0
+1455023037818,children /marks.aspx:GET:tab=period,Non HTTP response code: org.apache.http.conn.HttpHostConnectException,2325,500,500,https://children.lt.dnevnik.ru/marks.aspx?child=432743&tab=period,0
+1455023037589,root /counters:GET,Non HTTP response code: org.apache.http.conn.HttpHostConnectException,2316,500,500,https://lt.dnevnik.ru/counters,0
+1455023037811,root /counters:GET,Non HTTP response code: org.apache.http.conn.HttpHostConnectException,2316,500,500,https://lt.dnevnik.ru/counters,0

@@ -1,0 +1,9 @@
+timeStamp,elapsed,label,grpThreads,allThreads
+1455091903010,1784387,db07 EXEC Network\Bytes Sent/sec,0,0
+1455091903041,1712499,db07 EXEC Network\Bytes Received/sec,0,0
+1455091903041,0,db07 EXEC Memory\Page/sec,0,0
+1455091903041,164455,db07 EXEC Memory\Page Faults/sec,0,0
+1455091903041,15161937,web11 Memory Memory\Available Mb,0,0
+1455091903041,983,web11 EXEC Memory\Page/sec,0,0
+1455091903041,4032272,web11 EXEC Memory\Page Faults/sec,0,0
+1455091903556,0,db07 EXEC SQLServer Number of Deadlocks,0,0

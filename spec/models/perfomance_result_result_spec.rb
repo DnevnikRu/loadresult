@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe PerfomanceResult do
+describe PerformanceResult do
 
   it 'belong to results' do
     result = create(:result, version: 'test')

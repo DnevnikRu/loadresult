@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20160212115315) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "performance_results", force: :cascade do |t|
     t.integer  "result_id"
     t.datetime "timestamp"

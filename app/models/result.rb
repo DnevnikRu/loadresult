@@ -21,13 +21,10 @@ class Result < ActiveRecord::Base
       result.errors.add(:base, 'Request data is required')
       return result
     end
-    return result unless save_request_data(params['request_data'], result) #do not save perfmon data unless request data saved
-    if params['perfmon_data']
-      save_perfmon_data(params['perfmon_data'], result)
-    end
+    return result unless save_request_data(params['request_data'], result) # do not save perfmon data unless request data saved
+    save_perfmon_data(params['perfmon_data'], result) if params['perfmon_data']
     result
   end
-
 
   private
 
@@ -39,8 +36,8 @@ class Result < ActiveRecord::Base
 
   def self.save_request_data(request_data, result)
     request_data = CSV.new(request_data.read)
-    header =  request_data.first
-    validate_header(result, header, 'request', %w(timeStamp label responseCode Latency)) #TODO: move list of required column to model
+    header = request_data.first
+    validate_header(result, header, 'request', %w(timeStamp label responseCode Latency)) # TODO: move list of required column to model
     return nil unless result.errors.empty?
     columns_indexes = csv_header_columns_indexes(header)
     request_data.each do |line|
@@ -57,8 +54,8 @@ class Result < ActiveRecord::Base
 
   def self.save_perfmon_data(perfmon_data, result)
     perfmon_data = CSV.new(perfmon_data.read)
-    header =  perfmon_data.first
-    validate_header(result, header, 'perfmon', %w(timeStamp label elapsed))  #TODO: move list of required column to model
+    header = perfmon_data.first
+    validate_header(result, header, 'perfmon', %w(timeStamp label elapsed)) # TODO: move list of required column to model
     return nil unless result.errors.empty?
     columns_indexes = csv_header_columns_indexes(header)
     perfmon_data.each do |line|

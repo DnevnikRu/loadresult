@@ -8,7 +8,7 @@
 5. `rails server` to run the application
 6. Go to `http://localhost:3000` in a browser
 
-#### Install database
+#### Install a database
 
 ##### OS X
 

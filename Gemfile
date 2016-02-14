@@ -21,10 +21,9 @@ group :development do
 end
 
 group :test, :development do
-  gem 'cucumber', '~> 2.3'
-  gem 'page-object', '~> 1.1'
   gem 'rspec-rails', '~> 3.4'
   gem 'factory_girl_rails', '~> 4.6'
+  gem 'capybara', '~> 2.6'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

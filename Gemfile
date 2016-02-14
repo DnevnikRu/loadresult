@@ -24,6 +24,7 @@ group :test, :development do
   gem 'rspec-rails', '~> 3.4'
   gem 'factory_girl_rails', '~> 4.6'
   gem 'capybara', '~> 2.6'
+  gem 'selenium-webdriver', '~> 2.52'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

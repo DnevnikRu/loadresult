@@ -15,3 +15,4 @@ RSpec.configure do |config|
 end
 
 Capybara.exact = true
+Capybara.default_driver = :selenium

@@ -62,7 +62,7 @@ describe Result do
             'duration' => 123,
             'profile' => 'asd',
             'date' => ['2016-02-11 11:21'],
-            'request_data' => requests_data,
+            'requests_data' => requests_data,
             'perfmon_data' => perfmon_data
         }
 
@@ -98,7 +98,7 @@ describe Result do
             'duration' => 123,
             'profile' => 'asd',
             'date' => ['2016-02-11 11:21'],
-            'request_data' => requests_data
+            'requests_data' => requests_data
         }
         result = Result.upload_and_create(params)
         expect(result.errors).to be_empty
@@ -113,7 +113,7 @@ describe Result do
             'duration' => 123,
             'profile' => 'asd',
             'date' => ['2016-02-11 11:21'],
-            'request_data' => requests_data
+            'requests_data' => requests_data
         }
         result = Result.upload_and_create(params)
         expect(result.errors).to match_array(["Version can't be blank"])
@@ -128,7 +128,7 @@ describe Result do
             'duration' => 123,
             'profile' => 'asd',
             'date' => ['2016-02-11 11:21'],
-            'request_data' => requests_data
+            'requests_data' => requests_data
         }
         result = Result.upload_and_create(params)
         expect(result.errors).to match_array(["Rps can't be blank"])
@@ -143,7 +143,7 @@ describe Result do
             'rps' => 150,
             'profile' => 'asd',
             'date' => ['2016-02-11 11:21'],
-            'request_data' => requests_data
+            'requests_data' => requests_data
         }
         result = Result.upload_and_create(params)
         expect(result.errors).to match_array(["Duration can't be blank"])
@@ -158,7 +158,7 @@ describe Result do
             'duration' => 123,
             'rps' => 150,
             'date' => ['2016-02-11 11:21'],
-            'request_data' => requests_data
+            'requests_data' => requests_data
         }
         result = Result.upload_and_create(params)
         expect(result.errors).to match_array(["Profile can't be blank"])
@@ -174,7 +174,7 @@ describe Result do
             'duration' => 123,
             'rps' => 150,
             'profile' => 'asd',
-            'request_data' => requests_data,
+            'requests_data' => requests_data,
             'date' => ['']
         }
         result = Result.upload_and_create(params)
@@ -221,7 +221,7 @@ describe Result do
             'duration' => 123,
             'profile' => 'asd',
             'date' => ['2016-02-11 11:21'],
-            'request_data' => requests_data
+            'requests_data' => requests_data
         }
 
         result = Result.upload_and_create(params)
@@ -245,7 +245,7 @@ describe Result do
             'duration' => 123,
             'profile' => 'asd',
             'date' => ['2016-02-11 11:21'],
-            'request_data' => requests_data,
+            'requests_data' => requests_data,
             'perfmon_data' => perfmon_data
         }
 

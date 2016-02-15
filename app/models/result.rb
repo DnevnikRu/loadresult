@@ -16,12 +16,14 @@ class Result < ActiveRecord::Base
 
   def self.upload_and_create(params)
     result = Result.new(version: params['version'], duration: params['duration'], rps: params['rps'], profile: params['profile'], test_run_date: params['date'].first)
-    return result unless result.save
-    unless params['request_data']
+    unless result.save
+      return result
+    end
+    unless params['requests_data']
       result.errors.add(:base, 'Request data is required')
       return result
     end
-    return result unless save_request_data(params['request_data'], result) # do not save perfmon data unless request data saved
+    return result unless save_request_data(params['requests_data'], result) # do not save perfmon data unless request data saved
     save_perfmon_data(params['perfmon_data'], result) if params['perfmon_data']
     result
   end

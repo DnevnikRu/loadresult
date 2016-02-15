@@ -18,6 +18,7 @@ feature 'Upload load result' do
   end
 
   scenario 'Upload a result with all fields filled' do
+    pending
     visit '/results/new'
     fill_in 'version', with: 'edu sharding'
     fill_in 'rps', with: '600'

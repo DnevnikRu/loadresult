@@ -20,8 +20,8 @@ feature 'Upload load result' do
   end
 
   context 'Upload form' do
-    let(:summary_file_path) { File.expand_path('../../resources/summary.csv', __FILE__).normalize_path }
-    let(:perfmon_file_path) { File.expand_path('../../resources/perfmon.csv', __FILE__).normalize_path }
+    let(:summary_file_path) { File.join(fixture_path, 'summary.csv').normalize_path }
+    let(:perfmon_file_path) { File.join(fixture_path, 'perfmon.csv').normalize_path }
 
     before do
       visit '/results/new'

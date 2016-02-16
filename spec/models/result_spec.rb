@@ -40,10 +40,10 @@ describe Result do
     before(:all) do
       @summary = Tempfile.new('requests_data_temp')
       @perfmon = Tempfile.new('perfmon_data_temp')
-      File.open(File.expand_path('../../resources/summary.csv', __FILE__), 'r') do |f|
+      File.open(File.join(fixture_path, 'summary.csv'), 'r') do |f|
         @summary.write f.read
       end
-      File.open(File.expand_path('../../resources/perfmon.csv', __FILE__), 'r') do |f|
+      File.open(File.join(fixture_path, 'perfmon.csv'), 'r') do |f|
         @perfmon.write f.read
       end
       @summary.close
@@ -199,18 +199,18 @@ describe Result do
     end
 
     describe 'absence required columns in request and perfmon data' do
-     before(:all) do
-       @invalid_summary = Tempfile.new('requests_data_temp')
-       @invalid_perfmon = Tempfile.new('perfmon_data_temp')
-       File.open(File.expand_path('../../resources/summary_invalid_header.csv', __FILE__), 'r') do |f|
-         @invalid_summary.write f.read
-       end
-       File.open(File.expand_path('../../resources/perfmon_invalid_header.csv', __FILE__), 'r') do |f|
-         @invalid_perfmon.write f.read
-       end
-       @invalid_summary.close
-       @invalid_perfmon.close
-     end
+      before(:all) do
+        @invalid_summary = Tempfile.new('requests_data_temp')
+        @invalid_perfmon = Tempfile.new('perfmon_data_temp')
+        File.open(File.join(fixture_path, 'summary_invalid_header.csv'), 'r') do |f|
+          @invalid_summary.write f.read
+        end
+        File.open(File.join(fixture_path, 'perfmon_invalid_header.csv'), 'r') do |f|
+          @invalid_perfmon.write f.read
+        end
+        @invalid_summary.close
+        @invalid_perfmon.close
+      end
 
       it 'absence required columns in request data' do
         @invalid_summary.open

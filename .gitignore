@@ -20,3 +20,4 @@
 /.atom-build.cson
 /spec/features/screenshots
 tags
+.byebug_history

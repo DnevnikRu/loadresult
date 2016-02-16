@@ -47,6 +47,6 @@
   </table>
 
   <div class="row">
-    <input id="compare" class="btn btn-success btn-lg pull-right" type="submit" value="Compare" style="width:149.063px">
+    <%= button_to 'Compare', compare_results_path, { method: :get, class: "btn btn-success btn-lg pull-right", style: "width:149.063px" } %>
   </div>
 </div>

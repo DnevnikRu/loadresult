@@ -14,4 +14,7 @@ class ResultsController < ApplicationController
       redirect_to({action: :new}, alert: result.errors.full_messages)
     end
   end
+
+  def compare
+  end
 end

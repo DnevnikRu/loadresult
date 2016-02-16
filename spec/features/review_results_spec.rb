@@ -1,5 +1,4 @@
 require 'feature_helper'
-require 'rails_helper'
 require 'active_support/time_with_zone'
 
 feature 'Review results' do

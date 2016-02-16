@@ -12,3 +12,9 @@ RSpec.configure do |config|
     end
   end
 end
+
+class String
+  def normalize_path
+    self.gsub('/', '\\') if Gem.win_platform?
+  end
+end

@@ -20,14 +20,14 @@ feature 'Upload load result' do
   end
 
   context 'Upload form' do
-    let(:summary_file_path) { File.expand_path('../../resources/summary.csv', __FILE__) }
-    let(:perfmon_file_path) { File.expand_path('../../resources/perfmon.csv', __FILE__) }
+    let(:summary_file_path) { File.expand_path('../../resources/summary.csv', __FILE__).normalize_path }
+    let(:perfmon_file_path) { File.expand_path('../../resources/perfmon.csv', __FILE__).normalize_path }
 
     before do
       visit '/results/new'
     end
 
-    skip 'Upload a result with all fields filled' do
+    scenario 'Upload a result with all fields filled' do
       fill_in 'version', with: 'edu sharding'
       fill_in 'rps', with: '600'
       fill_in 'duration', with: '600'
@@ -37,10 +37,10 @@ feature 'Upload load result' do
       attach_file 'perfmon_data', perfmon_file_path
       click_button 'Upload'
 
-      expect(page).to have_content('Resut was successfully created.')
+      expect(page).to have_content('Result was successfully created.')
     end
 
-    skip 'Upload a result without a perfmon file' do
+    scenario 'Upload a result without a perfmon file' do
       fill_in 'version', with: 'edu sharding'
       fill_in 'rps', with: '600'
       fill_in 'duration', with: '600'
@@ -52,7 +52,7 @@ feature 'Upload load result' do
       expect(page).to have_content('Result was successfully created.')
     end
 
-    skip 'Can not upload a result without additional information' do
+    scenario 'Can not upload a result without additional information' do
       attach_file 'requests_data', summary_file_path
       attach_file 'perfmon_data', perfmon_file_path
       click_button 'Upload'
@@ -66,7 +66,7 @@ feature 'Upload load result' do
       )
     end
 
-    skip 'Can not upload a result without a summary file' do
+    scenario 'Can not upload a result without a summary file' do
       fill_in 'version', with: 'edu sharding'
       fill_in 'rps', with: '600'
       fill_in 'duration', with: '600'

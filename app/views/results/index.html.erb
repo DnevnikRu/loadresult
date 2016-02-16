@@ -32,16 +32,15 @@
     <tbody>
 
     <% @results.each do |result| %>
-        <tr>
+        <tr class="result_row">
           <td style="width: 50px;"><%= check_box_tag 'results', result.id %></td>
-          <td><%= result.id %></td>
-          <td><%= result.version %></td>
-          <td><%= result.rps %></td>
-          <td><%= result.duration %></td>
-          <td><%= result.profile %></td>
-          <td><%= result.test_run_date %></td>
-          <td><%= result.created_at %></td>
-
+          <td class="id"><%= result.id %></td>
+          <td class="version"><%= result.version %></td>
+          <td class="rps"><%= result.rps %></td>
+          <td class="duration"><%= result.duration %></td>
+          <td class="profile"><%= result.profile %></td>
+          <td class="test_run_date"><%= result.test_run_date %></td>
+          <td class="created_at"><%= result.created_at %></td>
         </tr>
     <% end %>
     </tbody>

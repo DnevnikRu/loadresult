@@ -19,6 +19,6 @@ end
 
 class String
   def normalize_path
-    tr('/', '\\') if Gem.win_platform?
+    Gem.win_platform? ? tr('/', '\\') : self
   end
 end

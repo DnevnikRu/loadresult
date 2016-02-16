@@ -199,66 +199,98 @@ describe Result do
     end
 
     describe 'absence required columns in request and perfmon data' do
-     before(:all) do
-       @invalid_summary = Tempfile.new('requests_data_temp')
-       @invalid_perfmon = Tempfile.new('perfmon_data_temp')
-       File.open(File.expand_path('../../resources/summary_invalid_header.csv', __FILE__), 'r') do |f|
-         @invalid_summary.write f.read
-       end
-       File.open(File.expand_path('../../resources/perfmon_invalid_header.csv', __FILE__), 'r') do |f|
-         @invalid_perfmon.write f.read
-       end
-       @invalid_summary.close
-       @invalid_perfmon.close
-     end
-
-      it 'absence required columns in request data' do
-        @invalid_summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_summary)
-        params = {
-            'version' => 'edu',
-            'rps' => 150,
-            'duration' => 123,
-            'profile' => 'asd',
-            'date' => ['2016-02-11 11:21'],
-            'requests_data' => requests_data
-        }
-
-        result = Result.upload_and_create(params)
+      before(:all) do
+        @invalid_summary = Tempfile.new('requests_data_temp')
+        @invalid_perfmon = Tempfile.new('perfmon_data_temp')
+        File.open(File.expand_path('../../resources/summary_invalid_header.csv', __FILE__), 'r') do |f|
+          @invalid_summary.write f.read
+        end
+        File.open(File.expand_path('../../resources/perfmon_invalid_header.csv', __FILE__), 'r') do |f|
+          @invalid_perfmon.write f.read
+        end
         @invalid_summary.close
-        errors = []
-        required_column = %w(timeStamp label responseCode Latency)
-        required_column.each do |column|
-          errors.push "#{column} column in request data is required!"
-        end
-        expect(result.errors).to match_array(errors)
-      end
-
-      it 'absence required columns in perfmon data' do
-        @summary.open
-        @invalid_perfmon.open
-        perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_perfmon)
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
-        params = {
-            'version' => 'edu',
-            'rps' => 150,
-            'duration' => 123,
-            'profile' => 'asd',
-            'date' => ['2016-02-11 11:21'],
-            'requests_data' => requests_data,
-            'perfmon_data' => perfmon_data
-        }
-
-        result = Result.upload_and_create(params)
-        @summary.close
         @invalid_perfmon.close
-        errors = []
-        required_column = %w(timeStamp label elapsed)
-        required_column.each do |column|
-          errors.push "#{column} column in perfmon data is required!"
-        end
-        expect(result.errors).to match_array(errors)
       end
+
+      describe 'absence required columns in request data' do
+
+        before(:all) do
+          @invalid_summary.open
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_summary)
+          params = {
+              'version' => 'edu',
+              'rps' => 150,
+              'duration' => 123,
+              'profile' => 'asd',
+              'date' => ['2016-02-11 11:21'],
+              'requests_data' => requests_data
+          }
+
+          @result = Result.upload_and_create(params)
+          @invalid_summary.close
+        end
+
+        it 'result include correct errors' do
+          errors = []
+          required_column = %w(timeStamp label responseCode Latency)
+          required_column.each do |column|
+            errors.push "#{column} column in request data is required!"
+          end
+          expect(@result.errors).to match_array(errors)
+        end
+
+        it 'result does not save' do
+          expect(Result.find_by(id: @result.id)).to be_nil
+        end
+
+        it 'requests data not save' do
+          expect(RequestsResult.where(result_id: @result.id).empty?).to be(true)
+        end
+
+      end
+
+
+      describe 'absence required columns in perfmon data' do
+        before(:all) do
+          @summary.open
+          @invalid_perfmon.open
+          perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_perfmon)
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+          params = {
+              'version' => 'edu',
+              'rps' => 150,
+              'duration' => 123,
+              'profile' => 'asd',
+              'date' => ['2016-02-11 11:21'],
+              'requests_data' => requests_data,
+              'perfmon_data' => perfmon_data
+          }
+
+          @result = Result.upload_and_create(params)
+          @summary.close
+          @invalid_perfmon.close
+        end
+
+        it 'result include correct errors' do
+          errors = []
+          required_column = %w(timeStamp label elapsed)
+          required_column.each do |column|
+            errors.push "#{column} column in perfmon data is required!"
+          end
+          expect(@result.errors).to match_array(errors)
+        end
+
+        it 'result does not save' do
+          expect(Result.find_by(id: @result.id)).to be_nil
+        end
+
+        it 'perfmon data not save' do
+          expect(PerformanceResult.where(result_id: @result.id).empty?).to be(true)
+        end
+
+      end
+
+
     end
   end
 end

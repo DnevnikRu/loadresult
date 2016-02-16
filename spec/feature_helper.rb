@@ -12,7 +12,7 @@ RSpec.configure do |config|
   config.after do |example|
     if example.exception
       screenshots_dir = File.expand_path('../features/screenshots', __FILE__)
-      Capybara.page.save_screenshot "#{screenshots_dir}/# {example.description}.png"
+      Capybara.page.save_screenshot "#{screenshots_dir}/#{example.description}.png"
     end
   end
 end

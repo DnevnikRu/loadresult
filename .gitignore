@@ -18,3 +18,4 @@
 /.idea/*
 /vagrant/.vagrant
 /.atom-build.cson
+/spec/features/screenshots

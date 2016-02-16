@@ -6,7 +6,7 @@ feature 'Review results' do
   scenario 'Uploaded results exist on the results page' do
     result = create(:result)
     expected_result =
-     [result.version, result.rps.to_s, result.duration.to_s, result.profile, Time.zone.parse(result.test_run_date.to_s).strftime('%d.%m.%Y %H:%M'), Time.zone.parse(result.created_at.to_s).strftime('%d.%m.%Y %H:%M')]
+      [result.version, result.rps.to_s, result.duration.to_s, result.profile, Time.zone.parse(result.test_run_date.to_s).strftime('%d.%m.%Y %H:%M'), Time.zone.parse(result.created_at.to_s).strftime('%d.%m.%Y %H:%M')]
     visit '/results/'
     results_rows = []
     page.all('table#results tr.result_row').each do |row|
@@ -15,10 +15,10 @@ feature 'Review results' do
       duration = row.find('td.duration').text
       profile = row.find('td.profile').text
       run_date = Time.zone.parse(row.find('td.test_run_date').text).strftime('%d.%m.%Y %H:%M')
-      created_at =Time.zone.parse(row.find('td.created_at').text).strftime('%d.%m.%Y %H:%M')
+      created_at = Time.zone.parse(row.find('td.created_at').text).strftime('%d.%m.%Y %H:%M')
       results_rows.push [version, rps, duration, profile, run_date, created_at]
     end
-   expect(results_rows.include?(expected_result)).to be(true), 'Result from database is not displayed'
+    expect(results_rows.include?(expected_result)).to be(true), 'Result from database is not displayed'
   end
 
   context 'Upload form' do
@@ -45,11 +45,10 @@ feature 'Review results' do
         profile = row.find('td.profile').text
         run_date = Time.parse(row.find('td.test_run_date').text)
         run_date = run_date.strftime('%d.%m.%Y %H:%M')
-        created_at =Time.parse(row.find('td.created_at').text).strftime('%d.%m.%Y %H:%M')
+        created_at = Time.parse(row.find('td.created_at').text).strftime('%d.%m.%Y %H:%M')
         results_rows.push [version, rps, duration, profile, run_date, created_at]
       end
       expect(results_rows.include?(expected_row)).to be(true), 'Just uploaded result is not displayed'
     end
   end
-
 end

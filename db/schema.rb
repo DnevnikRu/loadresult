@@ -11,11 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160217135324) do
+ActiveRecord::Schema.define(version: 20160217140946) do
 
   create_table "performance_results", force: :cascade do |t|
     t.integer  "result_id"
-    t.datetime "timestamp"
+    t.integer  "timestamp",  limit: 8
     t.string   "label"
     t.integer  "value",      limit: 8
     t.datetime "created_at",           null: false

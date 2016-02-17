@@ -1,9 +1,23 @@
 <div class="container">
   <h1>Compare results</h1>
 
-  <%= render 'request_chart', data: @data[:requests1], name: 'Requests current 1' %>
-  <%= render 'request_chart', data: @data[:requests2], name: 'Requests current 2' %>
-
   <div id="chart1"></div>
-  <%= button_to 'Show chart', request_chart_results_path, remote: true %>
+  <%= button_to 'Show chart 1',
+      request_chart_results_path(
+        data: @results[:request_chart1],
+        name: 'Request chart 1',
+        div_id: 'chart1'
+      ),
+      remote: true,
+      class: 'btn btn-default' %>
+  <br />
+  <div id="chart2"></div>
+  <%= button_to 'Show chart 2',
+      request_chart_results_path(
+        data: @results[:request_chart2],
+        name: 'Request chart 2',
+        div_id: 'chart2'
+      ),
+      remote: true,
+      class: 'btn btn-default' %>
 </div>

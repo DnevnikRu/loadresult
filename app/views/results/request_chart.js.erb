@@ -1,25 +1,25 @@
-var currentWeb00 = {
-    name: 'CURRENT: web00 EXEC ASP.NET\Requests Current',
-    x: <%= @data[:current][:web00][:x] %>,
-    y: <%= @data[:current][:web00][:y] %>,
+var current1 = {
+    name: 'CURRENT: web00 EXEC ASP.NET / Requests',
+    x: <%= @data[:current][:web00][:x].map(&:to_i) %>,
+    y: <%= @data[:current][:web00][:y].map(&:to_i) %>,
     mode: 'lines',
     line: {
         color: 'red'
     }
 };
-var currentWeb01 = {
-    name: 'CURRENT: web11 EXEC ASP.NET\Requests Current',
-    x: <%= @data[:current][:web01][:x] %>,
-    y: <%= @data[:current][:web01][:y] %>,
+var current2 = {
+    name: 'CURRENT: web11 EXEC ASP.NET / Requests',
+    x: <%= @data[:current][:web01][:x].map(&:to_i) %>,
+    y: <%= @data[:current][:web01][:y].map(&:to_i) %>,
     mode: 'lines',
     line: {
         color: 'green'
     }
 };
-var baseWeb00 = {
-    name: 'BASE: web00 EXEC ASP.NET\Requests Current',
-    x: <%= @data[:base][:web00][:x] %>,
-    y: <%= @data[:base][:web00][:y] %>,
+var base1 = {
+    name: 'BASE: web00 EXEC ASP.NET / Requests',
+    x: <%= @data[:base][:web00][:x].map(&:to_i) %>,
+    y: <%= @data[:base][:web00][:y].map(&:to_i) %>,
     mode: 'lines',
     line: {
         color: 'red',
@@ -27,10 +27,10 @@ var baseWeb00 = {
         width: 2
     }
 };
-var baseWeb01 = {
-    name: 'BASE: web11 EXEC ASP.NET\Requests Current',
-    x: <%= @data[:base][:web01][:x] %>,
-    y: <%= @data[:base][:web01][:y] %>,
+var base2 = {
+    name: 'BASE: web11 EXEC ASP.NET / Requests',
+    x: <%= @data[:base][:web01][:x].map(&:to_i) %>,
+    y: <%= @data[:base][:web01][:y].map(&:to_i) %>,
     mode: 'lines',
     line: {
         color: 'green',
@@ -47,4 +47,4 @@ var layout = {
         title: 'Metrics, %'
     }
 };
-Plotly.newPlot('chart1', [baseWeb00, baseWeb01, currentWeb00, currentWeb01], layout);
+Plotly.newPlot(<%= @div_id %>, [current1, current2, base1, base2], layout);

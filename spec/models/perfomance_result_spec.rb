@@ -8,5 +8,9 @@ describe PerformanceResult do
     expect(perfomance_result.result.version).to eql('test')
   end
 
+  it 'save big value' do
+    create(:performance_result, value: 6143854356)
+  end
+
 
 end

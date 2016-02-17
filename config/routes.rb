@@ -58,6 +58,7 @@ Rails.application.routes.draw do
     collection do
       get :compare
       get :compare_chart_temp
+      post :request_chart
     end
   end
   root 'results#index'

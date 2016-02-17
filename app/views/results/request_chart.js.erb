@@ -1,0 +1,50 @@
+var currentWeb00 = {
+    name: 'CURRENT: web00 EXEC ASP.NET\Requests Current',
+    x: <%= @data[:current][:web00][:x] %>,
+    y: <%= @data[:current][:web00][:y] %>,
+    mode: 'lines',
+    line: {
+        color: 'red'
+    }
+};
+var currentWeb01 = {
+    name: 'CURRENT: web11 EXEC ASP.NET\Requests Current',
+    x: <%= @data[:current][:web01][:x] %>,
+    y: <%= @data[:current][:web01][:y] %>,
+    mode: 'lines',
+    line: {
+        color: 'green'
+    }
+};
+var baseWeb00 = {
+    name: 'BASE: web00 EXEC ASP.NET\Requests Current',
+    x: <%= @data[:base][:web00][:x] %>,
+    y: <%= @data[:base][:web00][:y] %>,
+    mode: 'lines',
+    line: {
+        color: 'red',
+        dash: 'dot',
+        width: 2
+    }
+};
+var baseWeb01 = {
+    name: 'BASE: web11 EXEC ASP.NET\Requests Current',
+    x: <%= @data[:base][:web01][:x] %>,
+    y: <%= @data[:base][:web01][:y] %>,
+    mode: 'lines',
+    line: {
+        color: 'green',
+        dash: 'dot',
+        width: 2
+    }
+};
+var layout = {
+    title: '<%= @name %>',
+    xaxis: {
+        title: 'Time, s'
+    },
+    yaxis: {
+        title: 'Metrics, %'
+    }
+};
+Plotly.newPlot('chart1', [baseWeb00, baseWeb01, currentWeb00, currentWeb01], layout);

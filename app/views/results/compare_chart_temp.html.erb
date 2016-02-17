@@ -1,6 +1,9 @@
 <div class="container">
   <h1>Compare results</h1>
-  <%= render 'requests_chart', data: @data[:requests1], name: 'Requests current 1' %>
-  <%= render 'requests_chart', data: @data[:requests2], name: 'Requests current 2' %>
-  <%= yield :charts %>
+
+  <%= render 'request_chart', data: @data[:requests1], name: 'Requests current 1' %>
+  <%= render 'request_chart', data: @data[:requests2], name: 'Requests current 2' %>
+
+  <div id="chart1"></div>
+  <%= button_to 'Show chart', request_chart_results_path, remote: true %>
 </div>

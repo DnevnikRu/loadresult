@@ -1,0 +1,6 @@
+<div class="container">
+  <h1>Compare results</h1>
+  <%= render 'requests_chart', data: @data[:requests1], name: 'Requests current 1' %>
+  <%= render 'requests_chart', data: @data[:requests2], name: 'Requests current 2' %>
+  <%= yield :charts %>
+</div>

@@ -57,6 +57,7 @@ Rails.application.routes.draw do
   resources :results, only: [:index, :new, :create] do
     collection do
       get :compare
+      get :compare_chart_temp
     end
   end
   root 'results#index'

@@ -44,13 +44,14 @@ class Result < ActiveRecord::Base
     request_data = CSV.new(request_data.read)
     header = request_data.first
     validate_header(result, header, 'request', %w(timeStamp label responseCode Latency)) # TODO: move list of required column to model
-    return nil unless result.errors.empty?
-    columns_indexes = csv_header_columns_indexes(header)
-    requests_results = []
-    request_data.each do |line|
-      requests_results.push "(#{result.id}, #{line[columns_indexes['timeStamp']]}, '#{line[columns_indexes['label']]}', '#{line[columns_indexes['responseCode']]}', #{line[columns_indexes['Latency']]}, '#{Time.now}', '#{Time.now}')"
+    return if result.errors.any?
+    requests_results = request_data.map do |line|
+      "(#{result.id}, #{line[header.index('timeStamp')]},
+       '#{line[header.index('label')]}', '#{line[header.index('responseCode')]}',
+       #{line[header.index('Latency')]}, '#{Time.now}', '#{Time.now}')"
     end
-    ActiveRecord::Base.connection.execute("insert into requests_results (result_id, timestamp, label, response_code, value, created_at, updated_at) values #{requests_results.join(', ')}")
+    ActiveRecord::Base.connection.execute(%(INSERT INTO requests_results (result_id, timestamp, label, response_code, value, created_at, updated_at)
+                                            VALUES #{requests_results.join(', ')}))
     result
   end
 
@@ -58,21 +59,14 @@ class Result < ActiveRecord::Base
     perfmon_data = CSV.new(perfmon_data.read)
     header = perfmon_data.first
     validate_header(result, header, 'perfmon', %w(timeStamp label elapsed)) # TODO: move list of required column to model
-    return nil unless result.errors.empty?
-    columns_indexes = csv_header_columns_indexes(header)
-    perfmons_data = []
-    perfmon_data.each do |line|
-      perfmons_data.push "(#{result.id}, #{line[columns_indexes['timeStamp']]}, '#{line[columns_indexes['label']]}', #{line[columns_indexes['elapsed']]}, '#{Time.now}', '#{Time.now}')"
+    return if result.errors.any?
+    perfmons_data = perfmon_data.map do |line|
+      "(#{result.id}, #{line[header.index('timeStamp')]},
+      '#{line[header.index('label')]}', #{line[header.index('elapsed')]},
+       '#{Time.now}', '#{Time.now}')"
     end
-    ActiveRecord::Base.connection.execute("insert into performance_results (result_id, timestamp, label, value, created_at, updated_at) values #{perfmons_data.join(', ')}")
+    ActiveRecord::Base.connection.execute(%(INSERT INTO performance_results (result_id, timestamp, label, value, created_at, updated_at)
+                                            VALUES #{perfmons_data.join(', ')}))
     result
-  end
-
-  def self.csv_header_columns_indexes(header)
-    indexes = {}
-    header.each_index do |i|
-      indexes[header[i]] = i
-    end
-    indexes
   end
 end

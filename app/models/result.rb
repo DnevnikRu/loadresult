@@ -33,39 +33,61 @@ class Result < ActiveRecord::Base
   end
 
   def request_mean(label)
-    bottom_timestamp, top_timestamp = border_timestamps(self.id)
+    bottom_timestamp, top_timestamp = border_timestamps(self.id, RequestsResult)
     (RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").average(:value)).round(2)
   end
 
   def request_median(label)
-    bottom_timestamp, top_timestamp = border_timestamps(self.id)
+    bottom_timestamp, top_timestamp = border_timestamps(self.id, RequestsResult)
     median(RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").pluck(:value))
   end
 
   def request_90percentile(label)
-    bottom_timestamp, top_timestamp = border_timestamps(self.id)
+    bottom_timestamp, top_timestamp = border_timestamps(self.id, RequestsResult)
     percentile((RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").pluck(:value)), 90)
   end
 
   def request_min(label)
-    bottom_timestamp, top_timestamp = border_timestamps(self.id)
+    bottom_timestamp, top_timestamp = border_timestamps(self.id, RequestsResult)
     RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").minimum(:value)
   end
 
   def request_max(label)
-    bottom_timestamp, top_timestamp = border_timestamps(self.id)
+    bottom_timestamp, top_timestamp = border_timestamps(self.id, RequestsResult)
     RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").maximum(:value)
   end
 
   def request_thoughput(label)
-    bottom_timestamp, top_timestamp = border_timestamps(self.id)
+    bottom_timestamp, top_timestamp = border_timestamps(self.id, RequestsResult)
     duration = Time.at(top_timestamp).to_time - Time.at(bottom_timestamp).to_time
     request_count = (RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").count).to_f
     (request_count/duration).round(2)
   end
 
+  def failed_requests(label)
+    bottom_timestamp, top_timestamp = border_timestamps(self.id, RequestsResult)
+    int_codes = []
+    (RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").pluck(:response_code)).each do |code|
+      int_codes.push code.to_i
+    end
+    client_errors = int_codes.count{|code| code.between?(400, 499)}
+    server_errors = int_codes.count{|code| code.between?(500, 599)}
+    failed_count = client_errors + server_errors
+    ((failed_count.to_f/int_codes.count)*100).round(2)
+  end
+
   def performance_mean(label)
-    results = self.performance_results #get from perfromance
+    results = self.performance_results
+    bottom_timestamp, top_timestamp = border_timestamps(self.id, PerformanceResult)
+    (results.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").average(:value)).round(2)
+  end
+
+  def perfomance_min(label)
+
+  end
+
+  def perfomance_max(label)
+
   end
 
   private
@@ -106,9 +128,9 @@ class Result < ActiveRecord::Base
     result
   end
 
-  def border_timestamps(id)
-    min_timestamp = Time.at(RequestsResult.where("result_id = #{id}").first.timestamp).to_time
-    max_timestamp = Time.at(RequestsResult.where("result_id = #{id}").last.timestamp).to_time
+  def border_timestamps(id, table)
+    min_timestamp = Time.at(table.where("result_id = #{id}").first.timestamp).to_time
+    max_timestamp = Time.at(table.where("result_id = #{id}").last.timestamp).to_time
     ten_percent = ((max_timestamp - min_timestamp)*0.10).round
     bottom_timestamp = (min_timestamp + ten_percent).to_i
     top_timestamp = (max_timestamp - ten_percent).to_i

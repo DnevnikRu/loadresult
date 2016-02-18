@@ -297,16 +297,16 @@ describe Result do
   end
 
 
-  describe '#mean' do
+  describe '#request calculate' do
 
     before(:all) do
       @result = create(:result)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023055000, value: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2, response_code: 200)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123, response_code: 400)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 123, response_code: 500)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050000, value: 1000, response_code: 499)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023055000, value: 123, response_code: 600)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 6, response_code: 600)
     end
 
     it 'request mean is correct' do
@@ -321,6 +321,27 @@ describe Result do
     it 'request thoughput is correct' do
       expect(@result.request_thoughput('children /marks.aspx:GET:tab=subject')).to eql 0.00
     end
+    it 'failed tests persenage is correct' do
+      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject')).to eql 66.67
+    end
+  end
+
+  describe '#perfomance calculate' do
+
+    before(:all) do
+      @result = create(:result)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023045000, value: 123)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 123)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
+    end
+
+    it 'performance mean is correct' do
+      expect(@result.performance_mean('EXEC Network\Bytes Sent/sec')).to eql 415.33
+    end
 
   end
+
 end

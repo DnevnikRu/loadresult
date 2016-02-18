@@ -1,5 +1,9 @@
 class CompareController < ApplicationController
   def show
+    result1 = Result.find_by(id: params[:result1])
+    result2 = Result.find_by(id: params[:result2])
+    redirect_to root_path, :alert => 'Can`t find selected results' if result1.nil? || result2.nil?
+    @compare_report = CompareReport.new(result1, result2)
   end
 
   def request_chart

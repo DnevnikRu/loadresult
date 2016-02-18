@@ -332,14 +332,22 @@ describe Result do
       @result = create(:result)
       create(:performance_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
       create(:performance_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023045000, value: 123)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
       create(:performance_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 123)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
       create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
     end
 
     it 'performance mean is correct' do
-      expect(@result.performance_mean('EXEC Network\Bytes Sent/sec')).to eql 415.33
+      expect(@result.performance_mean('EXEC Network\Bytes Sent/sec')).to eql 377.67
+    end
+
+    it 'performance minimum is correct' do
+      expect(@result.performance_min('EXEC Network\Bytes Sent/sec')).to eql 12
+    end
+
+    it 'performance maximum is correct' do
+      expect(@result.performance_max('EXEC Network\Bytes Sent/sec')).to eql 1000
     end
 
   end

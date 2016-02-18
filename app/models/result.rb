@@ -82,12 +82,16 @@ class Result < ActiveRecord::Base
     (results.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").average(:value)).round(2)
   end
 
-  def perfomance_min(label)
-
+  def performance_min(label)
+    results = self.performance_results
+    bottom_timestamp, top_timestamp = border_timestamps(self.id, PerformanceResult)
+    results.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").minimum(:value)
   end
 
-  def perfomance_max(label)
-
+  def performance_max(label)
+    results = self.performance_results
+    bottom_timestamp, top_timestamp = border_timestamps(self.id, PerformanceResult)
+    results.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").maximum(:value)
   end
 
   private

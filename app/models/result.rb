@@ -46,15 +46,11 @@ class Result < ActiveRecord::Base
     validate_header(result, header, 'request', %w(timeStamp label responseCode Latency)) # TODO: move list of required column to model
     return nil unless result.errors.empty?
     columns_indexes = csv_header_columns_indexes(header)
+    requests_results = []
     request_data.each do |line|
-      requests_result = RequestsResult.new
-      requests_result.result_id = result.id
-      requests_result.timestamp = line[columns_indexes['timeStamp']]
-      requests_result.label = line[columns_indexes['label']]
-      requests_result.response_code = line[columns_indexes['responseCode']]
-      requests_result.value = line[columns_indexes['Latency']]
-      requests_result.save
+      requests_results.push "(#{result.id}, #{line[columns_indexes['timeStamp']]}, '#{line[columns_indexes['label']]}', '#{line[columns_indexes['responseCode']]}', #{line[columns_indexes['Latency']]}, '#{Time.now}', '#{Time.now}')"
     end
+    ActiveRecord::Base.connection.execute("insert into requests_results (result_id, timestamp, label, response_code, value, created_at, updated_at) values #{requests_results.join(', ')}")
     result
   end
 
@@ -64,14 +60,11 @@ class Result < ActiveRecord::Base
     validate_header(result, header, 'perfmon', %w(timeStamp label elapsed)) # TODO: move list of required column to model
     return nil unless result.errors.empty?
     columns_indexes = csv_header_columns_indexes(header)
+    perfmons_data = []
     perfmon_data.each do |line|
-      performance_result = PerformanceResult.new
-      performance_result.result_id = result.id
-      performance_result.timestamp = line[columns_indexes['timeStamp']]
-      performance_result.label = line[columns_indexes['label']]
-      performance_result.value = line[columns_indexes['elapsed']]
-      performance_result.save
+      perfmons_data.push "(#{result.id}, #{line[columns_indexes['timeStamp']]}, '#{line[columns_indexes['label']]}', #{line[columns_indexes['elapsed']]}, '#{Time.now}', '#{Time.now}')"
     end
+    ActiveRecord::Base.connection.execute("insert into performance_results (result_id, timestamp, label, value, created_at, updated_at) values #{perfmons_data.join(', ')}")
     result
   end
 

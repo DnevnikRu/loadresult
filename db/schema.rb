@@ -11,28 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160217140946) do
+ActiveRecord::Schema.define(version: 20160217154121) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "performance_results", force: :cascade do |t|
     t.integer  "result_id"
-    t.integer  "timestamp",  limit: 8
     t.string   "label"
     t.integer  "value",      limit: 8
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
+    t.integer  "timestamp",  limit: 8
   end
 
   create_table "requests_results", force: :cascade do |t|
     t.integer  "result_id"
-    t.integer  "timestamp",     limit: 8
     t.string   "label"
     t.integer  "value",         limit: 8
-    t.integer  "response_code"
+    t.string   "response_code"
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
+    t.integer  "timestamp",     limit: 8
   end
 
   create_table "results", force: :cascade do |t|

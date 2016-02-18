@@ -33,33 +33,35 @@ class Result < ActiveRecord::Base
   end
 
   def request_mean(label)
-    bottom_timestamp = border_timestamps(self.id)[0]
-    top_timestamp = border_timestamps(self.id)[1]
-    RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").average(:value)
+    bottom_timestamp, top_timestamp = border_timestamps(self.id)
+    (RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").average(:value)).round(2)
   end
 
   def request_median(label)
-    bottom_timestamp = border_timestamps(self.id)[0]
-    top_timestamp = border_timestamps(self.id)[1]
+    bottom_timestamp, top_timestamp = border_timestamps(self.id)
     median(RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").pluck(:value))
   end
 
   def request_90percentile(label)
-    bottom_timestamp = border_timestamps(self.id)[0]
-    top_timestamp = border_timestamps(self.id)[1]
+    bottom_timestamp, top_timestamp = border_timestamps(self.id)
     percentile((RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").pluck(:value)), 90)
   end
 
   def request_min(label)
-    bottom_timestamp = border_timestamps(self.id)[0]
-    top_timestamp = border_timestamps(self.id)[1]
+    bottom_timestamp, top_timestamp = border_timestamps(self.id)
     RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").minimum(:value)
   end
 
   def request_max(label)
-    bottom_timestamp = border_timestamps(self.id)[0]
-    top_timestamp = border_timestamps(self.id)[1]
+    bottom_timestamp, top_timestamp = border_timestamps(self.id)
     RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").maximum(:value)
+  end
+
+  def request_thoughput(label)
+    bottom_timestamp, top_timestamp = border_timestamps(self.id)
+    duration = Time.at(top_timestamp).to_time - Time.at(bottom_timestamp).to_time
+    request_count = (RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").count).to_f
+    (request_count/duration).round(2)
   end
 
   def performance_mean(label)
@@ -102,15 +104,6 @@ class Result < ActiveRecord::Base
     ActiveRecord::Base.connection.execute(%(INSERT INTO performance_results (result_id, timestamp, label, value, created_at, updated_at)
                                             VALUES #{perfmons_data.join(', ')}))
     result
-  end
-
-
-  def self.csv_header_columns_indexes(header)
-    indexes = {}
-    header.each_index do |i|
-      indexes[header[i]] = i
-    end
-    indexes
   end
 
   def border_timestamps(id)

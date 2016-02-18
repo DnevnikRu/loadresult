@@ -310,17 +310,16 @@ describe Result do
     end
 
     it 'request mean is correct' do
-      expect(@result.request_mean('children /marks.aspx:GET:tab=subject')).to eql 123
-    end
-
-    it 'performance mean is correct' do
-      expect(@result.performance_mean('children /marks.aspx:GET:tab=subject')).to eql 123
+      expect(@result.request_mean('children /marks.aspx:GET:tab=subject')).to eql 415.33
     end
     it 'request median is correct' do
-      expect(@result.request_median('children /marks.aspx:GET:tab=subject')).to eql 3.5
+      expect(@result.request_median('children /marks.aspx:GET:tab=subject')).to eql 123
     end
-    it 'request min is correct' do
+    it 'request max is correct' do
       expect(@result.request_max('children /marks.aspx:GET:tab=subject')).to eql 1000
+    end
+    it 'request thoughput is correct' do
+      expect(@result.request_thoughput('children /marks.aspx:GET:tab=subject')).to eql 0.00
     end
 
   end

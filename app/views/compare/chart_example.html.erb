@@ -4,8 +4,8 @@
   <div id="chart1"></div>
   <%= button_to 'Show chart 1',
       compare_request_chart_path(
-        data: @results[:request_chart1],
-        name: 'Request chart 1',
+        data_name: 'request_chart1',
+        chart_name: 'Request chart 1',
         div_id: 'chart1'
       ),
       remote: true,
@@ -14,8 +14,8 @@
   <div id="chart2"></div>
   <%= button_to 'Show chart 2',
       compare_request_chart_path(
-        data: @results[:request_chart2],
-        name: 'Request chart 2',
+        data_name: 'request_chart2',
+        chart_name: 'Request chart 2',
         div_id: 'chart2'
       ),
       remote: true,

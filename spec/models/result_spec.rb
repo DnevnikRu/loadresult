@@ -295,4 +295,33 @@ describe Result do
 
     end
   end
+
+
+  describe '#mean' do
+
+    before(:all) do
+      @result = create(:result)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023055000, value: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
+    end
+
+    it 'request mean is correct' do
+      expect(@result.request_mean('children /marks.aspx:GET:tab=subject')).to eql 123
+    end
+
+    it 'performance mean is correct' do
+      expect(@result.performance_mean('children /marks.aspx:GET:tab=subject')).to eql 123
+    end
+    it 'request median is correct' do
+      expect(@result.request_median('children /marks.aspx:GET:tab=subject')).to eql 3.5
+    end
+    it 'request min is correct' do
+      expect(@result.request_max('children /marks.aspx:GET:tab=subject')).to eql 1000
+    end
+
+  end
 end

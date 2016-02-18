@@ -32,6 +32,40 @@ class Result < ActiveRecord::Base
     result
   end
 
+  def request_mean(label)
+    bottom_timestamp = border_timestamps(self.id)[0]
+    top_timestamp = border_timestamps(self.id)[1]
+    RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").average(:value)
+  end
+
+  def request_median(label)
+    bottom_timestamp = border_timestamps(self.id)[0]
+    top_timestamp = border_timestamps(self.id)[1]
+    median(RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").pluck(:value))
+  end
+
+  def request_90percentile(label)
+    bottom_timestamp = border_timestamps(self.id)[0]
+    top_timestamp = border_timestamps(self.id)[1]
+    percentile((RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").pluck(:value)), 90)
+  end
+
+  def request_min(label)
+    bottom_timestamp = border_timestamps(self.id)[0]
+    top_timestamp = border_timestamps(self.id)[1]
+    RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").minimum(:value)
+  end
+
+  def request_max(label)
+    bottom_timestamp = border_timestamps(self.id)[0]
+    top_timestamp = border_timestamps(self.id)[1]
+    RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").maximum(:value)
+  end
+
+  def performance_mean(label)
+    results = self.performance_results #get from perfromance
+  end
+
   private
 
   def self.validate_header(result, header, data_type, required_fields)
@@ -69,4 +103,43 @@ class Result < ActiveRecord::Base
                                             VALUES #{perfmons_data.join(', ')}))
     result
   end
+
+
+  def self.csv_header_columns_indexes(header)
+    indexes = {}
+    header.each_index do |i|
+      indexes[header[i]] = i
+    end
+    indexes
+  end
+
+  def border_timestamps(id)
+    min_timestamp = Time.at(RequestsResult.where("result_id = #{id}").first.timestamp).to_time
+    max_timestamp = Time.at(RequestsResult.where("result_id = #{id}").last.timestamp).to_time
+    ten_percent = ((max_timestamp - min_timestamp)*0.10).round
+    bottom_timestamp = (min_timestamp + ten_percent).to_i
+    top_timestamp = (max_timestamp - ten_percent).to_i
+    [bottom_timestamp, top_timestamp]
+  end
+
+  def median(data)
+    percentile(data, 50)
+  end
+
+  def percentile(data, percent)
+    sorted_array = data.sort
+    rank = (percent.to_f)/100*data.length
+    exactly_divide_check = rank.to_f - rank.to_i
+    if data.length == 0
+      nil
+    elsif exactly_divide_check.eql? 0.0
+      first = (sorted_array[rank-1]).to_f
+      second = (sorted_array[rank]).to_f
+      return (first + second)*(percent.to_f)/100
+    else
+      index = (data.length - 1)*(percent.to_f)/100
+      sorted_array[index]
+    end
+  end
+
 end

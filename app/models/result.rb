@@ -77,21 +77,18 @@ class Result < ActiveRecord::Base
   end
 
   def performance_mean(label)
-    results = performance_results
     bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    results.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").average(:value).round(2)
+    performance_results.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").average(:value).round(2)
   end
 
   def performance_min(label)
-    results = performance_results
     bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    results.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").minimum(:value)
+    performance_results.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").minimum(:value)
   end
 
   def performance_max(label)
-    results = performance_results
     bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    results.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").maximum(:value)
+    performance_results.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").maximum(:value)
   end
 
   private

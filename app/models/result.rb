@@ -149,7 +149,7 @@ class Result < ActiveRecord::Base
     sorted_array = data.sort
     rank = percent.to_f / 100 * data.length
     exactly_divide_check = rank.to_f - rank.to_i
-    if data.length == 0
+    if data.empty?
       nil
     elsif exactly_divide_check.eql? 0.0
       first = (sorted_array[rank - 1]).to_f

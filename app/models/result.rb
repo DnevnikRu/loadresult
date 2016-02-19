@@ -34,40 +34,40 @@ class Result < ActiveRecord::Base
 
   def request_mean(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    RequestsResult.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").average(:value).round(2)
+    RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).average(:value).round(2)
   end
 
   def request_median(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    median(RequestsResult.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").pluck(:value))
+    median(RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).pluck(:value))
   end
 
   def request_90percentile(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    percentile(RequestsResult.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").pluck(:value), 90)
+    percentile(RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).pluck(:value), 90)
   end
 
   def request_min(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    RequestsResult.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").minimum(:value)
+    RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).minimum(:value)
   end
 
   def request_max(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    RequestsResult.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").maximum(:value)
+    RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).maximum(:value)
   end
 
   def request_throughput(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
     duration = Time.at(top_timestamp).to_time - Time.at(bottom_timestamp).to_time
-    request_count = RequestsResult.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").count.to_f
+    request_count = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).count.to_f
     (request_count / duration).round(2)
   end
 
   def failed_requests(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
     int_codes = []
-    RequestsResult.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").pluck(:response_code).each do |code|
+    RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).pluck(:response_code).each do |code|
       int_codes.push code.to_i
     end
     client_errors = int_codes.count { |code| code.between?(400, 499) }
@@ -78,20 +78,24 @@ class Result < ActiveRecord::Base
 
   def performance_mean(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    performance_results.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").average(:value).round(2)
+    performance_results.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).average(:value).round(2)
   end
 
   def performance_min(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    performance_results.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").minimum(:value)
+    performance_results.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).minimum(:value)
   end
 
   def performance_max(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    performance_results.where("result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").maximum(:value)
+    performance_results.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).maximum(:value)
   end
 
   private
+
+  def where_conditional(id, label, bottom_timestamp, top_timestamp)
+    "result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}"
+  end
 
   def self.validate_header(result, header, data_type, required_fields)
     required_fields.each do |column_name|

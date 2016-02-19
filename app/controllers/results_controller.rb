@@ -11,6 +11,7 @@ class ResultsController < ApplicationController
     if result.errors.empty?
       redirect_to({ action: :index }, notice: 'Result was successfully created.')
     else
+      params.each { |k, v| flash[k] = v }
       redirect_to({ action: :new }, alert: result.errors.full_messages)
     end
   end

@@ -14,19 +14,19 @@
       <%= form_tag({action: "create"}, multipart: true) do %>
           <div class="form-group">
             <%= label_tag :version %>
-            <%= text_field_tag :version, nil, class: "form-control", placeholder: 'edu sharding' %>
+            <%= text_field_tag :version, flash[:version], class: "form-control", placeholder: 'edu sharding' %>
           </div>
           <div class="form-group">
             <%= label_tag :rps %>
-            <%= text_field_tag :rps, nil, class: "form-control", placeholder: '600' %>
+            <%= text_field_tag :rps, flash[:rps], class: "form-control", placeholder: '600' %>
           </div>
           <div class="form-group">
             <%= label_tag :duration %>
-            <%= text_field_tag :duration, nil, class: "form-control", placeholder: '600' %>
+            <%= text_field_tag :duration, flash[:duration], class: "form-control", placeholder: '600' %>
           </div>
           <div class="form-group">
             <%= label_tag :profile %>
-            <%= text_field_tag :profile, nil, class: "form-control", placeholder: 'all_sites' %>
+            <%= text_field_tag :profile, flash[:profile], class: "form-control", placeholder: 'all_sites' %>
           </div>
           <div class="form-group">
             <%= label_tag :date %>

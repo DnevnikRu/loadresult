@@ -57,7 +57,7 @@ class Result < ActiveRecord::Base
     RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").maximum(:value)
   end
 
-  def request_thoughput(label)
+  def request_throughput(label)
     bottom_timestamp, top_timestamp = border_timestamps(self.id, RequestsResult)
     duration = Time.at(top_timestamp).to_time - Time.at(bottom_timestamp).to_time
     request_count = (RequestsResult.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").count).to_f
@@ -93,6 +93,7 @@ class Result < ActiveRecord::Base
     bottom_timestamp, top_timestamp = border_timestamps(self.id, PerformanceResult)
     results.where("result_id = #{self.id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}").maximum(:value)
   end
+
 
   private
 

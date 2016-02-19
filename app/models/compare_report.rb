@@ -19,4 +19,8 @@ class CompareReport
     description
   end
 
+  def request_labels
+     @result1.requests_results.pluck(:label) | @result2.requests_results.pluck(:label)
+  end
+
 end

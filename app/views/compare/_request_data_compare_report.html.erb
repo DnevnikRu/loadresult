@@ -1,0 +1,117 @@
+<div class="panel-group" id="requests_data">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#requestsData" href="#collapseRequestsData">
+          Requests Data
+        </a>
+      </h4>
+    </div>
+    <div id="collapseRequestsData" class="panel-collapse collapse">
+      <div class="panel-body">
+        <div class="panel-group" id="params">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#params" href="#collapseParams">
+                  Parameters
+                </a>
+              </h4>
+            </div>
+            <div id="collapseParams" class="panel-collapse collapse">
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="input-group">
+                      <span class="input-group-addon">Show columns</span>
+
+                      <div class="input-group-btn btn-group-custom" data-toggle="buttons">
+                        <label class="btn btn-primary active">
+                          <input id="btn_show_mean" type="checkbox" onchange="showColumn('btn_show_mean', 'mean');">
+                          Mean
+                        </label>
+                        <label class="btn btn-primary active">
+                          <input id="btn_show_median" type="checkbox" onchange="showColumn('btn_show_median', 'median');">
+                          Median
+                        </label>
+                        <label class="btn btn-primary active">
+                          <input id="btn_show_90line" type="checkbox" onchange="showColumn('btn_show_90line', 'line90');">
+                          90% Line
+                        </label>
+                        <label class="btn btn-primary">
+                          <input id="btn_show_min" type="checkbox" onchange="showColumn('btn_show_min', 'min');">
+                          Min
+                        </label>
+                        <label class="btn btn-primary">
+                          <input id="btn_show_max" type="checkbox" onchange="showColumn('btn_show_max', 'max');">
+                          Max
+                        </label>
+                        <label class="btn btn-primary">
+                          <input id="btn_show_throughput" type="checkbox" onchange="showColumn('btn_show_throughput', 'throughput');">
+                          Throughput
+                        </label>
+                        <label class="btn btn-primary">
+                          <input id="btn_show_failed_req" type="checkbox" onchange="showColumn('btn_show_failed_req', 'failed_request');">
+                          Failed requests
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <table class="table table-hover table-striped table-condensed table-responsive table-bordered">
+          <thead>
+          <tr>
+            <th></th>
+            <th class="mean">Mean first, msec</th>
+            <th class="mean">Mean second, msec</th>
+            <th class="mean">Mean trend, msec</th>
+            <th class="median">Median first, msec</th>
+            <th class="median">Median second, msec</th>
+            <th class="median">Median trend, msec</th>
+            <th class="line90">90% Line first, msec</th>
+            <th class="line90">90% Line second, msec</th>
+            <th class="line90">90% Line trend, msec</th>
+            <th class="min">Min first, msec</th>
+            <th class="min">Min second, msec</th>
+            <th class="max">Max first, msec</th>
+            <th class="max">Max second, msec</th>
+            <th class="throughput">Throughput first, req/sec</th>
+            <th class="throughput">Throughput second, req/sec</th>
+            <th class="failed_request">Failed requests first, %</th>
+            <th class="failed_request">Failed requests second, %</th>
+            <th class="failed_request">Failed requests trend, %</th>
+          </tr>
+          </thead>
+          <% @compare_report.request_labels.each do |label| %>
+            <tr>
+              <td><%= label %></td>
+              <td class="mean"><%= @compare_report.result1.request_mean(label)%></td>
+              <td class="mean"><%= @compare_report.result2.request_mean(label)%></td>
+              <td class="mean"> - </td>
+              <td class="median"><%= @compare_report.result1.request_median(label)%></td>
+              <td class="median"><%= @compare_report.result2.request_median(label)%></td>
+              <td class="median"> - </td>
+              <td class="line90"><%= @compare_report.result1.request_90percentile(label)%></td>
+              <td class="line90"><%= @compare_report.result2.request_90percentile(label)%></td>
+              <td class="line90"> - </td>
+              <td class="min"><%= @compare_report.result1.request_min(label)%></td>
+              <td class="min"><%= @compare_report.result2.request_min(label)%></td>
+              <td class="max"><%= @compare_report.result1.request_max(label)%></td>
+              <td class="max"><%= @compare_report.result2.request_max(label)%></td>
+              <td class="throughput"><%= @compare_report.result1.request_throughput(label)%></td>
+              <td class="throughput"><%= @compare_report.result2.request_throughput(label)%></td>
+              <td class="failed_request"><%= @compare_report.result1.failed_requests(label)%></td>
+              <td class="failed_request"><%= @compare_report.result2.failed_requests(label)%></td>
+              <td class="failed_request"> - </td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

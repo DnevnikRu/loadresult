@@ -319,7 +319,7 @@ describe Result do
       expect(@result.request_max('children /marks.aspx:GET:tab=subject')).to eql 1000
     end
     it 'request thoughput is correct' do
-      expect(@result.request_thoughput('children /marks.aspx:GET:tab=subject')).to eql 0.00
+      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject')).to eql 0.00
     end
     it 'failed tests persenage is correct' do
       expect(@result.failed_requests('children /marks.aspx:GET:tab=subject')).to eql 66.67

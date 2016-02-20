@@ -20,7 +20,7 @@ class Result < ActiveRecord::Base
       duration: params['duration'],
       rps: params['rps'],
       profile: params['profile'],
-      test_run_date: params['date'].first
+      test_run_date: params['test_run_date']
     )
     result.save
 

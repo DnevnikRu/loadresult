@@ -61,7 +61,7 @@ describe Result do
             'rps' => 150,
             'duration' => 123,
             'profile' => 'asd',
-            'date' => ['2016-02-11 11:21'],
+            'test_run_date' => '2016-02-11 11:21',
             'requests_data' => requests_data,
             'perfmon_data' => perfmon_data
         }
@@ -97,7 +97,7 @@ describe Result do
             'rps' => 150,
             'duration' => 123,
             'profile' => 'asd',
-            'date' => ['2016-02-11 11:21'],
+            'test_run_date' => '2016-02-11 11:21',
             'requests_data' => requests_data
         }
         result = Result.upload_and_create(params)
@@ -112,7 +112,7 @@ describe Result do
             'rps' => 150,
             'duration' => 123,
             'profile' => 'asd',
-            'date' => ['2016-02-11 11:21'],
+            'test_run_date' => '2016-02-11 11:21',
             'requests_data' => requests_data
         }
         result = Result.upload_and_create(params)
@@ -127,7 +127,7 @@ describe Result do
             'version' => 'asd',
             'duration' => 123,
             'profile' => 'asd',
-            'date' => ['2016-02-11 11:21'],
+            'test_run_date' => '2016-02-11 11:21',
             'requests_data' => requests_data
         }
         result = Result.upload_and_create(params)
@@ -142,7 +142,7 @@ describe Result do
             'version' => 'asd',
             'rps' => 150,
             'profile' => 'asd',
-            'date' => ['2016-02-11 11:21'],
+            'test_run_date' => '2016-02-11 11:21',
             'requests_data' => requests_data
         }
         result = Result.upload_and_create(params)
@@ -157,7 +157,7 @@ describe Result do
             'version' => 'asd',
             'duration' => 123,
             'rps' => 150,
-            'date' => ['2016-02-11 11:21'],
+            'test_run_date' => '2016-02-11 11:21',
             'requests_data' => requests_data
         }
         result = Result.upload_and_create(params)
@@ -175,7 +175,7 @@ describe Result do
             'rps' => 150,
             'profile' => 'asd',
             'requests_data' => requests_data,
-            'date' => ['']
+            'test_run_date' => ''
         }
         result = Result.upload_and_create(params)
         expect(result.errors).to match_array(['Test run date must be in a datetime format'])
@@ -188,7 +188,7 @@ describe Result do
             'duration' => 123,
             'rps' => 150,
             'profile' => 'asd',
-            'date' => ['2016-02-11 11:21']
+            'test_run_date' => '2016-02-11 11:21'
         }
         result = Result.upload_and_create(params)
         expect(result.errors).to match_array(['Request data is required'])
@@ -222,7 +222,7 @@ describe Result do
               'rps' => 150,
               'duration' => 123,
               'profile' => 'asd',
-              'date' => ['2016-02-11 11:21'],
+              'test_run_date' => '2016-02-11 11:21',
               'requests_data' => requests_data
           }
 
@@ -261,7 +261,7 @@ describe Result do
               'rps' => 150,
               'duration' => 123,
               'profile' => 'asd',
-              'date' => ['2016-02-11 11:21'],
+              'test_run_date' => '2016-02-11 11:21',
               'requests_data' => requests_data,
               'perfmon_data' => perfmon_data
           }

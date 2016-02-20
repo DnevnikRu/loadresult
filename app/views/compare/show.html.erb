@@ -4,14 +4,17 @@
   </div>
 
   <div class="row">
-
     <%= render('compare/description_compare_report') %>
-
   </div>
 
   <div class="row">
     <%= render('compare/request_data_compare_report') %>
   </div>
 
+  <% if @compare_report.performance? %>
+      <div class="row">
+        <%= render('compare/performance_data_compare_report') %>
+      </div>
+  <% end %>
 
 </div>

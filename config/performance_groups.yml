@@ -1,0 +1,85 @@
+ -
+    name: Processor
+    units: '%'
+    trend_limit: 0
+    labels: ['CPU Processor Time']
+ -
+    name: Requests per second
+    units: req/sec
+    trend_limit: 1
+    labels: ['EXEC ASP.NET Apps(_total_)\Req/sec']
+ -
+    name: Requests executing
+    units: requests
+    trend_limit: 0.1
+    labels: ['EXEC ASP.NET Apps(_total_)\Requests Executing']
+ -
+    name: Requests Current
+    units: requests
+    trend_limit: 0.01
+    labels: ['EXEC ASP.NET\Requests Current']
+ -
+    name: DB Server Connections
+    units: users
+    trend_limit: 1
+    labels: ['EXEC SQLServer User connections']
+ -
+    name: Memory
+    units: Mb
+    trend_limit: 10
+    labels: ['Memory Memory\Available Mb']
+ -
+    name: Memory Page Faults
+    units: page/sec
+    trend_limit: 10
+    labels: ['Memory\Page Faults/sec']
+ -
+    name: Memory Page
+    units: page/sec
+    trend_limit: 1
+    labels: ['Memory\Page/sec']
+ -
+    name: Network traffic
+    units: Mb/sec
+    trend_limit: 100
+    labels: ['Network\Bytes Sent/sec', 'Network\Bytes Received/sec']
+ -
+    name: Network queue
+    units: unit
+    trend_limit: 0.01
+    labels: ['Network\Output Queue Length']
+ -
+    name: Disk queue
+    units: unit
+    trend_limit: 0.5
+    labels: ['Disk(inst_1)\Avg. Write Queue', 'Disk(inst_1)\Avg. Read Queue']
+ -
+    name: Error per second
+    units: error/sec
+    trend_limit: 0.01
+    labels: ['ASP.NET Apps(_total_)\Errors Total/Sec']
+ -
+    name: Requests in application queue
+    units: requests
+    trend_limit: 0.01
+    labels: ['ASP.NET Apps(_total_)\Requests In Application Queue']
+ -
+    name: 'DB Server Cache'
+    units: '%'
+    trend_limit: 0
+    labels: ['SQLServer Buffer cache hit ratio', 'SQLServer Plane cache hit ratio']
+ -
+    name: 'DB Server Waits'
+    units: ms
+    trend_limit: 0.01
+    labels: ['SQLServer Lock Avg Wait Time']
+ -
+    name: DB Server Locks
+    units: locks
+    trend_limit: 0.01
+    labels: ['SQLServer Lock Timeouts/sec']
+ -
+    name: DB Server Statistics
+    units: unit
+    trend_limit: 1
+    labels: ['SQLServer Errors/sec', 'SQLServer Re-Compilations/sec', 'SQLServer Number of Deadlocks']

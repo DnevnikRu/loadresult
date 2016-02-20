@@ -1,0 +1,47 @@
+<div class="panel-group" id="perfmon_data">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#perfmon_data" href="#collapsePerfmonData">
+          Performance results
+        </a>
+      </h4>
+    </div>
+    <div id="collapsePerfmonData" class="panel-collapse collapse">
+      <div class="panel-body">
+        <% @compare_report.performance_groups.each do |group| %>
+            <h4 style="color: blue"><%= group[:name] %></h4>
+            <table class="table table-hover table-striped table-condensed table-responsive table-bordered">
+              <thead>
+              <tr>
+                <th></th>
+                <th>Mean first</th>
+                <th>Mean second</th>
+                <th>Mean trend, %</th>
+                <th>Min first</th>
+                <th>Min second</th>
+                <th>Max first</th>
+                <th>Max second</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% group[:labels].each do |label| %>
+                  <tr>
+                    <td><b><%= label %></b></td>
+                    <td><%= @compare_report.result1.performance_mean(label) %></td>
+                    <td><%= @compare_report.result2.performance_mean(label) %></td>
+                    <td> -</td>
+                    <td><%= @compare_report.result1.performance_min(label) %></td>
+                    <td><%= @compare_report.result2.performance_min(label) %></td>
+                    <td><%= @compare_report.result1.performance_max(label) %></td>
+                    <td><%= @compare_report.result2.performance_max(label) %></td>
+                  </tr>
+              <% end %>
+              </tbody>
+            </table>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<br>

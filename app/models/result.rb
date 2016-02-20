@@ -32,48 +32,68 @@ class Result < ActiveRecord::Base
     result
   end
 
+  def border_timestamps(id, table)
+    min_timestamp = Time.at(table.where("result_id = #{id}").first.timestamp).to_time
+    max_timestamp = Time.at(table.where("result_id = #{id}").last.timestamp).to_time
+    ten_percent = ((max_timestamp - min_timestamp) * 0.10).round
+    bottom_timestamp = (min_timestamp + ten_percent).to_i
+    top_timestamp = (max_timestamp - ten_percent).to_i
+    [bottom_timestamp, top_timestamp]
+  end
+
   def request_mean(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).average(:value).round(2)
+    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    (records.exists?) ? records.average(:value).round(2) : nil
   end
 
   def request_median(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    median(RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).pluck(:value))
+    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    records.exists? ? median(records.pluck(:value)) : nil
   end
 
   def request_90percentile(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    percentile(RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).pluck(:value), 90)
+    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    records.exists? ? percentile(records.pluck(:value), 90) : nil
   end
 
   def request_min(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).minimum(:value)
+    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    records.exists? ? records.minimum(:value) : nil
   end
 
   def request_max(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).maximum(:value)
+    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    records.exists? ? records.maximum(:value) : nil
   end
 
   def request_throughput(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
     duration = Time.at(top_timestamp).to_time - Time.at(bottom_timestamp).to_time
-    request_count = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).count.to_f
-    (request_count / duration).round(2)
+    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    records.exists? ? (records.count.to_f / duration).round(2) : nil
   end
 
   def failed_requests(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
     int_codes = []
-    RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).pluck(:response_code).each do |code|
-      int_codes.push code.to_i
+    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    if records.exists?
+      records.pluck(:response_code).each do |code|
+        int_codes.push code.to_i
+      end
+      client_errors = int_codes.count { |code| code.between?(400, 499) }
+      server_errors = int_codes.count { |code| code.between?(500, 599) }
+      unrecognized_errors = int_codes.count { |code| code == 0 }
+      failed_count = client_errors + server_errors + unrecognized_errors
+      ((failed_count.to_f / int_codes.count) * 100).round(2)
+    else
+      nil
     end
-    client_errors = int_codes.count { |code| code.between?(400, 499) }
-    server_errors = int_codes.count { |code| code.between?(500, 599) }
-    failed_count = client_errors + server_errors
-    ((failed_count.to_f / int_codes.count) * 100).round(2)
   end
 
   def performance_mean(label)
@@ -133,32 +153,31 @@ class Result < ActiveRecord::Base
     result
   end
 
-  def border_timestamps(id, table)
-    min_timestamp = Time.at(table.where("result_id = #{id}").first.timestamp).to_time
-    max_timestamp = Time.at(table.where("result_id = #{id}").last.timestamp).to_time
-    ten_percent = ((max_timestamp - min_timestamp) * 0.10).round
-    bottom_timestamp = (min_timestamp + ten_percent).to_i
-    top_timestamp = (max_timestamp - ten_percent).to_i
-    [bottom_timestamp, top_timestamp]
-  end
-
   def median(data)
-    percentile(data, 50)
+    sorted_array = data.sort
+    rank = data.length*0.5
+    exactly_divide_check = rank - rank.to_i
+    if exactly_divide_check.eql? 0.0
+      first = (sorted_array[rank - 1]).to_f
+      second = (sorted_array[rank]).to_f
+      (first + second) / 2
+    else
+      sorted_array[rank-1]
+    end
   end
 
   def percentile(data, percent)
     sorted_array = data.sort
     rank = percent.to_f / 100 * data.length
-    exactly_divide_check = rank.to_f - rank.to_i
+    exactly_divide_check = rank - rank.to_i
     if data.empty?
       nil
     elsif exactly_divide_check.eql? 0.0
+      sorted_array[rank-1]
+    else
       first = (sorted_array[rank - 1]).to_f
       second = (sorted_array[rank]).to_f
-      return (first + second) * percent.to_f / 100
-    else
-      index = (data.length - 1) * percent.to_f / 100
-      sorted_array[index]
+      (first + second) / 2
     end
   end
 end

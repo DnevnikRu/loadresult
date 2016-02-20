@@ -89,5 +89,20 @@ feature 'Upload load result' do
 
       expect(page).to have_content('Request data is required')
     end
+
+    scenario 'Data in the form is saved if there is an error' do
+      fill_in 'version', with: 'first version'
+      fill_in 'rps', with: '500'
+      fill_in 'duration', with: '450'
+      fill_in 'profile', with: 'main'
+      fill_in 'test_run_date', with: '21.02.2016 01:43'
+      click_button 'Upload'
+
+      expect(page).to have_field('version', with: 'first version')
+      expect(page).to have_field('rps', with: '500')
+      expect(page).to have_field('duration', with: '450')
+      expect(page).to have_field('profile', with: 'main')
+      expect(page).to have_field('test_run_date', with: '21.02.2016 01:43')
+    end
   end
 end

@@ -12,28 +12,28 @@
       <h1>Upload results</h1>
 
       <%= form_tag({action: "create"}, multipart: true) do %>
-          <div class="form-group">
-            <%= label_tag :version %>
+          <div class="form-group required">
+            <%= label_tag :version, nil, class: "control-label" %>
             <%= text_field_tag :version, flash[:version], class: "form-control", placeholder: 'edu sharding' %>
           </div>
-          <div class="form-group">
-            <%= label_tag :rps %>
+          <div class="form-group required">
+            <%= label_tag :rps, nil, class: "control-label" %>
             <%= text_field_tag :rps, flash[:rps], class: "form-control", placeholder: '600' %>
           </div>
-          <div class="form-group">
-            <%= label_tag :duration %>
+          <div class="form-group required">
+            <%= label_tag :duration, nil, class: "control-label" %>
             <%= text_field_tag :duration, flash[:duration], class: "form-control", placeholder: '600' %>
           </div>
-          <div class="form-group">
-            <%= label_tag :profile %>
+          <div class="form-group required">
+            <%= label_tag :profile, nil, class: "control-label" %>
             <%= text_field_tag :profile, flash[:profile], class: "form-control", placeholder: 'all_sites' %>
           </div>
-          <div class="form-group">
-            <%= label_tag :test_run_date %>
+          <div class="form-group required">
+            <%= label_tag :test_run_date, nil, class: "control-label" %>
             <%= datetime_local_field_tag :test_run_date, flash[:test_run_date], class: "form-control", placeholder: '10.02.2016 18:59' %>
           </div>
-          <div class="form-group">
-            <%= label_tag :requests_data %>
+          <div class="form-group required">
+            <%= label_tag :requests_data, nil, class: "control-label" %>
             <%= file_field_tag :requests_data %>
           </div>
           <div class="form-group">

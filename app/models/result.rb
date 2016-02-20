@@ -15,20 +15,26 @@ class Result < ActiveRecord::Base
   end
 
   def self.upload_and_create(params)
-    result = Result.new(version: params['version'], duration: params['duration'], rps: params['rps'], profile: params['profile'], test_run_date: params['date'].first)
-    return result unless result.save
-    unless params['requests_data']
-      result.errors.add(:base, 'Request data is required')
-      result.delete
-      return result
-    end
-    unless save_request_data(params['requests_data'], result)
+    result = Result.new(
+      version: params['version'],
+      duration: params['duration'],
+      rps: params['rps'],
+      profile: params['profile'],
+      test_run_date: params['date'].first
+    )
+    result.save
+
+    if params['requests_data']
+      result.destroy unless save_request_data(params['requests_data'], result)
+    else
       result.destroy
-      return result
+      result.errors.add(:base, 'Request data is required')
     end
+
     if params['perfmon_data']
       result.destroy unless save_perfmon_data(params['perfmon_data'], result)
     end
+
     result
   end
 
@@ -44,7 +50,7 @@ class Result < ActiveRecord::Base
   def request_mean(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
     records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
-    (records.exists?) ? records.average(:value).round(2) : nil
+    records.exists? ? records.average(:value).round(2) : nil
   end
 
   def request_median(label)
@@ -91,8 +97,6 @@ class Result < ActiveRecord::Base
       unrecognized_errors = int_codes.count { |code| code == 0 }
       failed_count = client_errors + server_errors + unrecognized_errors
       ((failed_count.to_f / int_codes.count) * 100).round(2)
-    else
-      nil
     end
   end
 
@@ -155,14 +159,14 @@ class Result < ActiveRecord::Base
 
   def median(data)
     sorted_array = data.sort
-    rank = data.length*0.5
+    rank = data.length * 0.5
     exactly_divide_check = rank - rank.to_i
     if exactly_divide_check.eql? 0.0
       first = (sorted_array[rank - 1]).to_f
       second = (sorted_array[rank]).to_f
       (first + second) / 2
     else
-      sorted_array[rank-1]
+      sorted_array[rank - 1]
     end
   end
 
@@ -173,7 +177,7 @@ class Result < ActiveRecord::Base
     if data.empty?
       nil
     elsif exactly_divide_check.eql? 0.0
-      sorted_array[rank-1]
+      sorted_array[rank - 1]
     else
       first = (sorted_array[rank - 1]).to_f
       second = (sorted_array[rank]).to_f

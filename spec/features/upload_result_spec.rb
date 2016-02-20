@@ -52,9 +52,21 @@ feature 'Upload load result' do
       expect(page).to have_content('Result was successfully created.')
     end
 
+    scenario 'Can not upload a result without filling information' do
+      click_button 'Upload'
+
+      expect(page).to have_content(
+        %(Version can't be blank
+        Duration can't be blank
+        Rps can't be blank
+        Profile can't be blank
+        Test run date must be in a datetime format
+        Request data is required)
+      )
+    end
+
     scenario 'Can not upload a result without additional information' do
       attach_file 'requests_data', summary_file_path
-      attach_file 'perfmon_data', perfmon_file_path
       click_button 'Upload'
 
       expect(page).to have_content(

@@ -10,13 +10,6 @@ class CompareController < ApplicationController
     @data = mock_data[params[:data_name].to_sym]
     @chart_name = params[:chart_name]
     @div_id = params[:div_id]
-    respond_to do |format|
-      format.js
-    end
-  end
-
-  def chart_example
-    @data = mock_data
   end
 
   def mock_data

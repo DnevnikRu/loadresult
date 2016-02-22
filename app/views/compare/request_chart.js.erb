@@ -1,3 +1,5 @@
+$('#<%= "#{@div_id}_button" %>').prop('type', 'button');
+
 var current1 = {
     name: 'CURRENT: web00 EXEC ASP.NET / Requests',
     x: <%= @data[:current][:web00][:x].map(&:to_i) %>,

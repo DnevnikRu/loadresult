@@ -149,7 +149,7 @@ class Result < ActiveRecord::Base
     return if result.errors.any?
     perfmons_data = perfmon_data.map do |line|
       "(#{result.id}, #{line[header.index('timeStamp')]},
-      '#{line[header.index('label')]}', #{line[header.index('elapsed')]},
+      '#{line[header.index('label')]}', #{line[header.index('elapsed')].to_i / 1000},
        '#{Time.now}', '#{Time.now}')"
     end
     ActiveRecord::Base.connection.execute(%(INSERT INTO performance_results (result_id, timestamp, label, value, created_at, updated_at)

@@ -101,8 +101,8 @@
                       remote: true,
                       id: "#{label.parameterize.underscore}_button",
                       class: 'btn btn-default show-plot',
-                      'data-toggle': 'collapse',
-                      'data-target': "##{label.parameterize.underscore}" %>
+                      'data-toggle' => 'collapse',
+                      'data-target' => "##{label.parameterize.underscore}" %>
                 </td>
                 <td class="mean"><%= @compare_report.result1.request_mean(label)%></td>
                 <td class="mean"><%= @compare_report.result2.request_mean(label)%></td>

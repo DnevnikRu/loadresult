@@ -18,4 +18,16 @@ feature 'Review compare report' do
     expect(page).to have_content "Can't find selected results"
   end
 
+  scenario 'Redirects to the resutls page if there is one id' do
+    visit compare_path(result: [@result1.id])
+    expect(page).to have_current_path(results_path)
+    expect(page).to have_content 'You should select 2 or more results to compare them'
+  end
+
+  scenario 'Redirects to the resutls page if there are no ids' do
+    visit compare_path(result: [])
+    expect(page).to have_current_path(results_path)
+    expect(page).to have_content 'You should select 2 or more results to compare them'
+  end
+
 end

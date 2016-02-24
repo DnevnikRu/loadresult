@@ -2,7 +2,7 @@ class CompareController < ApplicationController
   def show
     result1 = Result.find_by(id: params[:result][0])
     result2 = Result.find_by(id: params[:result][1])
-    redirect_to root_path, alert: "Can't find selected results" if result1.nil? || result2.nil?
+    redirect_to results_path, alert: "Can't find selected results" if result1.nil? || result2.nil?
     @compare_report = CompareReport.new(result1, result2)
   end
 

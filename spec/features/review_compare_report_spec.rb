@@ -12,4 +12,10 @@ feature 'Review compare report' do
     expect(page).to have_selector('div#collapseDescription')
   end
 
+  scenario 'Redirects to the resutls page if ids absent' do
+    visit compare_path(result: [999998, 999999])
+    expect(page).to have_current_path(results_path)
+    expect(page).to have_content "Can't find selected results"
+  end
+
 end

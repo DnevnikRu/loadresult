@@ -27,7 +27,7 @@
     name: Memory
     units: Mb
     trend_limit: 10
-    labels: ['Memory Memory\Available Mb']
+    labels: ['Memory Memory\Available']
  -
     name: Memory Page Faults
     units: page/sec

@@ -30,7 +30,7 @@
                     <td><b><%= label %></b></td>
                     <td><%= @compare_report.result1.performance_mean(label) %></td>
                     <td><%= @compare_report.result2.performance_mean(label) %></td>
-                    <td> -</td>
+                    <td class="mean trend"><%= @compare_report.trend(:performance_mean, label, group[:trend_limit]) %></td>
                     <td><%= @compare_report.result1.performance_min(label) %></td>
                     <td><%= @compare_report.result2.performance_min(label) %></td>
                     <td><%= @compare_report.result1.performance_max(label) %></td>

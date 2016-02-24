@@ -106,13 +106,13 @@
                 </td>
                 <td class="mean"><%= @compare_report.result1.request_mean(label)%></td>
                 <td class="mean"><%= @compare_report.result2.request_mean(label)%></td>
-                <td class="mean"> - </td>
+                <td class="mean trend"><%= @compare_report.trend(:request_mean, label) %> </td>
                 <td class="median"><%= @compare_report.result1.request_median(label)%></td>
                 <td class="median"><%= @compare_report.result2.request_median(label)%></td>
-                <td class="median"> - </td>
+                <td class="median trend"><%= @compare_report.trend(:request_median, label) %> </td>
                 <td class="line90"><%= @compare_report.result1.request_90percentile(label)%></td>
                 <td class="line90"><%= @compare_report.result2.request_90percentile(label)%></td>
-                <td class="line90"> - </td>
+                <td class="line90 trend"><%= @compare_report.trend(:request_90percentile, label) %> </td>
                 <td class="min"><%= @compare_report.result1.request_min(label)%></td>
                 <td class="min"><%= @compare_report.result2.request_min(label)%></td>
                 <td class="max"><%= @compare_report.result1.request_max(label)%></td>
@@ -121,7 +121,7 @@
                 <td class="throughput"><%= @compare_report.result2.request_throughput(label)%></td>
                 <td class="failed_request"><%= @compare_report.result1.failed_requests(label)%></td>
                 <td class="failed_request"><%= @compare_report.result2.failed_requests(label)%></td>
-                <td class="failed_request"> - </td>
+                <td class="failed_request trend"><%= @compare_report.trend(:failed_requests, label) %></td>
               </tr>
               </tr>
               <tr>

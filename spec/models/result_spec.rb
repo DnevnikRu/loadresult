@@ -370,8 +370,114 @@ describe Result do
     end
   end
 
+  describe '#request calculate with different values' do
 
-  describe '#perfomance calculate' do
+    before(:all) do
+      @result = create(:result)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123, response_code: 600)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 0, response_code: 500)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050500, value: 0.1, response_code: 499)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 346, response_code: nil)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 345, response_code: 599)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 344, response_code: 'Non HTTP response code: org.apache.http.ConnectionClosedException')
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 343, response_code: 1)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 123, response_code: 9880)
+    end
+
+    it 'request mean is correct with different values' do
+      expect(@result.request_mean('children /marks.aspx:GET:tab=subject')).to eql 229.67
+    end
+    it 'request median is correct with different values' do
+      expect(@result.request_median('children /marks.aspx:GET:tab=subject')).to eql 343.5
+    end
+    it 'request 90 percent is correct with different values' do
+      expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject')).to eql 345.5
+    end
+    it 'request max is correct with different values' do
+      expect(@result.request_max('children /marks.aspx:GET:tab=subject')).to eql 346
+    end
+    it 'request min is correct with different values' do
+      expect(@result.request_min('children /marks.aspx:GET:tab=subject')).to eql 0
+    end
+    it 'failed tests percentage is correct with different values' do
+      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject')).to eql 83.33
+    end
+  end
+
+  describe '#request calculate with same values' do
+
+    before(:all) do
+      @result = create(:result)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123, response_code: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 123, response_code: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023047500, value: 123, response_code: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050500, value: 123, response_code: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 123, response_code: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050601, value: 123, response_code: 123)
+    end
+
+    it 'request mean is correct with same values' do
+      expect(@result.request_mean('children /marks.aspx:GET:tab=subject')).to eql 123.0
+    end
+    it 'request median is correct with same values' do
+      expect(@result.request_median('children /marks.aspx:GET:tab=subject')).to eql 123.0
+    end
+    it 'request 90 percent is correct with same values' do
+      expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject')).to eql 123.0
+    end
+    it 'request max is correct with same values' do
+      expect(@result.request_max('children /marks.aspx:GET:tab=subject')).to eql 123
+    end
+    it 'request min is correct with same values' do
+      expect(@result.request_min('children /marks.aspx:GET:tab=subject')).to eql 123
+    end
+    it 'failed tests percentage is correct with same values' do
+      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject')).to eql 0.0
+    end
+  end
+
+  describe '#request throughput with different timestamps' do
+
+    before(:all) do
+      @result = create(:result)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040700)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040800)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040900)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041000)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041100)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041200)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041300)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041400)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041500)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041600)
+    end
+
+    it 'request throughput with different timestamps' do
+      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject')).to eql 0.01
+    end
+  end
+
+  describe '#request throughput with different timestamps' do
+
+    before(:all) do
+      @result = create(:result)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040500)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040700)
+    end
+
+    it 'request throughput with same timestamps' do
+      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject')).to eql 0.03
+    end
+  end
+
+
+  describe '#perfomance calculate with correct values and with not existent label' do
 
     before(:all) do
       @result = create(:result)
@@ -394,7 +500,17 @@ describe Result do
     it 'performance maximum is correct' do
       expect(@result.performance_max('EXEC Network\Bytes Sent/sec')).to eql 1000
     end
+    it 'performance mean is nill with nonexistent label' do
+      expect(@result.performance_mean('EXEC Events\Bytes Sent/sec')).to eql nil
+    end
 
+    it 'performance minimum is nill with nonexistent label' do
+      expect(@result.performance_min('EXEC Events\Bytes Sent/sec')).to eql nil
+    end
+
+    it 'performance maximum is nill with nonexistent label' do
+      expect(@result.performance_max('EXEC Events\Bytes Sent/sec')).to eql nil
+    end
   end
 
 end

@@ -102,17 +102,20 @@ class Result < ActiveRecord::Base
 
   def performance_mean(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    performance_results.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).average(:value).round(2)
+    records = PerformanceResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    records.exists? ? records.average(:value).round(2) : nil
   end
 
   def performance_min(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    performance_results.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).minimum(:value)
+    records = PerformanceResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    records.exists? ? records.minimum(:value) : nil
   end
 
   def performance_max(label)
     bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    performance_results.where(where_conditional(id, label, bottom_timestamp, top_timestamp)).maximum(:value)
+    records = PerformanceResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    records.exists? ? records.maximum(:value) : nil
   end
 
   private
@@ -164,7 +167,7 @@ class Result < ActiveRecord::Base
     if exactly_divide_check.eql? 0.0
       first = (sorted_array[rank - 1]).to_f
       second = (sorted_array[rank]).to_f
-      (first + second) / 2
+     (first + second) / 2
     else
       sorted_array[rank]
     end

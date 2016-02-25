@@ -3,6 +3,8 @@ require 'csv'
 class Result < ActiveRecord::Base
   has_many :performance_results
   has_many :requests_results
+  has_many :calculated_requests_results
+  has_many :calculated_performance_results
 
   validates :version, presence: true
   validates :duration, presence: true
@@ -35,8 +37,25 @@ class Result < ActiveRecord::Base
       result.destroy unless save_perfmon_data(params['perfmon_data'], result)
     end
 
+  #  unless result.errors.any?
+  #    calc_request_data(result)
+  #    calc_perfmon_data(result) unless result.performance_results.empty?
+  #  end
+
     result
   end
+
+ # def self.calc_request_data(result)
+ #   labels = RequestsResult.where(result_id: result.id).pluck(:label)
+ #   labels.each do |label|
+ #     RequestsResultCalculated.create(
+ #         result_id: result.id,
+ #         label: label,
+ #         mean: request_mean(label)
+ #     )
+
+ #   end
+ # end
 
   def border_timestamps(id, table)
     min_timestamp = Time.at(table.where("result_id = #{id}").first.timestamp).to_time
@@ -167,7 +186,7 @@ class Result < ActiveRecord::Base
     if exactly_divide_check.eql? 0.0
       first = (sorted_array[rank - 1]).to_f
       second = (sorted_array[rank]).to_f
-     (first + second) / 2
+      (first + second) / 2
     else
       sorted_array[rank]
     end

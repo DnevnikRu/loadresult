@@ -90,19 +90,21 @@
             <tbody>
             <tr><td class="hidden-row"></td></tr>
             <% @compare_report.request_labels.each do |label| %>
+              <% label_uniq_id = SecureRandom.hex %>
               <tr>
                 <td>
                   <%= button_to label,
-                      compare_request_chart_path(
-                        data_name: 'request_chart1',
-                        chart_name: 'Request chart 1',
-                        div_id: label.parameterize.underscore
+                      compare_histogram_requests_plot_path(
+                        label: label,
+                        result1_id: @compare_report.result1.id,
+                        result2_id: @compare_report.result2.id,
+                        div_id: label_uniq_id
                       ),
                       remote: true,
-                      id: "#{label.parameterize.underscore}_button",
+                      id: "#{label_uniq_id}_button",
                       class: 'btn btn-default show-plot',
                       'data-toggle' => 'collapse',
-                      'data-target' => "##{label.parameterize.underscore}" %>
+                      'data-target' => "##{label_uniq_id}" %>
                 </td>
                 <td class="mean"><%= @compare_report.result1.request_mean(label)%></td>
                 <td class="mean"><%= @compare_report.result2.request_mean(label)%></td>
@@ -126,7 +128,7 @@
               </tr>
               <tr>
                 <td colspan="100" class="hidden-row">
-                  <div class="collapse" id="<%= label.parameterize.underscore %>"></div>
+                  <div class="collapse" id="<%= label_uniq_id %>"></div>
                 </td>
               </tr>
             <% end %>

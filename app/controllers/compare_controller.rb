@@ -14,9 +14,15 @@ class CompareController < ApplicationController
   def histogram_requests_plot
     @div_id = params[:div_id]
     label = params[:label]
+
     result1_id = params[:result1_id]
+    bottom_timestamp, top_timestamp = Result.border_timestamps(result1_id, RequestsResult)
+    records1 = RequestsResult.where(Result.where_conditional(result1_id, label, bottom_timestamp, top_timestamp))
+    @result1_data = records1.map(&:value)
+
     result2_id = params[:result2_id]
-    @result1_data = RequestsResult.where(result_id: result1_id, label: label).map(&:value)
-    @result2_data = RequestsResult.where(result_id: result2_id, label: label).map(&:value)
+    bottom_timestamp, top_timestamp = Result.border_timestamps(result2_id, RequestsResult)
+    records2 = RequestsResult.where(Result.where_conditional(result2_id, label, bottom_timestamp, top_timestamp))
+    @result2_data = records2.map(&:value)
   end
 end

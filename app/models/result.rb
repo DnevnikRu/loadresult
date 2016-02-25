@@ -57,56 +57,47 @@ class Result < ActiveRecord::Base
  #   end
  # end
 
-  def border_timestamps(id, table)
-    min_timestamp = Time.at(table.where("result_id = #{id}").first.timestamp).to_time
-    max_timestamp = Time.at(table.where("result_id = #{id}").last.timestamp).to_time
-    ten_percent = ((max_timestamp - min_timestamp) * 0.10).round
-    bottom_timestamp = (min_timestamp + ten_percent).to_i
-    top_timestamp = (max_timestamp - ten_percent).to_i
-    [bottom_timestamp, top_timestamp]
-  end
-
   def request_mean(label)
-    bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.average(:value).round(2) : nil
   end
 
   def request_median(label)
-    bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? median(records.pluck(:value)) : nil
   end
 
   def request_90percentile(label)
-    bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? percentile(records.pluck(:value), 90) : nil
   end
 
   def request_min(label)
-    bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.minimum(:value) : nil
   end
 
   def request_max(label)
-    bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
-    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.maximum(:value) : nil
   end
 
   def request_throughput(label)
-    bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
+    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
     duration = Time.at(top_timestamp).to_time - Time.at(bottom_timestamp).to_time
-    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? (records.count.to_f / duration).round(2) : nil
   end
 
   def failed_requests(label)
-    bottom_timestamp, top_timestamp = border_timestamps(id, RequestsResult)
+    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
     int_codes = []
-    records = RequestsResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     if records.exists?
       records.pluck(:response_code).each do |code|
         int_codes.push code.to_i
@@ -120,28 +111,37 @@ class Result < ActiveRecord::Base
   end
 
   def performance_mean(label)
-    bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    records = PerformanceResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, PerformanceResult)
+    records = PerformanceResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.average(:value).round(2) : nil
   end
 
   def performance_min(label)
-    bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    records = PerformanceResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, PerformanceResult)
+    records = PerformanceResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.minimum(:value) : nil
   end
 
   def performance_max(label)
-    bottom_timestamp, top_timestamp = border_timestamps(id, PerformanceResult)
-    records = PerformanceResult.where(where_conditional(id, label, bottom_timestamp, top_timestamp))
+    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, PerformanceResult)
+    records = PerformanceResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.maximum(:value) : nil
   end
 
-  private
-
-  def where_conditional(id, label, bottom_timestamp, top_timestamp)
+  def self.border_timestamps(id, table)
+    min_timestamp = Time.at(table.where("result_id = #{id}").first.timestamp).to_time
+    max_timestamp = Time.at(table.where("result_id = #{id}").last.timestamp).to_time
+    ten_percent = ((max_timestamp - min_timestamp) * 0.10).round
+    bottom_timestamp = (min_timestamp + ten_percent).to_i
+    top_timestamp = (max_timestamp - ten_percent).to_i
+    [bottom_timestamp, top_timestamp]
+  end
+  
+  def self.where_conditional(id, label, bottom_timestamp, top_timestamp)
     "result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}"
   end
+  
+  private
 
   def self.validate_header(result, header, data_type, required_fields)
     required_fields.each do |column_name|

@@ -305,7 +305,7 @@ describe Result do
     end
 
     it 'timestamp borders are corect' do
-      expect(@result.border_timestamps(@result.id, RequestsResult)).to match_array([1455023041593, 1455023057955])
+      expect(@result.class.border_timestamps(@result.id, RequestsResult)).to match_array([1455023041593, 1455023057955])
     end
 
 

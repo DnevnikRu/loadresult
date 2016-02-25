@@ -166,7 +166,7 @@ class Result < ActiveRecord::Base
       second = (sorted_array[rank]).to_f
       (first + second) / 2
     else
-      sorted_array[rank - 1]
+      sorted_array[rank]
     end
   end
 

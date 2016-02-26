@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   resources :results, only: [:index, :new, :create]
   get 'compare' => 'compare#show'
-  post 'compare/histogram_requests_plot' => 'compare#histogram_requests_plot'
+  post 'compare/requests_histogram_plot' => 'compare#requests_histogram_plot'
   root 'results#index'
 end

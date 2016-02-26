@@ -11,7 +11,7 @@ class CompareController < ApplicationController
     @compare_report = CompareReport.new(result1, result2)
   end
 
-  def histogram_requests_plot
+  def requests_histogram_plot
     @div_id = params[:div_id]
     label = params[:label]
 

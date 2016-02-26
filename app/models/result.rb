@@ -18,11 +18,11 @@ class Result < ActiveRecord::Base
 
   def self.upload_and_create(params)
     result = Result.new(
-      version: params['version'],
-      duration: params['duration'],
-      rps: params['rps'],
-      profile: params['profile'],
-      test_run_date: params['test_run_date']
+        version: params['version'],
+        duration: params['duration'],
+        rps: params['rps'],
+        profile: params['profile'],
+        test_run_date: params['test_run_date']
     )
     result.save
 
@@ -37,25 +37,25 @@ class Result < ActiveRecord::Base
       result.destroy unless save_perfmon_data(params['perfmon_data'], result)
     end
 
-  #  unless result.errors.any?
-  #    calc_request_data(result)
-  #    calc_perfmon_data(result) unless result.performance_results.empty?
-  #  end
+    #  unless result.errors.any?
+    #    calc_request_data(result)
+    #    calc_perfmon_data(result) unless result.performance_results.empty?
+    #  end
 
     result
   end
 
- # def self.calc_request_data(result)
- #   labels = RequestsResult.where(result_id: result.id).pluck(:label)
- #   labels.each do |label|
- #     RequestsResultCalculated.create(
- #         result_id: result.id,
- #         label: label,
- #         mean: request_mean(label)
- #     )
+  # def self.calc_request_data(result)
+  #   labels = RequestsResult.where(result_id: result.id).pluck(:label)
+  #   labels.each do |label|
+  #     RequestsResultCalculated.create(
+  #         result_id: result.id,
+  #         label: label,
+  #         mean: request_mean(label)
+  #     )
 
- #   end
- # end
+  #   end
+  # end
 
   def request_mean(label)
     bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
@@ -89,19 +89,17 @@ class Result < ActiveRecord::Base
 
   def request_throughput(label)
     bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
-    duration = Time.at(top_timestamp).to_time - Time.at(bottom_timestamp).to_time
+    duration = (top_timestamp - bottom_timestamp)
+    duration = duration == 0 || duration / 1000.0 <= 1 ? 1 : duration / 1000.0
     records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    records.exists? ? (records.count.to_f / duration).round(2) : nil
+    records.exists? ? (records.count.to_f / duration.to_f).round(2) : nil
   end
 
   def failed_requests(label)
     bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
-    int_codes = []
     records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     if records.exists?
-      records.pluck(:response_code).each do |code|
-        int_codes.push code.to_i
-      end
+      int_codes = records.pluck(:response_code).map { |code| code.to_i }
       client_errors = int_codes.count { |code| code.between?(400, 499) }
       server_errors = int_codes.count { |code| code.between?(500, 599) }
       unrecognized_errors = int_codes.count { |code| code == 0 }
@@ -129,18 +127,18 @@ class Result < ActiveRecord::Base
   end
 
   def self.border_timestamps(id, table)
-    min_timestamp = Time.at(table.where("result_id = #{id}").first.timestamp).to_time
-    max_timestamp = Time.at(table.where("result_id = #{id}").last.timestamp).to_time
-    ten_percent = ((max_timestamp - min_timestamp) * 0.10).round
-    bottom_timestamp = (min_timestamp + ten_percent).to_i
-    top_timestamp = (max_timestamp - ten_percent).to_i
+    max_timestamp = table.where(result_id: id).maximum(:timestamp)
+    min_timestamp = table.where(result_id: id).minimum(:timestamp)
+    ten_percent = (max_timestamp - min_timestamp) / 10
+    bottom_timestamp = (min_timestamp + ten_percent)
+    top_timestamp = (max_timestamp - ten_percent)
     [bottom_timestamp, top_timestamp]
   end
-  
+
   def self.where_conditional(id, label, bottom_timestamp, top_timestamp)
     "result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}"
   end
-  
+
   private
 
   def self.validate_header(result, header, data_type, required_fields)

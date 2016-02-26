@@ -304,7 +304,7 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023060000)
     end
 
-    it 'timestamp borders are corect' do
+    it 'timestamp borders are correct' do
       expect(@result.class.border_timestamps(@result.id, RequestsResult)).to match_array([1455023041593, 1455023057955])
     end
 
@@ -455,7 +455,7 @@ describe Result do
     end
 
     it 'request throughput with different timestamps' do
-      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject')).to eql 0.01
+      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject')).to eql 9.0
     end
   end
 
@@ -472,7 +472,7 @@ describe Result do
     end
 
     it 'request throughput with same timestamps' do
-      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject')).to eql 0.03
+      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject')).to eql 4.0
     end
   end
 

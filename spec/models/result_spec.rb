@@ -302,33 +302,33 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023050000)
       create(:requests_result, result_id: @result.id, timestamp: 1455023055000)
       create(:requests_result, result_id: @result.id, timestamp: 1455023060000)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
     end
 
     it 'timestamp borders are correct' do
-      expect(@result.class.border_timestamps(@result.id, RequestsResult)).to match_array([1455023041593, 1455023057955])
+      expect([@bottom_timestamp, @top_timestamp]).to match_array([1455023041593, 1455023057955])
     end
-
 
     it 'request mean is nill with wrong label' do
-      expect(@result.request_mean('root /invites.aspx:GET')).to eql nil
+      expect(@result.request_mean('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
     end
     it 'request median is nill with wrong label' do
-      expect(@result.request_median('root /invites.aspx:GET')).to eql nil
+      expect(@result.request_median('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
     end
     it 'request 90 percent is nill with wrong label' do
-      expect(@result.request_90percentile('root /invites.aspx:GET')).to eql nil
+      expect(@result.request_90percentile('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
     end
     it 'request max is nill with wrong label' do
-      expect(@result.request_max('root /invites.aspx:GET')).to eql nil
+      expect(@result.request_max('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
     end
     it 'request min is nill with wrong label' do
-      expect(@result.request_min('root /invites.aspx:GET')).to eql nil
+      expect(@result.request_min('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
     end
     it 'request failed tests percentage is nill with wrong label' do
-      expect(@result.failed_requests('root /invites.aspx:GET')).to eql nil
+      expect(@result.failed_requests('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
     end
     it 'request throughput is nill with wrong label' do
-      expect(@result.request_throughput('root /invites.aspx:GET')).to eql nil
+      expect(@result.request_throughput('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
     end
   end
 
@@ -348,25 +348,26 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 348, response_code: 100)
       create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 1238, response_code: 123)
       create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 123, response_code: 9880)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
     end
 
     it 'request mean is correct with standard values' do
-      expect(@result.request_mean('children /marks.aspx:GET:tab=subject')).to eql 504.8
+      expect(@result.request_mean('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 504.8
     end
     it 'request median is correct with standard values' do
-      expect(@result.request_median('children /marks.aspx:GET:tab=subject')).to eql 344.5
+      expect(@result.request_median('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 344.5
     end
     it 'request 90 percent is correct with standard values' do
-      expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject')).to eql 1238
+      expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 1238
     end
     it 'request max is correct with standard values' do
-      expect(@result.request_max('children /marks.aspx:GET:tab=subject')).to eql 1400
+      expect(@result.request_max('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 1400
     end
     it 'request min is correct with standard values' do
-      expect(@result.request_min('children /marks.aspx:GET:tab=subject')).to eql 1
+      expect(@result.request_min('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 1
     end
     it 'failed tests percentage is correct with standard values' do
-      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject')).to eql 60.0
+      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 60.0
     end
   end
 
@@ -382,25 +383,26 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 344, response_code: 'Non HTTP response code: org.apache.http.ConnectionClosedException')
       create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 343, response_code: 1)
       create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 123, response_code: 9880)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
     end
 
     it 'request mean is correct with different values' do
-      expect(@result.request_mean('children /marks.aspx:GET:tab=subject')).to eql 229.67
+      expect(@result.request_mean('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 229.67
     end
     it 'request median is correct with different values' do
-      expect(@result.request_median('children /marks.aspx:GET:tab=subject')).to eql 343.5
+      expect(@result.request_median('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 343.5
     end
     it 'request 90 percent is correct with different values' do
-      expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject')).to eql 345.5
+      expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 345.5
     end
     it 'request max is correct with different values' do
-      expect(@result.request_max('children /marks.aspx:GET:tab=subject')).to eql 346
+      expect(@result.request_max('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 346
     end
     it 'request min is correct with different values' do
-      expect(@result.request_min('children /marks.aspx:GET:tab=subject')).to eql 0
+      expect(@result.request_min('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 0
     end
     it 'failed tests percentage is correct with different values' do
-      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject')).to eql 83.33
+      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 83.33
     end
   end
 
@@ -414,25 +416,26 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023050500, value: 123, response_code: 123)
       create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 123, response_code: 123)
       create(:requests_result, result_id: @result.id, timestamp: 1455023050601, value: 123, response_code: 123)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
     end
 
     it 'request mean is correct with same values' do
-      expect(@result.request_mean('children /marks.aspx:GET:tab=subject')).to eql 123.0
+      expect(@result.request_mean('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123.0
     end
     it 'request median is correct with same values' do
-      expect(@result.request_median('children /marks.aspx:GET:tab=subject')).to eql 123.0
+      expect(@result.request_median('children /marks.aspx:GET:tab=subject', @bottom_timestamp,@top_timestamp)).to eql 123.0
     end
     it 'request 90 percent is correct with same values' do
-      expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject')).to eql 123.0
+      expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123.0
     end
     it 'request max is correct with same values' do
-      expect(@result.request_max('children /marks.aspx:GET:tab=subject')).to eql 123
+      expect(@result.request_max('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123
     end
     it 'request min is correct with same values' do
-      expect(@result.request_min('children /marks.aspx:GET:tab=subject')).to eql 123
+      expect(@result.request_min('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123
     end
     it 'failed tests percentage is correct with same values' do
-      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject')).to eql 0.0
+      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 0.0
     end
   end
 
@@ -452,14 +455,15 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023041400)
       create(:requests_result, result_id: @result.id, timestamp: 1455023041500)
       create(:requests_result, result_id: @result.id, timestamp: 1455023041600)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
     end
 
     it 'request throughput with different timestamps' do
-      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject')).to eql 9.0
+      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 7.03
     end
   end
 
-  describe '#request throughput with different timestamps' do
+  describe '#request throughput with same timestamps' do
 
     before(:all) do
       @result = create(:result)
@@ -469,10 +473,11 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
       create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
       create(:requests_result, result_id: @result.id, timestamp: 1455023040700)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
     end
 
     it 'request throughput with same timestamps' do
-      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject')).to eql 4.0
+      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 4.0
     end
   end
 
@@ -487,29 +492,30 @@ describe Result do
       create(:performance_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
       create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
       create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, PerformanceResult)
     end
 
     it 'performance mean is correct' do
-      expect(@result.performance_mean('EXEC Network\Bytes Sent/sec')).to eql 377.67
+      expect(@result.performance_mean('EXEC Network\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql 377.67
     end
 
     it 'performance minimum is correct' do
-      expect(@result.performance_min('EXEC Network\Bytes Sent/sec')).to eql 12
+      expect(@result.performance_min('EXEC Network\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql 12
     end
 
     it 'performance maximum is correct' do
-      expect(@result.performance_max('EXEC Network\Bytes Sent/sec')).to eql 1000
+      expect(@result.performance_max('EXEC Network\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql 1000
     end
     it 'performance mean is nill with nonexistent label' do
-      expect(@result.performance_mean('EXEC Events\Bytes Sent/sec')).to eql nil
+      expect(@result.performance_mean('EXEC Events\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql nil
     end
 
     it 'performance minimum is nill with nonexistent label' do
-      expect(@result.performance_min('EXEC Events\Bytes Sent/sec')).to eql nil
+      expect(@result.performance_min('EXEC Events\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql nil
     end
 
     it 'performance maximum is nill with nonexistent label' do
-      expect(@result.performance_max('EXEC Events\Bytes Sent/sec')).to eql nil
+      expect(@result.performance_max('EXEC Events\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql nil
     end
   end
 

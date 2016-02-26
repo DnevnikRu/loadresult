@@ -37,66 +37,79 @@ class Result < ActiveRecord::Base
       result.destroy unless save_perfmon_data(params['perfmon_data'], result)
     end
 
-    #  unless result.errors.any?
-    #    calc_request_data(result)
-    #    calc_perfmon_data(result) unless result.performance_results.empty?
-    #  end
+    unless result.errors.any?
+      calc_request_data(result)
+      calc_performance_data(result) unless result.performance_results.empty?
+    end
 
     result
   end
 
-  # def self.calc_request_data(result)
-  #   labels = RequestsResult.where(result_id: result.id).pluck(:label)
-  #   labels.each do |label|
-  #     RequestsResultCalculated.create(
-  #         result_id: result.id,
-  #         label: label,
-  #         mean: request_mean(label)
-  #     )
+  def self.calc_request_data(result)
+    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, RequestsResult)
+    labels = RequestsResult.where(result_id: result.id).pluck(:label).uniq
+    labels.each do |label|
+    CalculatedRequestsResult.create(
+          result_id: result.id,
+          label: label,
+          mean: result.request_mean(label, bottom_timestamp, top_timestamp),
+          median: result.request_median(label, bottom_timestamp, top_timestamp),
+          ninety_percentile: result.request_90percentile(label, bottom_timestamp, top_timestamp),
+          max: result.request_max(label, bottom_timestamp, top_timestamp),
+          min: result.request_min(label, bottom_timestamp, top_timestamp),
+          throughput: result.request_throughput(label, bottom_timestamp, top_timestamp),
+          failed_results: result.failed_requests(label, bottom_timestamp, top_timestamp)
+      )
+    end
+  end
 
-  #   end
-  # end
+  def self.calc_performance_data(result)
+    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, PerformanceResult)
+    labels = PerformanceResult.where(result_id: result.id).pluck(:label).uniq
+    labels.each do |label|
+      CalculatedPerformanceResult.create(
+          result_id: result.id,
+          label: label,
+          mean: result.performance_mean(label, bottom_timestamp, top_timestamp),
+          max: result.performance_max(label, bottom_timestamp, top_timestamp),
+          min: result.performance_min(label, bottom_timestamp, top_timestamp)
+      )
+    end
+  end
 
-  def request_mean(label)
-    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+  def request_mean(label, bottom_timestamp, top_timestamp)
     records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.average(:value).round(2) : nil
   end
 
-  def request_median(label)
-    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+  def request_median(label, bottom_timestamp, top_timestamp)
     records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? median(records.pluck(:value)) : nil
   end
 
-  def request_90percentile(label)
-    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+  def request_90percentile(label, bottom_timestamp, top_timestamp)
     records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? percentile(records.pluck(:value), 90) : nil
   end
 
-  def request_min(label)
-    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+  def request_min(label, bottom_timestamp, top_timestamp)
     records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.minimum(:value) : nil
   end
 
-  def request_max(label)
-    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+  def request_max(label, bottom_timestamp, top_timestamp)
     records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.maximum(:value) : nil
   end
 
-  def request_throughput(label)
-    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+  def request_throughput(label, bottom_timestamp, top_timestamp)
     duration = (top_timestamp - bottom_timestamp)
-    duration = duration == 0 || duration / 1000.0 <= 1 ? 1 : duration / 1000.0
+    duration = (duration == 0 || duration / 1000.0 <= 1) ? 1 : duration / 1000.0
     records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? (records.count.to_f / duration.to_f).round(2) : nil
   end
 
-  def failed_requests(label)
-    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, RequestsResult)
+  def failed_requests(label, bottom_timestamp, top_timestamp)
     records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     if records.exists?
       int_codes = records.pluck(:response_code).map { |code| code.to_i }
@@ -108,20 +121,17 @@ class Result < ActiveRecord::Base
     end
   end
 
-  def performance_mean(label)
-    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, PerformanceResult)
+  def performance_mean(label, bottom_timestamp, top_timestamp)
     records = PerformanceResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.average(:value).round(2) : nil
   end
 
-  def performance_min(label)
-    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, PerformanceResult)
+  def performance_min(label, bottom_timestamp, top_timestamp)
     records = PerformanceResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.minimum(:value) : nil
   end
 
-  def performance_max(label)
-    bottom_timestamp, top_timestamp = self.class.border_timestamps(id, PerformanceResult)
+  def performance_max(label, bottom_timestamp, top_timestamp)
     records = PerformanceResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
     records.exists? ? records.maximum(:value) : nil
   end

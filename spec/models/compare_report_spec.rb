@@ -81,4 +81,44 @@ describe CompareReport do
 
   end
 
+  describe '#trend' do
+
+     it 'positive trend' do
+        result1 = create(:result)
+        result2 = create(:result)
+        compare_report = CompareReport.new(result1, result2)
+
+        create(:requests_result, label: 'test', value: 100, timestamp: 1455023040400, result_id: compare_report.result1.id)
+        create(:requests_result, label: 'test', value: 200, timestamp: 1455023040500, result_id: compare_report.result1.id)
+        create(:requests_result, label: 'test', value: 300, timestamp: 1455023040500, result_id: compare_report.result1.id)
+        create(:requests_result, label: 'test', value: 400, timestamp: 1455023040600, result_id: compare_report.result1.id)
+
+        create(:requests_result, label: 'test', value: 100, timestamp: 1455023040400, result_id: compare_report.result2.id)
+        create(:requests_result, label: 'test', value: 250, timestamp: 1455023040500, result_id: compare_report.result2.id)
+        create(:requests_result, label: 'test', value: 350, timestamp: 1455023040500, result_id: compare_report.result2.id)
+        create(:requests_result, label: 'test', value: 400, timestamp: 1455023040600, result_id: compare_report.result2.id)
+
+        expect(compare_report.trend(:request_mean, 'test')).to eql 20.0
+     end
+
+     it 'negative trend' do
+       result1 = create(:result)
+       result2 = create(:result)
+       compare_report = CompareReport.new(result1, result2)
+
+       create(:requests_result, label: 'test', value: 100, timestamp: 1455023040400, result_id: compare_report.result1.id)
+       create(:requests_result, label: 'test', value: 250, timestamp: 1455023040500, result_id: compare_report.result1.id)
+       create(:requests_result, label: 'test', value: 350, timestamp: 1455023040500, result_id: compare_report.result1.id)
+       create(:requests_result, label: 'test', value: 400, timestamp: 1455023040600, result_id: compare_report.result1.id)
+
+       create(:requests_result, label: 'test', value: 100, timestamp: 1455023040400, result_id: compare_report.result2.id)
+       create(:requests_result, label: 'test', value: 200, timestamp: 1455023040500, result_id: compare_report.result2.id)
+       create(:requests_result, label: 'test', value: 300, timestamp: 1455023040500, result_id: compare_report.result2.id)
+       create(:requests_result, label: 'test', value: 400, timestamp: 1455023040600, result_id: compare_report.result2.id)
+
+       expect(compare_report.trend(:request_mean, 'test')).to eq -16.67
+     end
+
+  end
+
 end

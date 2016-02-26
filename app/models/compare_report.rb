@@ -21,7 +21,7 @@ class CompareReport
   end
 
   def request_labels
-    @result1.requests_results.pluck(:label) | @result2.requests_results.pluck(:label)
+    (@result1.requests_results.pluck(:label).uniq | @result2.requests_results.pluck(:label).uniq).sort
   end
 
   def performance?
@@ -49,8 +49,10 @@ class CompareReport
   def trend(metric, label, limit=0)
     first = @result1.send(metric, label).to_f
     second = @result2.send(metric, label).to_f
-    if((first + second) / 2 < limit)
+    if (first == 0.0 && second == 0.00) || ((first + second) / 2 < limit)
       0.00
+    elsif first == 0.0
+       100.0
     else
       (((second - first) / first)*100).round(2)
     end

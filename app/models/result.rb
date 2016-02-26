@@ -137,8 +137,13 @@ class Result < ActiveRecord::Base
     [bottom_timestamp, top_timestamp]
   end
   
-  def self.where_conditional(id, label, bottom_timestamp, top_timestamp)
-    "result_id = #{id} and label = '#{label}' and timestamp > #{bottom_timestamp} and timestamp < #{top_timestamp}"
+  def self.where_conditional(id = nil, label = nil, bottom_timestamp = nil, top_timestamp = nil)
+    where_request = []
+    where_request.push "result_id = #{id}" if id
+    where_request.push "label = '#{label}'" if label
+    where_request.push "timestamp > #{bottom_timestamp}" if bottom_timestamp
+    where_request.push "timestamp < #{top_timestamp}" if top_timestamp
+    where_request.size > 1 ? where_request.join(' AND ') : where_request.join
   end
   
   private

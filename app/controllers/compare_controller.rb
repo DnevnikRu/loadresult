@@ -13,28 +13,36 @@ class CompareController < ApplicationController
 
   def requests_histogram_plot
     @plot_id = params[:plot_id]
-    label = params[:label]
+    @result1_data = data_for_requests_histogram_plot(params[:result1_id], params[:label])
+    @result2_data = data_for_requests_histogram_plot(params[:result2_id], params[:label])
+  end
 
-    result1_id = params[:result1_id]
-    bottom_timestamp, top_timestamp = Result.border_timestamps(result1_id, RequestsResult)
-    records1 = RequestsResult.where(Result.where_conditional(result1_id, label, bottom_timestamp, top_timestamp))
-    @result1_data = records1.map(&:value)
-
-    result2_id = params[:result2_id]
-    bottom_timestamp, top_timestamp = Result.border_timestamps(result2_id, RequestsResult)
-    records2 = RequestsResult.where(Result.where_conditional(result2_id, label, bottom_timestamp, top_timestamp))
-    @result2_data = records2.map(&:value)
+  def data_for_requests_histogram_plot(result_id, label)
+    bottom_timestamp, top_timestamp = Result.border_timestamps(result_id, RequestsResult)
+    records = RequestsResult.where(Result.where_conditional(result_id, label, bottom_timestamp, top_timestamp))
+    records.map(&:value)
   end
 
   def all_requests_histogram_plot
-    result1_id = params[:result1_id]
-    bottom_timestamp, top_timestamp = Result.border_timestamps(result1_id, RequestsResult)
-    records1 = RequestsResult.where(Result.where_conditional(result1_id, nil, bottom_timestamp, top_timestamp))
-    @result1_data = records1.map(&:value)
+    @result1_data = data_for_all_requests_histogram_plot(params[:result1_id])
+    @result2_data = data_for_all_requests_histogram_plot(params[:result2_id])
+  end
 
-    result2_id = params[:result2_id]
-    bottom_timestamp, top_timestamp = Result.border_timestamps(result2_id, RequestsResult)
-    records2 = RequestsResult.where(Result.where_conditional(result2_id, nil, bottom_timestamp, top_timestamp))
-    @result2_data = records2.map(&:value)
+  def data_for_all_requests_histogram_plot(result_id)
+    bottom_timestamp, top_timestamp = Result.border_timestamps(result_id, RequestsResult)
+    records = RequestsResult.where(Result.where_conditional(result_id, nil, bottom_timestamp, top_timestamp))
+    records.map(&:value)
+  end
+
+  def percentile_requests_plot
+    @result1_data = data_for_percentile_requests_plot(params[:result1_id])
+    @result2_data = data_for_percentile_requests_plot(params[:result2_id])
+  end
+
+  def data_for_percentile_requests_plot(result_id)
+    bottom_timestamp, top_timestamp = Result.border_timestamps(result_id, RequestsResult)
+    records = RequestsResult.where(Result.where_conditional(result_id, nil, bottom_timestamp, top_timestamp))
+    values = records.map(&:value)
+    (0..100).map { |i| Result.percentile(values, i) }
   end
 end

@@ -5,8 +5,21 @@
     ),
     remote: true,
     id: 'all_requests_plot_button',
-    class: 'btn btn-default show-plot',
+    class: 'btn btn-default show-plot bottom20',
     'data-toggle' => 'collapse',
     'data-target' => '#all_requests_plot' %>
 
 <div class="collapse" id="all_requests_plot"></div>
+
+<%= button_to 'Percentile of requests',
+    compare_percentile_requests_plot_path(
+      result1_id: @compare_report.result1.id,
+      result2_id: @compare_report.result2.id
+    ),
+    remote: true,
+    id: 'percentile_requests_button',
+    class: 'btn btn-default show-plot bottom20',
+    'data-toggle' => 'collapse',
+    'data-target' => '#percentile_requests_plot' %>
+
+<div class="collapse" id="percentile_requests_plot"></div>

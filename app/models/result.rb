@@ -89,7 +89,7 @@ class Result < ActiveRecord::Base
 
   def request_90percentile(label, bottom_timestamp, top_timestamp)
     records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    records.exists? ? percentile(records.pluck(:value), 90) : nil
+    records.exists? ? self.class.percentile(records.pluck(:value), 90) : nil
   end
 
   def request_min(label, bottom_timestamp, top_timestamp)
@@ -154,6 +154,23 @@ class Result < ActiveRecord::Base
     where_request.size > 1 ? where_request.join(' AND ') : where_request.join
   end
 
+  def self.percentile(data, percent)
+    return 0 if percent == 0
+
+    sorted_array = data.sort
+    rank = percent.to_f / 100 * data.length
+    exactly_divide_check = rank - rank.to_i
+    if data.empty?
+      nil
+    elsif exactly_divide_check.eql? 0.0
+      sorted_array[rank - 1]
+    else
+      first = (sorted_array[rank - 1]).to_f
+      second = (sorted_array[rank]).to_f
+      (first + second) / 2
+    end
+  end
+  
   private
 
   def self.validate_header(result, header, data_type, required_fields)
@@ -202,21 +219,6 @@ class Result < ActiveRecord::Base
       (first + second) / 2
     else
       sorted_array[rank]
-    end
-  end
-
-  def percentile(data, percent)
-    sorted_array = data.sort
-    rank = percent.to_f / 100 * data.length
-    exactly_divide_check = rank - rank.to_i
-    if data.empty?
-      nil
-    elsif exactly_divide_check.eql? 0.0
-      sorted_array[rank - 1]
-    else
-      first = (sorted_array[rank - 1]).to_f
-      second = (sorted_array[rank]).to_f
-      (first + second) / 2
     end
   end
 end

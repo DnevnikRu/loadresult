@@ -87,43 +87,45 @@
             <th class="failed_request">Failed requests trend, %</th>
           </tr>
           </thead>
-            <tbody>
-            <tr><td class="hidden-row"></td></tr>
-            <% @compare_report.request_labels.each do |label| %>
+          <tbody>
+          <tr>
+            <td class="hidden-row"></td>
+          </tr>
+          <% @compare_report.request_labels.each do |label| %>
               <% label_uniq_id = SecureRandom.hex %>
               <tr>
                 <td>
                   <%= button_to label,
-                      compare_requests_histogram_plot_path(
-                        label: label,
-                        result1_id: @compare_report.result1.id,
-                        result2_id: @compare_report.result2.id,
-                        plot_id: label_uniq_id
-                      ),
-                      remote: true,
-                      id: "#{label_uniq_id}_button",
-                      class: 'btn btn-default show-plot',
-                      'data-toggle' => 'collapse',
-                      'data-target' => "##{label_uniq_id}_div" %>
+                                compare_requests_histogram_plot_path(
+                                    label: label,
+                                    result1_id: @compare_report.result1.id,
+                                    result2_id: @compare_report.result2.id,
+                                    plot_id: label_uniq_id
+                                ),
+                                remote: true,
+                                id: "#{label_uniq_id}_button",
+                                class: 'btn btn-default show-plot',
+                                'data-toggle' => 'collapse',
+                                'data-target' => "##{label_uniq_id}_div" %>
                 </td>
-                <td class="mean"><%= @compare_report.result1.request_mean(label)%></td>
-                <td class="mean"><%= @compare_report.result2.request_mean(label)%></td>
-                <td class="mean trend"><%= @compare_report.trend(:request_mean, label) %> </td>
-                <td class="median"><%= @compare_report.result1.request_median(label)%></td>
-                <td class="median"><%= @compare_report.result2.request_median(label)%></td>
-                <td class="median trend"><%= @compare_report.trend(:request_median, label) %> </td>
-                <td class="line90"><%= @compare_report.result1.request_90percentile(label)%></td>
-                <td class="line90"><%= @compare_report.result2.request_90percentile(label)%></td>
-                <td class="line90 trend"><%= @compare_report.trend(:request_90percentile, label) %> </td>
-                <td class="min"><%= @compare_report.result1.request_min(label)%></td>
-                <td class="min"><%= @compare_report.result2.request_min(label)%></td>
-                <td class="max"><%= @compare_report.result1.request_max(label)%></td>
-                <td class="max"><%= @compare_report.result2.request_max(label)%></td>
-                <td class="throughput"><%= @compare_report.result1.request_throughput(label)%></td>
-                <td class="throughput"><%= @compare_report.result2.request_throughput(label)%></td>
-                <td class="failed_request"><%= @compare_report.result1.failed_requests(label)%></td>
-                <td class="failed_request"><%= @compare_report.result2.failed_requests(label)%></td>
-                <td class="failed_request trend"><%= @compare_report.trend(:failed_requests, label) %></td>
+                <td class="mean"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).mean %></td>
+                <td class="mean"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).mean %></td>
+                <td class="mean trend"><%= @compare_report.trend(:calculated_requests_results, :mean, label) %> </td>
+                <td class="median"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).median %></td>
+                <td class="median"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).median %></td>
+                <td class="median trend"><%= @compare_report.trend(:calculated_requests_results, :median, label) %> </td>
+                <td class="line90"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).ninety_percentile %></td>
+                <td class="line90"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).ninety_percentile %></td>
+                <td class="line90 trend"><%= @compare_report.trend(:calculated_requests_results, :ninety_percentile, label) %> </td>
+                <td class="min"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).min %></td>
+                <td class="min"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).min %></td>
+                <td class="max"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).max %></td>
+                <td class="max"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).max %></td>
+                <td class="throughput"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).throughput %></td>
+                <td class="throughput"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).throughput %></td>
+                <td class="failed_request"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).failed_results %></td>
+                <td class="failed_request"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).failed_results %></td>
+                <td class="failed_request trend"><%= @compare_report.trend(:calculated_requests_results, :failed_results, label) %></td>
               </tr>
               </tr>
               <tr>
@@ -131,7 +133,7 @@
                   <div class="collapse" id="<%= "#{label_uniq_id}_div" %>"></div>
                 </td>
               </tr>
-            <% end %>
+          <% end %>
           </tbody>
         </table>
       </div>

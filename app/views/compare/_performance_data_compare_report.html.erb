@@ -28,13 +28,13 @@
               <% group[:labels].each do |label| %>
                   <tr>
                     <td><b><%= label %></b></td>
-                    <td><%= @compare_report.result1.performance_mean(label) %></td>
-                    <td><%= @compare_report.result2.performance_mean(label) %></td>
-                    <td class="mean trend"><%= @compare_report.trend(:performance_mean, label, group[:trend_limit]) %></td>
-                    <td><%= @compare_report.result1.performance_min(label) %></td>
-                    <td><%= @compare_report.result2.performance_min(label) %></td>
-                    <td><%= @compare_report.result1.performance_max(label) %></td>
-                    <td><%= @compare_report.result2.performance_max(label) %></td>
+                    <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).mean%></td>
+                    <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).mean%></td>
+                    <td class="mean trend"><%= @compare_report.trend(:calculated_performance_results, :mean, label, group[:trend_limit]) %></td>
+                    <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).min %></td>
+                    <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).min %></td>
+                    <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).max %></td>
+                    <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).max %></td>
                   </tr>
               <% end %>
               </tbody>

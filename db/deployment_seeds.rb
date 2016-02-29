@@ -1,3 +1,9 @@
+Result.destroy_all
+RequestsResult.delete_all
+CalculatedRequestsResult.delete_all
+PerformanceResult.delete_all
+CalculatedPerformanceResult.delete_all
+
 random = Random.new(123)
 results = []
 5.times do |i|
@@ -18,6 +24,16 @@ results.each do |result|
                             response_code: [200, 500, 200, 200].sample,
                             result_id: result.id)
 
+      CalculatedRequestsResult.create(label: label,
+                                      mean: (150 + random.rand(100)),
+                                      median: (150 + random.rand(100)),
+                                      ninety_percentile: (150 + random.rand(100)),
+                                      max: (200 + random.rand(10)),
+                                      min: (0 + random.rand(10)),
+                                      failed_results: (0 + random.rand(10)),
+                                      result_id: result.id
+      )
+
     end
   end
   ['web00 EXEC Network\Bytes Sent/sec', 'web11 EXEC Network\Bytes Sent/sec', 'web11 CPU Processor Time',
@@ -27,6 +43,13 @@ results.each do |result|
                                label: label,
                                value: (0 + random.rand(1000)),
                                result_id: result.id)
+
+      CalculatedPerformanceResult.create(label: label,
+                                         mean: (150 + random.rand(100)),
+                                         max: (200 + random.rand(10)),
+                                         min: (0 + random.rand(10)),
+                                         result_id: result.id
+      )
     end
   end
 end

@@ -34,7 +34,7 @@ describe CompareReport do
       result = create(:result)
       ['db07 EXEC Network\Bytes Sent/sec', 'db07 EXEC Network\Bytes Received/sec', 'db08 CPU Processor Time',
        'web00 CPU Processor Time', 'web00 EXEC Disk(inst_1)\Avg. Read Queue'].each do |label|
-        create(:performance_result, result_id: result.id, label: label)
+        create(:calculated_performance_result, result_id: result.id, label: label)
       end
       compare_report = CompareReport.new(result, result)
       @performance_label_groups = compare_report.performance_groups
@@ -77,6 +77,32 @@ describe CompareReport do
     it 'network group is correct' do
       label = 'Network traffic'
       expect(@performance_label_groups.select{|g| g[label]}).to match_array(@exp_performance_label_groups.select{|g| g[label]})
+    end
+
+  end
+
+  describe '#trend' do
+
+    it 'positive trend' do
+      result1 = create(:result)
+      result2 = create(:result)
+      compare_report = CompareReport.new(result1, result2)
+
+      create(:calculated_requests_result, label: 'test', mean: 250, result_id: compare_report.result1.id)
+      create(:calculated_requests_result, label: 'test', mean: 300, result_id: compare_report.result2.id)
+
+      expect(compare_report.trend(:calculated_requests_results,:mean, 'test')).to eql 20.0
+    end
+
+    it 'negative trend' do
+      result1 = create(:result)
+      result2 = create(:result)
+      compare_report = CompareReport.new(result1, result2)
+
+      create(:calculated_requests_result, label: 'test', mean: 300, result_id: compare_report.result1.id)
+      create(:calculated_requests_result, label: 'test', mean: 250, result_id: compare_report.result2.id)
+
+      expect(compare_report.trend(:calculated_requests_results, :mean, 'test')).to eq -16.67
     end
 
   end

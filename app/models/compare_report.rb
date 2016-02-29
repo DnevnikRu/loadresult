@@ -19,16 +19,16 @@ class CompareReport
   end
 
   def request_labels
-    (@result1.requests_results.pluck(:label).uniq | @result2.requests_results.pluck(:label).uniq).sort
+    (@result1.calculated_requests_results.pluck(:label).uniq | @result2.calculated_requests_results.pluck(:label).uniq).sort
   end
 
   def performance?
-    @result1.performance_results.any? && @result2.performance_results.any?
+    @result1.calculated_performance_results.any? && @result2.calculated_performance_results.any?
   end
 
 
   def performance_groups
-    labels = @result1.performance_results.pluck(:label) | @result2.performance_results.pluck(:label)
+    labels = @result1.calculated_performance_results.pluck(:label) | @result2.calculated_performance_results.pluck(:label)
     label_groups = []
     PerformanceGroup.all.each do |group|
       labels_in_group = labels.select { |label| !group.labels.pluck(:label).select{ |l| label.include? l }.empty? }
@@ -44,9 +44,9 @@ class CompareReport
     label_groups
   end
 
-  def trend(metric, label, limit=0)
-    first = @result1.send(metric, label).to_f
-    second = @result2.send(metric, label).to_f
+  def trend(type, metric, label, limit=0)
+    first = @result1.send(type).find_by(label: label).send(metric)
+    second = @result2.send(type).find_by(label: label).send(metric)
     if (first == 0.0 && second == 0.00) || ((first + second) / 2 < limit)
       0.00
     elsif first == 0.0

@@ -92,7 +92,7 @@
             <td class="hidden-row"></td>
           </tr>
           <% @compare_report.request_labels.each do |label| %>
-              <% label_uniq_id = SecureRandom.hex %>
+              <% label_uniq_id = SecureRandom.urlsafe_base64 %>
               <tr>
                 <td>
                   <%= button_to label,

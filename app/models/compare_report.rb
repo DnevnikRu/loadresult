@@ -1,7 +1,5 @@
 class CompareReport
 
-  PERFORMANCE_GROUPS = YAML.load_file(Rails.root.join('config/performance_groups.yml'))
-
   attr_reader :result1, :result2
 
   def initialize(request1, request2)
@@ -32,14 +30,14 @@ class CompareReport
   def performance_groups
     labels = @result1.performance_results.pluck(:label) | @result2.performance_results.pluck(:label)
     label_groups = []
-    PERFORMANCE_GROUPS.each do |group|
-      labels_in_group = labels.select { |label| !group['labels'].select { |l| label.include? l }.empty? }
+    PerformanceGroup.all.each do |group|
+      labels_in_group = labels.select { |label| !group.labels.pluck(:label).select{ |l| label.include? l }.empty? }
       unless labels_in_group.empty?
         label_groups.push({
-                              name: group['name'],
+                              name: group.name,
                               labels: labels_in_group,
-                              trend_limit: group['trend_limit'],
-                              units: group['units']
+                              trend_limit: group.trend_limit,
+                              units: group.units
                           })
       end
     end

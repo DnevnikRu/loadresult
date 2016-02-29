@@ -11,10 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160225142350) do
-
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+ActiveRecord::Schema.define(version: 20160226173526) do
 
   create_table "calculated_performance_results", force: :cascade do |t|
     t.integer "result_id", null: false
@@ -34,6 +31,17 @@ ActiveRecord::Schema.define(version: 20160225142350) do
     t.float   "min"
     t.float   "throughput"
     t.float   "failed_results"
+  end
+
+  create_table "performance_groups", force: :cascade do |t|
+    t.string "name"
+    t.string "units"
+    t.float  "trend_limit"
+  end
+
+  create_table "performance_labels", force: :cascade do |t|
+    t.integer "performance_group_id"
+    t.string  "label"
   end
 
   create_table "performance_results", force: :cascade do |t|

@@ -1,0 +1,12 @@
+<%= button_to 'All requests historgram',
+    compare_all_requests_histogram_plot_path(
+      result1_id: @compare_report.result1.id,
+      result2_id: @compare_report.result2.id
+    ),
+    remote: true,
+    id: 'all_requests_plot_button',
+    class: 'btn btn-default show-plot',
+    'data-toggle' => 'collapse',
+    'data-target' => '#all_requests_plot' %>
+
+<div class="collapse" id="all_requests_plot"></div>

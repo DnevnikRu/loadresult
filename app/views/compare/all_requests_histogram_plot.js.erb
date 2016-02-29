@@ -1,4 +1,4 @@
-$('#<%= "#{@div_id}_button" %>').prop('type', 'button');
+$('#all_requests_plot_button').prop('type', 'button');
 
 var result1 = {
     x: <%= @result1_data %>,
@@ -22,4 +22,4 @@ var layout = {
     },
     barmode: 'overlay'
 };
-Plotly.newPlot('<%= @div_id %>', [result1, result2], layout);
+Plotly.newPlot('all_requests_plot', [result1, result2], layout);

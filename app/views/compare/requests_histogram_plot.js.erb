@@ -1,0 +1,25 @@
+$('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
+
+var result1 = {
+    x: <%= @result1_data %>,
+    opacity: 0.75,
+    name: 'First',
+    type: 'histogram'
+};
+var result2 = {
+    x: <%= @result2_data %>,
+    opacity: 0.75,
+    name: 'Second',
+    type: 'histogram'
+};
+var layout = {
+    title: 'Histogram of response time',
+    xaxis: {
+        title: 'Response time, ms'
+    },
+    yaxis: {
+        title: 'Number of requests'
+    },
+    barmode: 'overlay'
+};
+Plotly.newPlot('<%= "#{@plot_id}_div" %>', [result1, result2], layout);

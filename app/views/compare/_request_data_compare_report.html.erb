@@ -94,17 +94,17 @@
               <tr>
                 <td>
                   <%= button_to label,
-                      compare_histogram_requests_plot_path(
+                      compare_requests_histogram_plot_path(
                         label: label,
                         result1_id: @compare_report.result1.id,
                         result2_id: @compare_report.result2.id,
-                        div_id: label_uniq_id
+                        plot_id: label_uniq_id
                       ),
                       remote: true,
                       id: "#{label_uniq_id}_button",
                       class: 'btn btn-default show-plot',
                       'data-toggle' => 'collapse',
-                      'data-target' => "##{label_uniq_id}" %>
+                      'data-target' => "##{label_uniq_id}_div" %>
                 </td>
                 <td class="mean"><%= @compare_report.result1.request_mean(label)%></td>
                 <td class="mean"><%= @compare_report.result2.request_mean(label)%></td>
@@ -128,7 +128,7 @@
               </tr>
               <tr>
                 <td colspan="100" class="hidden-row">
-                  <div class="collapse" id="<%= label_uniq_id %>"></div>
+                  <div class="collapse" id="<%= "#{label_uniq_id}_div" %>"></div>
                 </td>
               </tr>
             <% end %>

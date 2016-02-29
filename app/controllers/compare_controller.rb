@@ -11,8 +11,8 @@ class CompareController < ApplicationController
     @compare_report = CompareReport.new(result1, result2)
   end
 
-  def histogram_requests_plot
-    @div_id = params[:div_id]
+  def requests_histogram_plot
+    @plot_id = params[:plot_id]
     label = params[:label]
 
     result1_id = params[:result1_id]
@@ -23,6 +23,18 @@ class CompareController < ApplicationController
     result2_id = params[:result2_id]
     bottom_timestamp, top_timestamp = Result.border_timestamps(result2_id, RequestsResult)
     records2 = RequestsResult.where(Result.where_conditional(result2_id, label, bottom_timestamp, top_timestamp))
+    @result2_data = records2.map(&:value)
+  end
+
+  def all_requests_histogram_plot
+    result1_id = params[:result1_id]
+    bottom_timestamp, top_timestamp = Result.border_timestamps(result1_id, RequestsResult)
+    records1 = RequestsResult.where(Result.where_conditional(result1_id, nil, bottom_timestamp, top_timestamp))
+    @result1_data = records1.map(&:value)
+
+    result2_id = params[:result2_id]
+    bottom_timestamp, top_timestamp = Result.border_timestamps(result2_id, RequestsResult)
+    records2 = RequestsResult.where(Result.where_conditional(result2_id, nil, bottom_timestamp, top_timestamp))
     @result2_data = records2.map(&:value)
   end
 end

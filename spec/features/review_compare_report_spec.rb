@@ -1,10 +1,16 @@
 require 'feature_helper'
 
 feature 'Review compare report' do
-
   before(:all) do
+    label = 'login :GET'
+
     @result1 = create(:result)
-    @result2 = create(:result, version: 'master-2', test_run_date: '01.01.2016 00:00')
+    create(:requests_result, result_id: @result1.id, label: label)
+    create(:calculated_requests_result, result_id: @result1.id, label: label)
+
+    @result2 = create(:result)
+    create(:requests_result, result_id: @result2.id, label: label)
+    create(:calculated_requests_result, result_id: @result2.id, label: label)
   end
 
   scenario 'Compare report contains description block' do
@@ -30,4 +36,12 @@ feature 'Review compare report' do
     expect(page).to have_content 'You should select 2 or more results to compare them'
   end
 
+  scenario 'All requests historgram button opens a plot' do
+    visit compare_path(result: [@result1.id, @result2.id])
+    click_button 'All requests historgram'
+
+    within('#all_requests_plot') do
+      expect(page).to have_selector('div.svg-container')
+    end
+  end
 end

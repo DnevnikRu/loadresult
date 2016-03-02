@@ -86,38 +86,75 @@ describe Result do
       it 'perfmon data save' do
         expect(@result.performance_results.count).to eql(8)
       end
+
+      it 'calculated request results save' do
+        expect(CalculatedRequestsResult.find_by result_id: @result.id).not_to be_nil
+      end
+
+      it 'calculated performance results save' do
+        expect(CalculatedPerformanceResult.find_by result_id: @result.id).not_to be_nil
+      end
+
     end
 
     describe 'some parameters absence' do
-      it 'perfmon data is absence' do
-        @summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
-        params = {
-            'version' => 'edu',
-            'rps' => 150,
-            'duration' => 123,
-            'profile' => 'asd',
-            'test_run_date' => '2016-02-11 11:21',
-            'requests_data' => requests_data
-        }
-        result = Result.upload_and_create(params)
-        expect(result.errors).to be_empty
-        @summary.close
+      describe 'perfmon data is absence' do
+        before(:all) do
+          @summary.open
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+          params = {
+              'version' => 'edu',
+              'rps' => 150,
+              'duration' => 123,
+              'profile' => 'asd',
+              'test_run_date' => '2016-02-11 11:21',
+              'requests_data' => requests_data
+          }
+          @result = Result.upload_and_create(params)
+          @summary.close
+        end
+        it 'empty errors without perfmon data' do
+          expect(@result.errors).to be_empty
+        end
+
+        it 'calculated request results save without perfmon data' do
+          expect(CalculatedRequestsResult.find_by result_id: @result.id).not_to be_nil
+        end
+
+        it 'calculated performance results not save without perfmon data' do
+          expect(CalculatedPerformanceResult.find_by result_id: @result.id).to be nil
+        end
       end
 
-      it 'version is absence, other required fields presence' do
-        @summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
-        params = {
-            'rps' => 150,
-            'duration' => 123,
-            'profile' => 'asd',
-            'test_run_date' => '2016-02-11 11:21',
-            'requests_data' => requests_data
-        }
-        result = Result.upload_and_create(params)
-        expect(result.errors).to match_array(["Version can't be blank"])
-        @summary.close
+      describe 'version is absence, other required fields presence' do
+        before(:all) do
+          @summary.open
+          @perfmon.open
+          perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon)
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+          params = {
+              'rps' => 150,
+              'duration' => 123,
+              'profile' => 'asd',
+              'test_run_date' => '2016-02-11 11:21',
+              'requests_data' => requests_data,
+              'perfmon_data' => perfmon_data
+          }
+          @result = Result.upload_and_create(params)
+          @summary.close
+          @perfmon.close
+        end
+        it 'errors present without version' do
+          expect(@result.errors).to match_array(["Version can't be blank"])
+        end
+
+        it 'calculated request results not save without version' do
+          expect(CalculatedRequestsResult.find_by result_id: @result.id).to be nil
+        end
+
+        it 'calculated performance results not save without version' do
+          expect(CalculatedPerformanceResult.find_by result_id: @result.id).to be nil
+        end
       end
 
       it 'rps is absence, other required fields presence' do
@@ -247,8 +284,15 @@ describe Result do
           expect(RequestsResult.where(result_id: @result.id).empty?).to be(true)
         end
 
-      end
+        it 'calculated request results not save' do
+          expect(CalculatedRequestsResult.find_by result_id: @result.id).to be nil
+        end
 
+        it 'calculated performance results not save' do
+          expect(CalculatedPerformanceResult.find_by result_id: @result.id).to be nil
+        end
+
+      end
 
       describe 'absence required columns in perfmon data' do
         before(:all) do
@@ -286,6 +330,14 @@ describe Result do
 
         it 'perfmon data not save' do
           expect(PerformanceResult.where(result_id: @result.id).empty?).to be(true)
+        end
+
+        it 'calculated request results not save' do
+          expect(CalculatedRequestsResult.find_by result_id: @result.id).to be nil
+        end
+
+        it 'calculated performance results not save' do
+          expect(CalculatedPerformanceResult.find_by result_id: @result.id).to be nil
         end
 
       end
@@ -423,7 +475,7 @@ describe Result do
       expect(@result.request_mean('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123.0
     end
     it 'request median is correct with same values' do
-      expect(@result.request_median('children /marks.aspx:GET:tab=subject', @bottom_timestamp,@top_timestamp)).to eql 123.0
+      expect(@result.request_median('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123.0
     end
     it 'request 90 percent is correct with same values' do
       expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123.0

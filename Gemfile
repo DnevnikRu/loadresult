@@ -16,7 +16,6 @@ group :test do
 end
 
 group :development do
-  gem 'byebug', '~> 8.2'
   gem 'web-console', '~> 2.0'
 end
 
@@ -25,6 +24,7 @@ group :test, :development do
   gem 'factory_girl_rails', '~> 4.6'
   gem 'capybara', '~> 2.6'
   gem 'selenium-webdriver', '~> 2.52'
+  gem 'pry-byebug'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

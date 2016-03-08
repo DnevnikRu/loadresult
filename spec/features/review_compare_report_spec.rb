@@ -2,15 +2,20 @@ require 'feature_helper'
 
 feature 'Review compare report' do
   before(:all) do
-    label = 'login :GET'
-
     @result1 = create(:result)
-    create(:requests_result, result_id: @result1.id, label: label)
-    create(:calculated_requests_result, result_id: @result1.id, label: label)
-
     @result2 = create(:result)
-    create(:requests_result, result_id: @result2.id, label: label)
-    create(:calculated_requests_result, result_id: @result2.id, label: label)
+
+    request_label = 'login :GET'
+    create(:requests_result, result_id: @result1.id, label: request_label)
+    create(:calculated_requests_result, result_id: @result1.id, label: request_label)
+    create(:requests_result, result_id: @result2.id, label: request_label)
+    create(:calculated_requests_result, result_id: @result2.id, label: request_label)
+
+    performance_label = 'web00 CPU Processor Time'
+    create(:performance_result, result_id: @result1.id, label: performance_label)
+    create(:calculated_performance_result, result_id: @result1.id, label: performance_label)
+    create(:performance_result, result_id: @result2.id, label: performance_label)
+    create(:calculated_performance_result, result_id: @result2.id, label: performance_label)
   end
 
   scenario 'Compare report contains description block' do
@@ -62,6 +67,17 @@ feature 'Review compare report' do
     visit compare_path(result: [@result1.id, @result2.id])
     click_on 'Requests Data'
     show_plot_btn = find_button 'login :GET'
+    show_plot_btn.click
+
+    within(show_plot_btn['data-target']) do
+      expect(page).to have_selector('div.svg-container')
+    end
+  end
+
+  scenario 'Show a plot button opens a performance plot' do
+    visit compare_path(result: [@result1.id, @result2.id])
+    click_on 'Performance results'
+    show_plot_btn = find_button 'Show a plot'
     show_plot_btn.click
 
     within(show_plot_btn['data-target']) do

@@ -45,4 +45,30 @@ class CompareController < ApplicationController
     values = records.map(&:value)
     (0..100).map { |i| Result.percentile(values, i) }
   end
+
+  def performance_plot
+    @group_name = params[:group_name]
+    @plot_id = params[:plot_id]
+    @result1_data = data_for_performance_plot(params[:result1_id])
+    @result2_data = data_for_performance_plot(params[:result2_id])
+  end
+
+  def data_for_performance_plot(result_id)
+    result_data = {}
+    PerformanceGroup.find_by(name: @group_name).labels.each do |label_main|
+      label_main_label = label_main.label.gsub('\\') { '\\\\' }
+      labels = PerformanceResult.where('label LIKE ?', "%#{label_main_label}%").pluck(:label).uniq
+      labels.each do |label|
+        result_data[label] = { seconds: [], values: [] }
+        bottom_timestamp, top_timestamp = Result.border_timestamps(result_id, PerformanceResult)
+        records = PerformanceResult.where(Result.where_conditional(result_id, label, bottom_timestamp, top_timestamp))
+        min_timestamp = records.minimum(:timestamp)
+        records.each do |record|
+          result_data[label][:seconds].push record.timestamp - min_timestamp
+          result_data[label][:values].push record.value
+        end
+      end
+    end
+    result_data
+  end
 end

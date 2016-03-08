@@ -1,0 +1,23 @@
+$('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
+
+var lines = [];
+<% @result1_data.each do |label, data| %>
+  var line = {
+    x: <%= data[:seconds] %>,
+    y: <%= data[:values] %>,
+    name: '<%= label %>',
+    mode: 'lines'
+  };
+  lines.push(line)
+<% end %>
+
+var layout = {
+  title: '<%= @group_name %>',
+  xaxis: {
+      title: 'x'
+  },
+  yaxis: {
+      title: 'y'
+  }
+};
+Plotly.newPlot('<%= "#{@plot_id}_div" %>', lines, layout);

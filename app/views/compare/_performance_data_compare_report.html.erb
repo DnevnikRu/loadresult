@@ -39,6 +39,22 @@
               <% end %>
               </tbody>
             </table>
+
+            <% label_uniq_id = SecureRandom.urlsafe_base64 %>
+            <%= button_to 'Show a plot',
+                compare_performance_plot_path(
+                  group_name: group[:name],
+                  result1_id: @compare_report.result1.id,
+                  result2_id: @compare_report.result2.id,
+                  plot_id: label_uniq_id
+                ),
+                remote: true,
+                id: "#{label_uniq_id}_button",
+                class: 'btn btn-default show-plot bottom20',
+                data: { disable_with: 'Loading..' },
+                'data-toggle' => 'collapse',
+                'data-target' => "##{label_uniq_id}_div" %>
+            <div class="collapse" id="<%= "#{label_uniq_id}_div" %>"></div>
         <% end %>
       </div>
     </div>

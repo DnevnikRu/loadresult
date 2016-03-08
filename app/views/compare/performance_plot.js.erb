@@ -1,23 +1,44 @@
 $('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
 
-var lines = [];
+var colors = ['red', 'green', 'blue', 'gray', 'orange', 'brown', 'purple', 'olive'];
+var colors_dup = colors.slice();
+
+var lines_first = [];
 <% @result1_data.each do |label, data| %>
-  var line = {
+  var label_plot = {
     x: <%= data[:seconds] %>,
     y: <%= data[:values] %>,
     name: '<%= label %>',
-    mode: 'lines'
+    mode: 'lines',
+    line: {
+      color: colors.shift()
+    }
   };
-  lines.push(line)
+  lines_first.push(label_plot);
+<% end %>
+
+var lines_second = [];
+<% @result2_data.each do |label, data| %>
+  var label_plot = {
+    x: <%= data[:seconds] %>,
+    y: <%= data[:values] %>,
+    name: '<%= label %>',
+    mode: 'lines',
+    line: {
+      dash: 'dot',
+      color: colors_dup.shift()
+    }
+  };
+  lines_second.push(label_plot);
 <% end %>
 
 var layout = {
   title: '<%= @group_name %>',
   xaxis: {
-      title: 'x'
+      title: 'Time, seconds'
   },
   yaxis: {
-      title: 'y'
+      title: 'Metrics, <%= @unit %>'
   }
 };
-Plotly.newPlot('<%= "#{@plot_id}_div" %>', lines, layout);
+Plotly.newPlot('<%= "#{@plot_id}_div" %>', lines_first.concat(lines_second), layout);

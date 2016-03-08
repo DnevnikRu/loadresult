@@ -48,27 +48,41 @@ class CompareController < ApplicationController
 
   def performance_plot
     @group_name = params[:group_name]
+    performance_group = find_performance_group(@group_name)
+    @unit = performance_group.units
     @plot_id = params[:plot_id]
-    @result1_data = data_for_performance_plot(params[:result1_id])
-    @result2_data = data_for_performance_plot(params[:result2_id])
+    @result1_data = data_for_performance_plot(params[:result1_id], performance_group)
+    @result2_data = data_for_performance_plot(params[:result2_id], performance_group)
   end
 
-  def data_for_performance_plot(result_id)
-    result_data = {}
-    PerformanceGroup.find_by(name: @group_name).labels.each do |label_main|
-      label_main_label = label_main.label.gsub('\\') { '\\\\' }
-      labels = PerformanceResult.where('label LIKE ?', "%#{label_main_label}%").pluck(:label).uniq
+  def data_for_performance_plot(result_id, performance_group)
+    data = {}
+    performance_group.labels.each do |label_main|
+      label_main_label = handle_backslash(label_main.label)
+      labels = find_performance_result_labels(label_main_label).uniq
       labels.each do |label|
-        result_data[label] = { seconds: [], values: [] }
+        data[label] = { seconds: [], values: [] }
         bottom_timestamp, top_timestamp = Result.border_timestamps(result_id, PerformanceResult)
         records = PerformanceResult.where(Result.where_conditional(result_id, label, bottom_timestamp, top_timestamp))
-        min_timestamp = records.minimum(:timestamp)
+        timestamp_min = records.minimum(:timestamp)
         records.each do |record|
-          result_data[label][:seconds].push record.timestamp - min_timestamp
-          result_data[label][:values].push record.value
+          data[label][:seconds].push (record.timestamp - timestamp_min) / 1000
+          data[label][:values].push record.value
         end
       end
     end
-    result_data
+    data
+  end
+
+  def find_performance_group(group_name)
+    PerformanceGroup.find_by(name: group_name)
+  end
+
+  def handle_backslash(str)
+    str.gsub('\\') { '\\\\' }
+  end
+
+  def find_performance_result_labels(label)
+    PerformanceResult.where('label LIKE ?', "%#{label}%").pluck(:label)
   end
 end

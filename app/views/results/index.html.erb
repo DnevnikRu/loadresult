@@ -39,7 +39,7 @@
       <tbody>
       <% @results.each do |result| %>
           <tr class="result_row">
-            <td style="width: 50px;"><%= check_box_tag 'result[]', result.id %></td>
+            <td><%= check_box_tag 'result[]', result.id %></td>
             <td class="id"><%= result.id %></td>
             <td class="version"><%= result.version %></td>
             <td class="rps"><%= result.rps %></td>

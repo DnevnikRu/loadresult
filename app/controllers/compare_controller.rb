@@ -65,7 +65,7 @@ class CompareController < ApplicationController
         bottom_timestamp, top_timestamp = Result.border_timestamps(result_id, PerformanceResult)
         records = PerformanceResult.where(Result.where_conditional(result_id, label, bottom_timestamp, top_timestamp))
         timestamp_min = records.minimum(:timestamp)
-        records.each do |record|
+        records.order(:timestamp).each do |record|
           data[label][:seconds].push (record.timestamp - timestamp_min) / 1000
           data[label][:values].push record.value
         end

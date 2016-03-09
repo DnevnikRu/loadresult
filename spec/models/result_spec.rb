@@ -571,4 +571,34 @@ describe Result do
     end
   end
 
+  describe 'destroying result' do
+    before do
+      @result = create(:result)
+      create(:performance_result, result_id: @result.id)
+      create(:calculated_performance_result, result_id: @result.id)
+      create(:requests_result, result_id: @result.id)
+      create(:calculated_requests_result, result_id: @result.id)
+    end
+
+    it 'destroys Result itself' do
+      expect { @result.destroy }.to change { Result.count }.by(-1)
+    end
+
+    it 'destroys CalculatedRequestsResult' do
+      expect { @result.destroy }.to change { CalculatedRequestsResult.count }.by(-1)
+    end
+
+    it 'destroys CalculatedPerformanceResult' do
+      expect { @result.destroy }.to change { CalculatedPerformanceResult.count }.by(-1)
+    end
+
+    it 'does not destroy RequestsResult' do
+      expect { @result.destroy }.to change { RequestsResult.count }.by(-1)
+    end
+
+    it 'does not destroy PerformanceResult' do
+      expect { @result.destroy }.to change { PerformanceResult.count }.by(-1)
+    end
+  end
+
 end

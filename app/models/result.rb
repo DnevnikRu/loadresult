@@ -1,10 +1,10 @@
 require 'csv'
 
 class Result < ActiveRecord::Base
-  has_many :performance_results
-  has_many :requests_results
-  has_many :calculated_requests_results
-  has_many :calculated_performance_results
+  has_many :performance_results, dependent: :destroy
+  has_many :requests_results, dependent: :destroy
+  has_many :calculated_requests_results, dependent: :destroy
+  has_many :calculated_performance_results, dependent: :destroy
 
   validates :version, presence: true
   validates :duration, presence: true

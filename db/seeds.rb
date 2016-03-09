@@ -15,12 +15,6 @@ groups = [{
               labels: [PerformanceLabel.create(label: 'EXEC ASP.NET Apps(_total_)\Req/sec')]
           },
           {
-              name: 'Requests per second',
-              units: 'req/sec',
-              trend_limit: 1,
-              labels: [PerformanceLabel.create(label: 'EXEC ASP.NET Apps(_total_)\Req/sec')]
-          },
-          {
               name: 'Requests executing',
               units: 'requests',
               trend_limit: 0.1,

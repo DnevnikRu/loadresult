@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="row">
+    <div class="center-block" id="upload-results-container">
+      <% if alert %>
+          <div class="alert alert-danger" role="alert">
+            <% alert.each do |message| %>
+                <div><%= message %></div>
+            <% end %>
+          </div>
+      <% end %>
+
+      <h1>Editing Result</h1>
+
+      <%= form_tag({action: :update}, multipart: true, method: :put) do %>
+          <div class="form-group required">
+            <%= label_tag :version, nil, class: "control-label" %>
+            <%= text_field_tag :version, flash[:version], class: "form-control", placeholder: 'edu sharding' %>
+          </div>
+          <div class="form-group required">
+            <%= label_tag :rps, 'RPS', class: "control-label" %>
+            <%= text_field_tag :rps, flash[:rps], class: "form-control", placeholder: '600' %>
+          </div>
+          <div class="form-group required">
+            <%= label_tag :duration, nil, class: "control-label" %>
+            <%= text_field_tag :duration, flash[:duration], class: "form-control", placeholder: '600' %>
+          </div>
+          <div class="form-group required">
+            <%= label_tag :profile, nil, class: "control-label" %>
+            <%= text_field_tag :profile, flash[:profile], class: "form-control", placeholder: 'all_sites' %>
+          </div>
+          <%= button_tag "Update", class: "btn btn-primary", 'data-disable-with' => 'Loading..' %>
+      <% end %>
+    </div>
+  </div>
+</div>

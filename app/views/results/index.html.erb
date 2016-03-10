@@ -49,9 +49,12 @@
             <td class="test_run_date"><%= result.test_run_date %></td>
             <td class="created_at"><%= result.created_at %></td>
             <td class="actions">
+              <%= link_to '<i class="glyphicon glyphicon-pencil"></i>'.html_safe,
+                  edit_result_path(result),
+                  class: 'editResult' %>
               <%= link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe,
                   result,
-                  class: 'destroy',
+                  class: 'destroyResult',
                   method: :delete,
                   data: { confirm: 'Are you sure?' } %>
             </td>

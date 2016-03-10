@@ -48,10 +48,13 @@
             <td class="profile"><%= result.profile %></td>
             <td class="test_run_date"><%= result.test_run_date %></td>
             <td class="created_at"><%= result.created_at %></td>
-            <td id="destroy"><%= link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe,
-                                         result,
-                                         method: :delete,
-                                         data: { confirm: 'Are you sure?' } %></td>
+            <td class="actions">
+              <%= link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe,
+                  result,
+                  class: 'destroy',
+                  method: :delete,
+                  data: { confirm: 'Are you sure?' } %>
+            </td>
           </tr>
       <% end %>
       </tbody>

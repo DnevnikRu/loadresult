@@ -7,7 +7,7 @@ feature 'Upload load result' do
       click_link 'Upload results'
     end
 
-    expect(page).to have_css('h1', text: 'Upload results')
+    expect(page).to have_css('h1', text: 'New Result')
   end
 
   scenario 'Open the upload page using the navigation bar' do
@@ -16,7 +16,7 @@ feature 'Upload load result' do
       click_link 'Upload results'
     end
 
-    expect(page).to have_css('h1', text: 'Upload results')
+    expect(page).to have_css('h1', text: 'New Result')
   end
 
   context 'Upload form' do
@@ -55,27 +55,23 @@ feature 'Upload load result' do
     scenario 'Can not upload a result without filling information' do
       click_button 'Upload'
 
-      expect(page).to have_content(
-        %(Version can't be blank
+      expect(page).to have_content(%(Version can't be blank
         Duration can't be blank
         Rps can't be blank
         Profile can't be blank
         Test run date must be in a datetime format
-        Request data is required)
-      )
+        Request data is required))
     end
 
     scenario 'Can not upload a result without additional information' do
       attach_file 'requests_data', summary_file_path
       click_button 'Upload'
 
-      expect(page).to have_content(
-        %(Version can't be blank
+      expect(page).to have_content(%(Version can't be blank
         Duration can't be blank
         Rps can't be blank
         Profile can't be blank
-        Test run date must be in a datetime format)
-      )
+        Test run date must be in a datetime format))
     end
 
     scenario 'Can not upload a result without a summary file' do
@@ -103,6 +99,18 @@ feature 'Upload load result' do
       expect(page).to have_field('duration', with: '450')
       expect(page).to have_field('profile', with: 'main')
       expect(page).to have_field('test_run_date', with: '21.02.2016 01:43')
+    end
+
+    scenario 'Redirects to the results page' do
+      fill_in 'version', with: 'first version'
+      fill_in 'rps', with: '500'
+      fill_in 'duration', with: '450'
+      fill_in 'profile', with: 'main'
+      fill_in 'test_run_date', with: '21.02.2016 01:43'
+      attach_file 'requests_data', summary_file_path
+      click_button 'Upload'
+
+      expect(page).to have_current_path(results_path)
     end
   end
 end

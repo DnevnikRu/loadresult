@@ -53,4 +53,17 @@ feature 'Review results' do
       expect(results_rows.include?(expected_row)).to be(true), 'Just uploaded result is not displayed'
     end
   end
+
+  scenario 'Destroy a result' do
+    result = create(:result)
+    visit '/results/'
+    row_with_result_xpath = "//td[@class='id' and text()='#{result.id}']/.."
+    accept_alert do
+      within(:xpath, row_with_result_xpath) do
+        find('.destroy').click
+      end
+    end
+
+    expect(page).to_not have_xpath(row_with_result_xpath)
+  end
 end

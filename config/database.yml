@@ -15,7 +15,7 @@ development:
   <<: *default
   database: loadtest
   username: postgres
-  password: password
+  password: <%= ENV['RAILS_DB_PWD'] %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

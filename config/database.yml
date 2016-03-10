@@ -21,10 +21,11 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test: &test
-  adapter: sqlite3
-  pool: 5
-  timeout: 5000
-  database: db/test.sqlite3
+  <<: *default
+  database: loadtest_test
+  username: postgres
+  password: <%= ENV['RAILS_DB_PWD'] %>
+
 
 production:
   <<: *default

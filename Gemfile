@@ -11,6 +11,11 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'bootstrap-sass', '~> 3.3.6'
 
+gem 'capistrano', '~> 3.1.0'
+gem 'capistrano-rails', '~> 1.1.0'
+gem 'capistrano-bundler', '~> 1.1.4'
+gem 'capistrano-rvm', '~> 0.1.2'
+
 group :test do
   gem 'sqlite3', '~> 1.3.11'
 end

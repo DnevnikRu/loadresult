@@ -1,5 +1,6 @@
 class ChangeRequestResultTimestampType < ActiveRecord::Migration
   def change
-    change_column :requests_results, :timestamp, 'bigint USING CAST(timestamp AS bigint)'
+    remove_column :requests_results, :timestamp
+    add_column :requests_results, :timestamp, :integer, limit: 8
   end
 end

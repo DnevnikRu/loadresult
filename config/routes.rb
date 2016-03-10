@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   root 'results#index'
-  resources :results, only: [:index, :new, :create, :destroy, :show]
+  resources :results
 
   get 'compare' => 'compare#show'
   namespace 'compare' do

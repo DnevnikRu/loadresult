@@ -5,7 +5,7 @@ Capybara.exact = true
 Capybara.default_driver = :selenium
 
 RSpec.configure do |config|
-  config.before do
+  config.before(:all) do
     Capybara.page.driver.browser.manage.window.resize_to('1024', '600')
   end
 

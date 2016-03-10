@@ -9,9 +9,9 @@
           </div>
       <% end %>
 
-      <h1>New Result</h1>
+      <h1>Editing Result</h1>
 
-      <%= form_tag({action: "create"}, multipart: true) do %>
+      <%= form_tag({action: :update}, multipart: true, method: :put) do %>
           <div class="form-group required">
             <%= label_tag :version, nil, class: "control-label" %>
             <%= text_field_tag :version, flash[:version], class: "form-control", placeholder: 'edu sharding' %>
@@ -28,19 +28,7 @@
             <%= label_tag :profile, nil, class: "control-label" %>
             <%= text_field_tag :profile, flash[:profile], class: "form-control", placeholder: 'all_sites' %>
           </div>
-          <div class="form-group required">
-            <%= label_tag :test_run_date, nil, class: "control-label" %>
-            <%= datetime_local_field_tag :test_run_date, flash[:test_run_date], class: "form-control", placeholder: '10.02.2016 18:59' %>
-          </div>
-          <div class="form-group required">
-            <%= label_tag :requests_data, nil, class: "control-label" %>
-            <%= file_field_tag :requests_data %>
-          </div>
-          <div class="form-group">
-            <%= label_tag :perfmon_data %>
-            <%= file_field_tag :perfmon_data %>
-          </div>
-          <%= button_tag "Upload", class: "btn btn-primary", 'data-disable-with' => 'Loading..' %>
+          <%= button_tag "Update", class: "btn btn-primary", 'data-disable-with' => 'Loading..' %>
       <% end %>
     </div>
   </div>

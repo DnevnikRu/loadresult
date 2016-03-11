@@ -1,6 +1,12 @@
 #upload-results-container {
   width: 450px;
 }
+
 #results-table tr:hover {
   background: #eee;
+}
+
+.nostrech {
+  width: 1%;
+  white-space: nowrap;
 }

@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="row">
+    <div class="center-block" id="upload-results-container">
+
+      <h1>Show Result</h1>
+
+      <dl class="dl-horizontal">
+        <dt>ID</dt>
+        <dd><%= @result.id %></dd>
+        <dt>Version</dt>
+        <dd><%= @result.version %></dd>
+        <dt>Duration</dt>
+        <dd><%= @result.duration %></dd>
+        <dt>RPS</dt>
+        <dd><%= @result.rps %></dd>
+        <dt>Profile</dt>
+        <dd><%= @result.profile %></dd>
+        <dt>Test run date</dt>
+        <dd><%= @result.test_run_date %></dd>
+        <dt>Created at</dt>
+        <dd><%= @result.created_at %></dd>
+        <dt>Updated at</dt>
+        <dd><%= @result.updated_at %></dd>
+        <dt>Has requests? </dt>
+        <dd><%= @result.requests_results.exists? %></dd>
+        <dt>Has performance? </dt>
+        <dd><%= @result.performance_results.exists? %></dd>
+      </dl>
+
+      <%= link_to 'Edit', edit_result_path(@result), class: "btn btn-primary" %>
+      <%= link_to 'Remove',
+                  @result,
+                  method: :delete,
+                  class: "btn btn-danger pull-right",
+                  data: { confirm: 'Are you sure?' } %>
+    </div>
+  </div>
+</div>

@@ -1,8 +1,11 @@
 class ResultsController < ApplicationController
-  before_action :set_result, only: [:edit, :update, :destroy]
+  before_action :set_result, only: [:show, :edit, :update, :destroy]
 
   def index
     @results = Result.all
+  end
+
+  def show
   end
 
   def new

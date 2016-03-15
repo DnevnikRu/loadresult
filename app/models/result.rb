@@ -49,7 +49,7 @@ class Result < ActiveRecord::Base
     bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, RequestsResult)
     labels = RequestsResult.where(result_id: result.id).pluck(:label).uniq
     labels.each do |label|
-    CalculatedRequestsResult.create(
+      CalculatedRequestsResult.create(
           result_id: result.id,
           label: label,
           mean: result.request_mean(label, bottom_timestamp, top_timestamp),
@@ -171,6 +171,44 @@ class Result < ActiveRecord::Base
     end
   end
 
+  def self.requests_histogram_plot(result_id, label)
+    bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult)
+    records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
+    records.map(&:value)
+  end
+
+  def self.all_requests_histogram_plot(result_id)
+    bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult)
+    records = RequestsResult.where(where_conditional(result_id, nil, bottom_timestamp, top_timestamp))
+    records.map(&:value)
+  end
+
+  def self.percentile_requests_plot(result_id)
+    bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult)
+    records = RequestsResult.where(where_conditional(result_id, nil, bottom_timestamp, top_timestamp))
+    values = records.map(&:value)
+    (0..100).map { |i| percentile(values, i) }
+  end
+
+  def self.performance_plot(result_id, performance_group)
+    data = {}
+    performance_group.labels.each do |label_main|
+      label_main_label = handle_backslash(label_main.label)
+      labels = find_performance_result_labels(label_main_label).uniq
+      labels.each do |label|
+        data[label] = {seconds: [], values: []}
+        bottom_timestamp, top_timestamp = border_timestamps(result_id, PerformanceResult)
+        records = PerformanceResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
+        timestamp_min = records.minimum(:timestamp)
+        records.order(:timestamp).each do |record|
+          data[label][:seconds].push (record.timestamp - timestamp_min) / 1000
+          data[label][:values].push record.value
+        end
+      end
+    end
+    data
+  end
+
   private
 
   def self.validate_header(result, header, data_type, required_fields)
@@ -220,5 +258,13 @@ class Result < ActiveRecord::Base
     else
       sorted_array[rank]
     end
+  end
+
+  def self.handle_backslash(str)
+    str.gsub('\\') { '\\\\' }
+  end
+
+  def self.find_performance_result_labels(label)
+    PerformanceResult.where('label LIKE ?', "%#{label}%").pluck(:label)
   end
 end

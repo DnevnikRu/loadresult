@@ -19,3 +19,18 @@ server 'loadresult', user: 'deployer', roles: %w{web app}
 set :deploy_to, '/var/www/loadresult_test'
 set :rails_env, 'test'
 set :bundle_without, nil
+
+namespace :deploy do
+
+
+
+  desc 'Restart application'
+  task :restart => [:set_rails_env] do
+    on roles(:app), in: :sequence, wait: 5 do
+
+    end
+  end
+
+  after :publishing, :restart
+
+end

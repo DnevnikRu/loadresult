@@ -12,7 +12,7 @@ development:
 
 test: &test
   <<: *default
-  host: <%= ENV['CI'] ? '192.168.50.111' : 'localhost' %>
+  host: <%= ENV['CI'] ? YAML.load_file(File.join(Rails.root, 'config', 'ci_config.yml'))['test_host'] : 'localhost' %>
   database: loadtest_test
   username: postgres
   password: <%= ENV['RAILS_DB_PWD'] || 'password' %>

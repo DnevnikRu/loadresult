@@ -4,11 +4,12 @@ require 'capybara/rails'
 Capybara.exact = true
 Capybara.default_driver = :selenium
 if ENV['CI']
-  Capybara.app_host = 'http://loadresult:777'
+  ci_config = YAML.load_file(File.join(Rails.root, 'config', 'ci_config.yml'))
+  Capybara.app_host = "http://#{ci_config['test_host']}:#{ci_config['test_port']}"
   Capybara.register_driver :selenium do |app|
     Capybara::Selenium::Driver.new(app,
                                    :browser => :remote,
-                                   :url => 'http://autotest-hub:4444/wd/hub',
+                                   :url => ci_config['hub_url'],
                                    :desired_capabilities => :firefox)
   end
   Capybara.run_server = false

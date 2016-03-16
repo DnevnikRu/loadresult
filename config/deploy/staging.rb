@@ -23,6 +23,5 @@ namespace :deploy do
   end
 
   after 'deploy:migrate', :db_seed
-  after :db_seed, :run_model_tests
 
 end

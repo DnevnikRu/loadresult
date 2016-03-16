@@ -9,5 +9,3 @@ set :ssh_options, {
     auth_methods: %w(password),
     password: ENV['DEPLOYER_PASSWORD']
 }
-
-set :branch, 'capistrano'

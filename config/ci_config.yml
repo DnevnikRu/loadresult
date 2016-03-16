@@ -1,4 +1,4 @@
 test_host: 'loadresult'
-test_port: '777'
+test_port: '3000'
 hub_url: 'http://autotest-hub:4444/wd/hub'
 fixture_path: '\\autotest01\loadresult_filecontext'

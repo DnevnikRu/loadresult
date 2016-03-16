@@ -79,6 +79,7 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     concurrent-ruby (1.0.0)
+    database_cleaner (1.5.1)
     debug_inspector (0.0.2)
     diff-lcs (1.2.5)
     erubis (2.7.0)
@@ -235,6 +236,7 @@ DEPENDENCIES
   capistrano-rvm (~> 0.1.2)
   capybara (~> 2.6)
   coffee-rails (~> 4.1.0)
+  database_cleaner (~> 1.5.1)
   factory_girl_rails (~> 4.6)
   jbuilder (~> 2.0)
   jquery-rails (~> 4.1)

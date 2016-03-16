@@ -30,6 +30,7 @@ group :test, :development do
   gem 'capybara', '~> 2.6'
   gem 'selenium-webdriver', '~> 2.52'
   gem 'pry-byebug'
+  gem 'database_cleaner', '~> 1.5.1'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

@@ -1,5 +1,6 @@
 class ChangePerformanceResultTimestampType < ActiveRecord::Migration
   def change
-    change_column :performance_results, :timestamp, 'bigint USING CAST(timestamp AS bigint)'
+    remove_column :performance_results, :timestamp
+    add_column :performance_results, :timestamp, :integer, limit: 8
   end
 end

@@ -3,6 +3,16 @@ require 'capybara/rails'
 
 Capybara.exact = true
 Capybara.default_driver = :selenium
+if ENV['CI']
+  Capybara.app_host = 'http://loadresult:777'
+  Capybara.register_driver :selenium do |app|
+    Capybara::Selenium::Driver.new(app,
+                                   :browser => :remote,
+                                   :url => 'http://autotest-hub:4444/wd/hub',
+                                   :desired_capabilities => :firefox)
+  end
+  Capybara.run_server = false
+end
 
 RSpec.configure do |config|
   config.before(:all) do

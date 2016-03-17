@@ -1,5 +1,5 @@
-desc 'Run db:seed'
 namespace :deploy do
+  desc 'Run db:seed'
   task :db_seed => [:set_rails_env] do
     on roles(:db) do
       within release_path do

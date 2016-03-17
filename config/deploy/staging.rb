@@ -11,4 +11,5 @@ set :bundle_without, nil
 
 namespace :deploy do
   after 'deploy:migrate', :db_seed
+  after :publishing, :restart_nginx
 end

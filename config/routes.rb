@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   root 'results#index'
   resources :results
-
+  post 'results/new' => 'results#create'
   get 'compare' => 'compare#show'
   namespace 'compare' do
     post 'requests_histogram_plot'

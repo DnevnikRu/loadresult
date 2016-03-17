@@ -27,6 +27,9 @@ class Result < ActiveRecord::Base
     result.save
 
     if params['requests_data']
+      if params['requests_data'].is_a?(Hash)
+        file_from_json(params, 'requests_data')
+      end
       result.destroy unless save_request_data(params['requests_data'], result)
     else
       result.destroy
@@ -34,6 +37,9 @@ class Result < ActiveRecord::Base
     end
 
     if params['perfmon_data']
+      if params['perfmon_data'].is_a?(Hash)
+        file_from_json(params, 'perfmon_data')
+      end
       result.destroy unless save_perfmon_data(params['perfmon_data'], result)
     end
 
@@ -210,6 +216,18 @@ class Result < ActiveRecord::Base
   end
 
   private
+
+  def self.file_from_json(params, data)
+    request_data = params[data]
+    tempfile = Tempfile.new('file')
+    tempfile.binmode
+    content = Base64.decode64(request_data[:file])
+    tempfile.write(content)
+    tempfile.rewind
+    mime_type = Mime::Type.lookup_by_extension(File.extname(request_data[:filename])[1..-1]).to_s
+    req_file = ActionDispatch::Http::UploadedFile.new(:tempfile => tempfile, :filename => request_data[:filename], :type => mime_type)
+    params[data] = req_file
+  end
 
   def self.validate_header(result, header, data_type, required_fields)
     required_fields.each do |column_name|

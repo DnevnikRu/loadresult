@@ -218,15 +218,14 @@ class Result < ActiveRecord::Base
   private
 
   def self.file_from_json(params, data)
-    request_data = params[data]
+    file_hash = params[data]
     tempfile = Tempfile.new('file')
     tempfile.binmode
-    content = Base64.decode64(request_data[:file])
-    tempfile.write(content)
+    tempfile.write(Base64.decode64(file_hash[:file]))
     tempfile.rewind
-    mime_type = Mime::Type.lookup_by_extension(File.extname(request_data[:filename])[1..-1]).to_s
-    req_file = ActionDispatch::Http::UploadedFile.new(:tempfile => tempfile, :filename => request_data[:filename], :type => mime_type)
-    params[data] = req_file
+    mime_type = Mime::Type.lookup_by_extension(File.extname(file_hash[:filename])[1..-1]).to_s
+    real_file = ActionDispatch::Http::UploadedFile.new(:tempfile => tempfile, :filename => file_hash[:filename], :type => mime_type)
+    params[data] = real_file
   end
 
   def self.validate_header(result, header, data_type, required_fields)

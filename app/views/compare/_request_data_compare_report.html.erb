@@ -67,23 +67,23 @@
           <thead>
           <tr>
             <th></th>
-            <th class="mean">Mean first, msec</th>
-            <th class="mean">Mean second, msec</th>
+            <th class="mean">Mean id:<%= @compare_report.result1.id %>, msec</th>
+            <th class="mean">Mean id:<%= @compare_report.result2.id %>, msec</th>
             <th class="mean">Mean trend, msec</th>
-            <th class="median">Median first, msec</th>
-            <th class="median">Median second, msec</th>
+            <th class="median">Median id:<%= @compare_report.result1.id %>, msec</th>
+            <th class="median">Median id:<%= @compare_report.result2.id %>, msec</th>
             <th class="median">Median trend, msec</th>
-            <th class="line90">90% Line first, msec</th>
-            <th class="line90">90% Line second, msec</th>
+            <th class="line90">90% Line id:<%= @compare_report.result1.id %>, msec</th>
+            <th class="line90">90% Line id:<%= @compare_report.result2.id %>, msec</th>
             <th class="line90">90% Line trend, msec</th>
-            <th class="min">Min first, msec</th>
-            <th class="min">Min second, msec</th>
-            <th class="max">Max first, msec</th>
-            <th class="max">Max second, msec</th>
-            <th class="throughput">Throughput first, req/sec</th>
-            <th class="throughput">Throughput second, req/sec</th>
-            <th class="failed_request">Failed requests first, %</th>
-            <th class="failed_request">Failed requests second, %</th>
+            <th class="min">Min id:<%= @compare_report.result1.id %>, msec</th>
+            <th class="min">Min id:<%= @compare_report.result2.id %>, msec</th>
+            <th class="max">Max id:<%= @compare_report.result1.id %>, msec</th>
+            <th class="max">Max id:<%= @compare_report.result2.id %>, msec</th>
+            <th class="throughput">Throughput id:<%= @compare_report.result1.id %>, req/sec</th>
+            <th class="throughput">Throughput id:<%= @compare_report.result2.id %>, req/sec</th>
+            <th class="failed_request">Failed requests id:<%= @compare_report.result1.id %>, %</th>
+            <th class="failed_request">Failed requests id:<%= @compare_report.result2.id %>, %</th>
             <th class="failed_request">Failed requests trend, %</th>
           </tr>
           </thead>

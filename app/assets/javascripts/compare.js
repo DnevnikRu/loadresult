@@ -29,3 +29,9 @@ $(document).ready(function () {
         if ($(n).children('.failed_request.trend').text() > 15) $(n).children('.failed_request').css('background-color', '#F5E0DF');
     });
 });
+
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip({
+        'delay': {show: 1200, hide: 20}, container: 'body', placement: 'bottom', html: true
+    });
+});

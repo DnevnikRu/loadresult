@@ -109,23 +109,23 @@
                                 'data-toggle' => 'collapse',
                                 'data-target' => "##{label_uniq_id}_div" %>
                 </td>
-                <td class="mean"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).mean %></td>
-                <td class="mean"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).mean %></td>
-                <td class="mean trend"><%= @compare_report.trend(:calculated_requests_results, :mean, label) %> </td>
-                <td class="median"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).median %></td>
-                <td class="median"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).median %></td>
+                <td class="mean" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version%> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).mean %></td>
+                <td class="mean" data-toggle="tooltip" title="Version: <%= @compare_report.result2.version%> <br> Test run date: <%= @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).mean %></td>
+                <td class="mean trend" ><%= @compare_report.trend(:calculated_requests_results, :mean, label) %> </td>
+                <td class="median" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version%> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).median %></td>
+                <td class="median" data-toggle="tooltip" title="Version: <%= @compare_report.result2.version%> <br> Test run date: <%= @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).median %></td>
                 <td class="median trend"><%= @compare_report.trend(:calculated_requests_results, :median, label) %> </td>
-                <td class="line90"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).ninety_percentile %></td>
-                <td class="line90"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).ninety_percentile %></td>
+                <td class="line90" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version%> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).ninety_percentile %></td>
+                <td class="line90" data-toggle="tooltip" title="Version: <%= @compare_report.result2.version%> <br> Test run date: <%= @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).ninety_percentile %></td>
                 <td class="line90 trend"><%= @compare_report.trend(:calculated_requests_results, :ninety_percentile, label) %> </td>
-                <td class="min"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).min %></td>
-                <td class="min"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).min %></td>
-                <td class="max"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).max %></td>
-                <td class="max"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).max %></td>
-                <td class="throughput"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).throughput %></td>
-                <td class="throughput"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).throughput %></td>
-                <td class="failed_request"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).failed_results %></td>
-                <td class="failed_request"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).failed_results %></td>
+                <td class="min" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version%> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).min %></td>
+                <td class="min" data-toggle="tooltip" title="Version: <%= @compare_report.result2.version%> <br> Test run date: <%= @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).min %></td>
+                <td class="max" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version%> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).max %></td>
+                <td class="max" data-toggle="tooltip" title="Version: <%= @compare_report.result2.version%> <br> Test run date: <%= @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).max %></td>
+                <td class="throughput" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version%> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).throughput %></td>
+                <td class="throughput" data-toggle="tooltip" title="Version: <%= @compare_report.result2.version%> <br> Test run date: <%= @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).throughput %></td>
+                <td class="failed_request" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version%> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).failed_results %></td>
+                <td class="failed_request" data-toggle="tooltip" title="Version: <%= @compare_report.result2.version%> <br> Test run date: <%= @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).failed_results %></td>
                 <td class="failed_request trend"><%= @compare_report.trend(:calculated_requests_results, :failed_results, label) %></td>
               </tr>
               </tr>

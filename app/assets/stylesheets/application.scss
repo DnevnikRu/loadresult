@@ -28,3 +28,13 @@
 .bottom20 {
   margin-bottom: 20px;
 }
+
+.tooltip-inner {
+  background-color: #5bc0de;
+  color: #fff;
+  text-align: left;
+}
+
+.tooltip.bottom .tooltip-arrow {
+  border-bottom-color: #5bc0de;
+}

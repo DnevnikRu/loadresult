@@ -8,7 +8,7 @@ var lines_first = [];
   var label_plot = {
     x: <%= data[:seconds] %>,
     y: <%= data[:values] %>,
-    name: '<%= "#{label} (id:#{@result1_id})" %>',
+    name: '<%= "#{label} (id:#{params[:result1_id]})" %>',
     mode: 'lines',
     line: {
       color: colors.shift()
@@ -22,7 +22,7 @@ var lines_second = [];
   var label_plot = {
     x: <%= data[:seconds] %>,
     y: <%= data[:values] %>,
-    name: '<%= "#{label} (id:#{@result2_id})" %>',
+    name: '<%= "#{label} (id:#{params[:result2_id]})" %>',
     mode: 'lines',
     line: {
       dash: 'dot',

@@ -125,6 +125,10 @@ feature 'Upload load result' do
       result = Result.upload_and_create(parameters)
       expect(result.errors).to match_array([])
     end
+
+
+
+
   end
 
 end

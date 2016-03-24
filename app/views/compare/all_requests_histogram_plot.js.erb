@@ -3,13 +3,13 @@ $('#all_requests_plot_button').prop('type', 'button');
 var result1 = {
     x: <%= @result1_data %>,
     opacity: 0.75,
-    name: 'First',
+    name: 'id:<%= params[:result1_id] %>',
     type: 'histogram'
 };
 var result2 = {
     x: <%= @result2_data %>,
     opacity: 0.75,
-    name: 'Second',
+    name: 'id:<%= params[:result2_id] %>',
     type: 'histogram'
 };
 var layout = {

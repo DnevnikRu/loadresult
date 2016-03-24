@@ -2,14 +2,14 @@ $('#percentile_requests_button').prop('type', 'button');
 
 var result1 = {
     y: <%= @result1_data %>,
-    name: 'First',
+    name: 'id:<%= params[:result1_id] %>',
     mode: 'lines',
     line: {shape: 'spline'},
     type: 'scatter'
 };
 var result2 = {
     y: <%= @result2_data %>,
-    name: 'Second',
+    name: 'id:<%= params[:result2_id] %>',
     mode: 'lines',
     line: {shape: 'spline'},
     type: 'scatter'

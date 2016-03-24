@@ -32,8 +32,6 @@ class CompareController < ApplicationController
     performance_group = PerformanceGroup.find_by(name: params[:group_name])
     @unit = performance_group.units
     @plot_id = params[:plot_id]
-    @result1_id = params[:result1_id]
-    @result2_id = params[:result2_id]
     @result1_data = Result.performance_plot(params[:result1_id], performance_group)
     @result2_data = Result.performance_plot(params[:result2_id], performance_group)
   end

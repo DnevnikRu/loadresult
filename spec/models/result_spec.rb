@@ -649,6 +649,10 @@ describe Result do
     it 'find percentile of array with odd number of elements' do
       expect(Result.percentile([1, 2, 3, 4, 5], 50)).to eq(2.5)
     end
+
+    it 'returns zero if percent is zero' do
+      expect(Result.percentile([1, 2, 3, 4], 0)).to eq(0)
+    end
   end
 
 end

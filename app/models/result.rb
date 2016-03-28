@@ -161,7 +161,7 @@ class Result < ActiveRecord::Base
   end
 
   def self.percentile(data_set, percent)
-    return 0 if percent == 0
+    return 0 if percent.zero?
     return nil if data_set.empty?
 
     sorted_data = data_set.sort

@@ -16,10 +16,6 @@ gem 'capistrano-rails', '~> 1.1.0'
 gem 'capistrano-bundler', '~> 1.1.4'
 gem 'capistrano-rvm', '~> 0.1.2'
 
-group :test do
-  gem 'sqlite3', '~> 1.3.11'
-end
-
 group :development do
   gem 'web-console', '~> 2.0'
 end

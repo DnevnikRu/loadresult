@@ -601,4 +601,40 @@ describe Result do
     end
   end
 
+  describe '.values_of_requests' do
+    before do
+      @result = create(:result)
+      (1..10).each do |i|
+        create(
+            :requests_result,
+            result_id: @result.id,
+            timestamp: i * 10,
+            value: i,
+            label: 'first label'
+        )
+      end
+      (11..20).each do |i|
+        create(
+            :requests_result,
+            result_id: @result.id,
+            timestamp: i * 10,
+            value: i,
+            label: 'second label'
+        )
+      end
+    end
+
+    it 'returns an Array' do
+      expect(Result.values_of_requests(@result.id)).to be_an(Array)
+    end
+
+    it 'returns values for result id' do
+      expect(Result.values_of_requests(@result.id)).to eq([3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
+    end
+
+    it 'returns values for result id and label' do
+      expect(Result.values_of_requests(@result.id, 'first label')).to eq([3, 4, 5, 6, 7, 8, 9, 10])
+    end
+  end
+
 end

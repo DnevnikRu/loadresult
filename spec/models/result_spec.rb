@@ -637,4 +637,18 @@ describe Result do
     end
   end
 
+  describe '.percentile' do
+    it 'finds percentile of an array' do
+      expect(Result.percentile([1, 2, 3, 4], 50)).to eq(2)
+    end
+
+    it 'finds percentile of an unsorted array' do
+      expect(Result.percentile([3, 1, 2, 4], 50)).to eq(2)
+    end
+
+    it 'find percentile of array with odd number of elements' do
+      expect(Result.percentile([1, 2, 3, 4, 5], 50)).to eq(2.5)
+    end
+  end
+
 end

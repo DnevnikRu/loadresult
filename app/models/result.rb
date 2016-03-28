@@ -160,20 +160,19 @@ class Result < ActiveRecord::Base
     where_request.size > 1 ? where_request.join(' AND ') : where_request.join
   end
 
-  def self.percentile(data, percent)
+  def self.percentile(data_set, percent)
     return 0 if percent == 0
+    return nil if data_set.empty?
 
-    sorted_array = data.sort
-    rank = percent.to_f / 100 * data.length
-    exactly_divide_check = rank - rank.to_i
-    if data.empty?
-      nil
-    elsif exactly_divide_check.eql? 0.0
-      sorted_array[rank - 1]
+    sorted_data = data_set.sort
+    index = (percent.to_f / 100 * data_set.length) - 1
+
+    if index.to_s.split('.').last.to_i.zero? # whole number?
+      sorted_data[index] # return an element of data_set
     else
-      first = (sorted_array[rank - 1]).to_f
-      second = (sorted_array[rank]).to_f
-      (first + second) / 2
+      left = (sorted_data[index.floor])
+      right = (sorted_data[index.ceil])
+      (left + right) / 2.0 # return average
     end
   end
 

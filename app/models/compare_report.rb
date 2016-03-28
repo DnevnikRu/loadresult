@@ -19,7 +19,7 @@ class CompareReport
   end
 
   def request_labels
-    (@result1.calculated_requests_results.pluck(:label).uniq | @result2.calculated_requests_results.pluck(:label).uniq).sort
+    (@result1.calculated_requests_results.pluck(:label).uniq & @result2.calculated_requests_results.pluck(:label).uniq).sort
   end
 
   def performance?
@@ -28,7 +28,7 @@ class CompareReport
 
 
   def performance_groups
-    labels = @result1.calculated_performance_results.pluck(:label) | @result2.calculated_performance_results.pluck(:label)
+    labels = @result1.calculated_performance_results.pluck(:label) & @result2.calculated_performance_results.pluck(:label)
     label_groups = []
     PerformanceGroup.all.each do |group|
       labels_in_group = labels.select { |label| !group.labels.pluck(:label).select{ |l| label.include? l }.empty? }
@@ -47,9 +47,9 @@ class CompareReport
   def trend(type, metric, label, limit=0)
     first = @result1.send(type).find_by(label: label).send(metric)
     second = @result2.send(type).find_by(label: label).send(metric)
-    if (first == 0.0 && second == 0.00) || ((first + second) / 2 < limit)
+    if ((first == 0.0 || first.nil?) && (second == 0.00 || second.nil?)) || ((first + second) / 2 < limit)
       0.00
-    elsif first == 0.0
+    elsif first == 0.0 || first.nil?
        100.0
     else
       (((second - first) / first)*100).round(2)

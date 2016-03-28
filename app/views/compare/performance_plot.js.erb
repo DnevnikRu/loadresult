@@ -11,6 +11,7 @@ var lines_first = [];
     name: '<%= "#{label} (id:#{params[:result1_id]})" %>',
     mode: 'lines',
     line: {
+      dash: 'dot',
       color: colors.shift()
     }
   };
@@ -25,7 +26,6 @@ var lines_second = [];
     name: '<%= "#{label} (id:#{params[:result2_id]})" %>',
     mode: 'lines',
     line: {
-      dash: 'dot',
       color: colors_dup.shift()
     }
   };

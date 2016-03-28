@@ -177,22 +177,14 @@ class Result < ActiveRecord::Base
     end
   end
 
-  def self.requests_histogram_plot(result_id, label)
+  def self.values_of_requests(result_id, label = nil)
     bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult)
     records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
     records.map(&:value)
   end
 
-  def self.all_requests_histogram_plot(result_id)
-    bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult)
-    records = RequestsResult.where(where_conditional(result_id, nil, bottom_timestamp, top_timestamp))
-    records.map(&:value)
-  end
-
-  def self.percentile_requests_plot(result_id)
-    bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult)
-    records = RequestsResult.where(where_conditional(result_id, nil, bottom_timestamp, top_timestamp))
-    values = records.map(&:value)
+  def self.percentile_of_values_of_requests(result_id)
+    values = values_of_requests(result_id)
     (0..100).map { |i| percentile(values, i) }
   end
 

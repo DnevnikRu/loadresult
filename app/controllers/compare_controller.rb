@@ -13,18 +13,18 @@ class CompareController < ApplicationController
 
   def requests_histogram_plot
     @plot_id = params[:plot_id]
-    @result1_data = Result.requests_histogram_plot(params[:result1_id], params[:label])
-    @result2_data = Result.requests_histogram_plot(params[:result2_id], params[:label])
+    @result1_data = Result.values_of_requests(params[:result1_id], params[:label])
+    @result2_data = Result.values_of_requests(params[:result2_id], params[:label])
   end
 
   def all_requests_histogram_plot
-    @result1_data = Result.all_requests_histogram_plot(params[:result1_id])
-    @result2_data = Result.all_requests_histogram_plot(params[:result2_id])
+    @result1_data = Result.values_of_requests(params[:result1_id])
+    @result2_data = Result.values_of_requests(params[:result2_id])
   end
 
   def percentile_requests_plot
-    @result1_data = Result.percentile_requests_plot(params[:result1_id])
-    @result2_data = Result.percentile_requests_plot(params[:result2_id])
+    @result1_data = Result.percentile_of_values_of_requests(params[:result1_id])
+    @result2_data = Result.percentile_of_values_of_requests(params[:result2_id])
   end
 
   def performance_plot

@@ -166,12 +166,13 @@ class Result < ActiveRecord::Base
 
     sorted_data = data_set.sort
     index = (percent.to_f / 100 * data_set.length) - 1
+    return sorted_data.first if index < 0
 
     if index.to_s.split('.').last.to_i.zero? # whole number?
       sorted_data[index] # return an element of data_set
     else
-      left = (sorted_data[index.floor])
-      right = (sorted_data[index.ceil])
+      left = sorted_data[index.floor]
+      right = sorted_data[index.ceil]
       (left + right) / 2.0 # return average
     end
   end

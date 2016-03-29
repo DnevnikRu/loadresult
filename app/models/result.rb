@@ -161,7 +161,6 @@ class Result < ActiveRecord::Base
   end
 
   def self.percentile(data_set, percent)
-    return 0 if percent.zero?
     return nil if data_set.empty?
 
     sorted_data = data_set.sort
@@ -185,7 +184,7 @@ class Result < ActiveRecord::Base
 
   def self.percentile_of_values_of_requests(result_id)
     values = values_of_requests(result_id)
-    (0..100).map { |i| percentile(values, i) }
+    (1..100).map { |i| percentile(values, i) }
   end
 
   def self.performance_plot(result_id, performance_group)

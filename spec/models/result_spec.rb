@@ -659,6 +659,25 @@ describe Result do
     end
   end
 
+  describe '.performance_seconds_to_values' do
+    before do
+      @result = create(:result)
+      (1..10).each do |i|
+        create(
+            :performance_result,
+            result_id: @result.id,
+            timestamp: i * 10,
+            value: i,
+            label: 'cpu_1'
+        )
+      end
+    end
+
+    it 'returns a Hash' do
+      expect(Result.performance_seconds_to_values(@result.id, ['cpu_1'])).to be_a(Hash)
+    end
+  end
+
   describe '.percentile' do
     it 'finds percentile of an array' do
       expect(Result.percentile([1, 2, 3, 4], 50)).to eq(2)

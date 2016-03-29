@@ -18,6 +18,8 @@ gem 'capistrano-rvm', '~> 0.1.2'
 
 group :development do
   gem 'web-console', '~> 2.0'
+  gem 'spring'
+  gem 'spring-commands-rspec'
 end
 
 group :test, :development do

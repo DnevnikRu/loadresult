@@ -191,6 +191,9 @@ GEM
       rubyzip (~> 1.0)
       websocket (~> 1.0)
     slop (3.6.0)
+    spring (1.6.4)
+    spring-commands-rspec (1.0.4)
+      spring (>= 0.9.1)
     sprockets (3.5.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -245,6 +248,8 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   selenium-webdriver (~> 2.52)
+  spring
+  spring-commands-rspec
   turbolinks (~> 2.5)
   tzinfo-data
   uglifier (>= 1.3.0)

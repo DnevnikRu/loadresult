@@ -28,11 +28,11 @@ class CompareController < ApplicationController
   end
 
   def performance_plot
-    @group_name = params[:group_name]
-    performance_group = PerformanceGroup.find_by(name: params[:group_name])
-    @unit = performance_group.units
+    group = params[:group]
+    @unit = group[:units]
+    @group_name = group[:name]
     @plot_id = params[:plot_id]
-    @result1_data = Result.performance_plot(params[:result1_id], performance_group)
-    @result2_data = Result.performance_plot(params[:result2_id], performance_group)
+    @result1_data = Result.performance_plot(params[:result1_id], group[:labels])
+    @result2_data = Result.performance_plot(params[:result2_id], group[:labels])
   end
 end

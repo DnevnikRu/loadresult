@@ -32,7 +32,7 @@ class CompareController < ApplicationController
     @unit = group[:units]
     @group_name = group[:name]
     @plot_id = params[:plot_id]
-    @result1_data = Result.performance_plot(params[:result1_id], group[:labels])
-    @result2_data = Result.performance_plot(params[:result2_id], group[:labels])
+    @result1_data = Result.performance_seconds_to_values(params[:result1_id], group[:labels])
+    @result2_data = Result.performance_seconds_to_values(params[:result2_id], group[:labels])
   end
 end

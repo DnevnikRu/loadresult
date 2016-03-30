@@ -186,7 +186,7 @@ class Result < ActiveRecord::Base
 
   def self.percentile_of_values_of_requests(result_id, cut_percent)
     values = values_of_requests(result_id, cut_percent)
-    (0..100).map { |i| percentile(values, i) }
+    (1..100).map { |i| percentile(values, i) }
   end
 
   def self.performance_seconds_to_values(result_id, labels, cut_percent)

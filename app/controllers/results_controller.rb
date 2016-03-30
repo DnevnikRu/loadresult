@@ -26,7 +26,8 @@ class ResultsController < ApplicationController
         version: params[:version],
         rps: params[:rps],
         duration: params[:duration],
-        profile: params[:profile]
+        profile: params[:profile],
+        time_cutting_percent: params[:time_cutting_percent]
     )
     if update_result
       redirect_to(results_url, notice: 'Result was successfully updated.')
@@ -35,6 +36,7 @@ class ResultsController < ApplicationController
       flash[:rps] = params[:rps]
       flash[:duration] = params[:duration]
       flash[:profile] = params[:profile]
+      flash[time_cutting_percent] = params[:time_cutting_percent]
       redirect_to({action: :edit}, alert: @result.errors.full_messages)
     end
   end

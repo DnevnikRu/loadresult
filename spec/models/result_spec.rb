@@ -662,19 +662,63 @@ describe Result do
   describe '.performance_seconds_to_values' do
     before do
       @result = create(:result)
-      (1..10).each do |i|
+      (0..10).each do |i|
         create(
             :performance_result,
             result_id: @result.id,
-            timestamp: i * 10,
+            timestamp: i * 1000,
             value: i,
             label: 'cpu_1'
+        )
+        create(
+            :performance_result,
+            result_id: @result.id,
+            timestamp: i * 1000,
+            value: i * 2,
+            label: 'cpu_2'
         )
       end
     end
 
     it 'returns a Hash' do
-      expect(Result.performance_seconds_to_values(@result.id, ['cpu_1']), @result.time_cutting_percent).to be_a(Hash)
+      expect(Result.performance_seconds_to_values(@result.id, ['cpu_1', 'cpu_2'], 10)).to be_a(Hash)
+    end
+
+    it 'calculates seconds' do
+      perf_seconds_to_values = Result.performance_seconds_to_values(@result.id, ['cpu_1', 'cpu_2'], 10)
+      expect(perf_seconds_to_values['cpu_1'][:seconds]).to eq([0, 1, 2, 3, 4, 5, 6, 7, 8])
+    end
+
+    it 'cut sent percent from values' do
+      perf_seconds_to_values = Result.performance_seconds_to_values(@result.id, ['cpu_1', 'cpu_2'], 10)
+      expect(perf_seconds_to_values['cpu_1'][:values]).to eq([1, 2, 3, 4, 5, 6, 7, 8, 9])
+    end
+
+    it 'handle all labels' do
+      perf_seconds_to_values = Result.performance_seconds_to_values(@result.id, ['cpu_1', 'cpu_2'], 10)
+      expect(perf_seconds_to_values).to have_key('cpu_1')
+      expect(perf_seconds_to_values).to have_key('cpu_2')
+    end
+  end
+
+  describe '.border_timestamps' do
+    before do
+      @result = create(:result)
+      (0..10).each do |i|
+        create(
+            :performance_result,
+            result_id: @result.id,
+            timestamp: i * 1000
+        )
+      end
+    end
+
+    it 'returns an Array' do
+      expect(Result.border_timestamps(@result.id, PerformanceResult, 10)).to be_an(Array)
+    end
+
+    it 'returns an minimum and maximum timestamp after cutting a percent' do
+      expect(Result.border_timestamps(@result.id, PerformanceResult, 10)).to eq([1000, 9000])
     end
   end
 

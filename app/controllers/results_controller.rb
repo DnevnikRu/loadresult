@@ -36,7 +36,7 @@ class ResultsController < ApplicationController
       flash[:rps] = params[:rps]
       flash[:duration] = params[:duration]
       flash[:profile] = params[:profile]
-      flash[time_cutting_percent] = params[:time_cutting_percent]
+      flash[:time_cutting_percent] = params[:time_cutting_percent]
       redirect_to({action: :edit}, alert: @result.errors.full_messages)
     end
   end

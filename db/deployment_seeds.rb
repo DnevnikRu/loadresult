@@ -11,6 +11,7 @@ results = []
                            duration: (i+1)*200,
                            rps: 100*(i+1),
                            profile: 'all_sites',
+                           time_cutting_percent: 10,
                            test_run_date: "0#{i+1}.02.2016 10:0#{i}",
                            created_at: "0#{i+1}.02.2016 10:0#{i}")
 end

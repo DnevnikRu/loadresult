@@ -651,11 +651,11 @@ describe Result do
     end
 
     it 'returns an Array' do
-      expect(Result.percentile_of_values_of_requests(@result.id)).to be_an(Array)
+      expect(Result.percentile_of_values_of_requests(@result.id, @result.time_cutting_percent)).to be_an(Array)
     end
 
     it 'finds percentile for each percent' do
-      expect(Result.percentile_of_values_of_requests(@result.id).size).to eq(100)
+      expect(Result.percentile_of_values_of_requests(@result.id, @result.time_cutting_percent).size).to eq(100)
     end
   end
 
@@ -674,7 +674,7 @@ describe Result do
     end
 
     it 'returns a Hash' do
-      expect(Result.performance_seconds_to_values(@result.id, ['cpu_1']), @result.time_cutting_percent).to be_a(Hash)
+      expect(Result.performance_seconds_to_values(@result.id, ['cpu_1'], @result.time_cutting_percent)).to be_a(Hash)
     end
   end
 

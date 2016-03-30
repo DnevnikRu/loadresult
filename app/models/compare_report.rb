@@ -9,7 +9,7 @@ class CompareReport
 
   def description
     description = {}
-    %w(version rps duration profile test_run_date).each do |key|
+    %w(version rps duration profile test_run_date time_cutting_percent).each do |key|
       values = {}
       values[:result1] = @result1.send(key)
       values[:result2] = @result2.send(key)

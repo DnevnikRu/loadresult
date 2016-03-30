@@ -18,6 +18,7 @@ class ResultsController < ApplicationController
     flash[:rps] = @result[:rps]
     flash[:duration] = @result[:duration]
     flash[:profile] = @result[:profile]
+    flash[:time_cutting_percent] = @result[:time_cutting_percent]
   end
 
   def update
@@ -55,6 +56,7 @@ class ResultsController < ApplicationController
         flash[:duration] = result[:duration]
         flash[:profile] = result[:profile]
         flash[:test_run_date] = result[:test_run_date].try(:strftime, '%d.%m.%Y %H:%M')
+        flash[:time_cutting_percent] = result[:time_cutting_percent]
         redirect_to({action: :new}, alert: result.errors.full_messages)
       end
     end

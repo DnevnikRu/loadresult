@@ -354,7 +354,7 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023050000)
       create(:requests_result, result_id: @result.id, timestamp: 1455023055000)
       create(:requests_result, result_id: @result.id, timestamp: 1455023060000)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
     end
 
     it 'timestamp borders are correct' do
@@ -400,7 +400,7 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 348, response_code: 100)
       create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 1238, response_code: 123)
       create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 123, response_code: 9880)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
     end
 
     it 'request mean is correct with standard values' do
@@ -435,7 +435,7 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 344, response_code: 'Non HTTP response code: org.apache.http.ConnectionClosedException')
       create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 343, response_code: 1)
       create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 123, response_code: 9880)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
     end
 
     it 'request mean is correct with different values' do
@@ -468,7 +468,7 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023050500, value: 123, response_code: 123)
       create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 123, response_code: 123)
       create(:requests_result, result_id: @result.id, timestamp: 1455023050601, value: 123, response_code: 123)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
     end
 
     it 'request mean is correct with same values' do
@@ -507,7 +507,7 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023041400)
       create(:requests_result, result_id: @result.id, timestamp: 1455023041500)
       create(:requests_result, result_id: @result.id, timestamp: 1455023041600)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
     end
 
     it 'request throughput with different timestamps' do
@@ -525,7 +525,7 @@ describe Result do
       create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
       create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
       create(:requests_result, result_id: @result.id, timestamp: 1455023040700)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
     end
 
     it 'request throughput with same timestamps' do
@@ -544,7 +544,7 @@ describe Result do
       create(:performance_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
       create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
       create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, PerformanceResult)
+      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, PerformanceResult, 10)
     end
 
     it 'performance mean is correct' do
@@ -625,15 +625,15 @@ describe Result do
     end
 
     it 'returns an Array' do
-      expect(Result.values_of_requests(@result.id)).to be_an(Array)
+      expect(Result.values_of_requests(@result.id, 10)).to be_an(Array)
     end
 
     it 'returns values for result id' do
-      expect(Result.values_of_requests(@result.id)).to eq([3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
+      expect(Result.values_of_requests(@result.id, 10)).to eq([3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
     end
 
     it 'returns values for result id and label' do
-      expect(Result.values_of_requests(@result.id, 'first label')).to eq([3, 4, 5, 6, 7, 8, 9, 10])
+      expect(Result.values_of_requests(@result.id, 'first label', 10)).to eq([3, 4, 5, 6, 7, 8, 9, 10])
     end
   end
 

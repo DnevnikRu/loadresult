@@ -28,6 +28,10 @@
             <%= label_tag :profile, nil, class: "control-label" %>
             <%= text_field_tag :profile, flash[:profile], class: "form-control", placeholder: 'all_sites' %>
           </div>
+          <div class="form-group">
+            <%= label_tag :time_cutting_percent, nil, class: "control-label" %>
+            <%= text_field_tag :time_cutting_percent, flash[:time_cutting_percent], class: "form-control", placeholder: '10' %>
+          </div>
           <%= button_tag "Update", class: "btn btn-primary", 'data-disable-with' => 'Loading..' %>
       <% end %>
 

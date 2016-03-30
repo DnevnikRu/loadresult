@@ -17,12 +17,14 @@ class Result < ActiveRecord::Base
   end
 
   def self.upload_and_create(params)
+    default_time_cutting = 10
     result = Result.new(
         version: params['version'],
         duration: params['duration'],
         rps: params['rps'],
         profile: params['profile'],
-        test_run_date: params['test_run_date']
+        test_run_date: params['test_run_date'],
+        time_cutting_percent: params['time_cut_percent']||default_time_cutting
     )
     result.save
 
@@ -44,15 +46,15 @@ class Result < ActiveRecord::Base
     end
 
     unless result.errors.any?
-      calc_request_data(result)
-      calc_performance_data(result) unless result.performance_results.empty?
+      calc_request_data(result, result.time_cutting_percent)
+      calc_performance_data(result, result.time_cutting_percent) unless result.performance_results.empty?
     end
 
     result
   end
 
-  def self.calc_request_data(result)
-    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, RequestsResult)
+  def self.calc_request_data(result, cut_percent)
+    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, RequestsResult, cut_percent)
     labels = RequestsResult.where(result_id: result.id).pluck(:label).uniq
     labels.each do |label|
       CalculatedRequestsResult.create(
@@ -69,8 +71,8 @@ class Result < ActiveRecord::Base
     end
   end
 
-  def self.calc_performance_data(result)
-    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, PerformanceResult)
+  def self.calc_performance_data(result, cut_percent)
+    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, PerformanceResult, cut_percent)
     labels = PerformanceResult.where(result_id: result.id).pluck(:label).uniq
     labels.each do |label|
       CalculatedPerformanceResult.create(
@@ -142,12 +144,12 @@ class Result < ActiveRecord::Base
     records.exists? ? records.maximum(:value) : nil
   end
 
-  def self.border_timestamps(id, table)
+  def self.border_timestamps(id, table, cut_percent)
     max_timestamp = table.where(result_id: id).maximum(:timestamp)
     min_timestamp = table.where(result_id: id).minimum(:timestamp)
-    ten_percent = (max_timestamp - min_timestamp) / 10
-    bottom_timestamp = (min_timestamp + ten_percent)
-    top_timestamp = (max_timestamp - ten_percent)
+    cutted_time = (max_timestamp - min_timestamp) / cut_percent
+    bottom_timestamp = (min_timestamp + cutted_time)
+    top_timestamp = (max_timestamp - cutted_time)
     [bottom_timestamp, top_timestamp]
   end
 
@@ -177,25 +179,25 @@ class Result < ActiveRecord::Base
     end
   end
 
-  def self.values_of_requests(result_id, label = nil)
-    bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult)
+  def self.values_of_requests(result_id, label = nil, cut_percent)
+    bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult, cut_percent)
     records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
     records.map(&:value)
   end
 
-  def self.percentile_of_values_of_requests(result_id)
-    values = values_of_requests(result_id)
+  def self.percentile_of_values_of_requests(result_id, cut_percent)
+    values = values_of_requests(result_id, cut_percent)
     (0..100).map { |i| percentile(values, i) }
   end
 
-  def self.performance_plot(result_id, performance_group)
+  def self.performance_plot(result_id, performance_group, cut_percent)
     data = {}
     performance_group.labels.each do |label_main|
       label_main_label = handle_backslash(label_main.label)
       labels = find_performance_result_labels(label_main_label).uniq
       labels.each do |label|
         data[label] = {seconds: [], values: []}
-        bottom_timestamp, top_timestamp = border_timestamps(result_id, PerformanceResult)
+        bottom_timestamp, top_timestamp = border_timestamps(result_id, PerformanceResult, cut_percent)
         records = PerformanceResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
         timestamp_min = records.minimum(:timestamp)
         records.order(:timestamp).each do |record|

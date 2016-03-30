@@ -13,18 +13,18 @@ class CompareController < ApplicationController
 
   def requests_histogram_plot
     @plot_id = params[:plot_id]
-    @result1_data = Result.values_of_requests(params[:result1_id], params[:label])
-    @result2_data = Result.values_of_requests(params[:result2_id], params[:label])
+    @result1_data = Result.values_of_requests(params[:result1_id], params[:label], params[:result1_time_cut].to_i)
+    @result2_data = Result.values_of_requests(params[:result2_id], params[:label], params[:result2_time_cut].to_i)
   end
 
   def all_requests_histogram_plot
-    @result1_data = Result.values_of_requests(params[:result1_id])
-    @result2_data = Result.values_of_requests(params[:result2_id])
+    @result1_data = Result.values_of_requests(params[:result1_id], params[:result1_time_cut].to_i)
+    @result2_data = Result.values_of_requests(params[:result2_id], params[:result1_time_cut].to_i)
   end
 
   def percentile_requests_plot
-    @result1_data = Result.percentile_of_values_of_requests(params[:result1_id])
-    @result2_data = Result.percentile_of_values_of_requests(params[:result2_id])
+    @result1_data = Result.percentile_of_values_of_requests(params[:result1_id], params[:result1_time_cut].to_i)
+    @result2_data = Result.percentile_of_values_of_requests(params[:result2_id], params[:result1_time_cut].to_i)
   end
 
   def performance_plot
@@ -32,7 +32,7 @@ class CompareController < ApplicationController
     performance_group = PerformanceGroup.find_by(name: params[:group_name])
     @unit = performance_group.units
     @plot_id = params[:plot_id]
-    @result1_data = Result.performance_plot(params[:result1_id], performance_group)
-    @result2_data = Result.performance_plot(params[:result2_id], performance_group)
+    @result1_data = Result.performance_plot(params[:result1_id], performance_group, params[:result1_time_cut].to_i)
+    @result2_data = Result.performance_plot(params[:result2_id], performance_group, params[:result1_time_cut].to_i)
   end
 end

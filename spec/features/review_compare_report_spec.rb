@@ -54,7 +54,7 @@ feature 'Review compare report' do
     end
   end
 
-  scenario 'All requests historgram button opens a plot' do
+  scenario 'Percentile of requests button opens a plot' do
     visit compare_path(result: [@result1.id, @result2.id])
     click_button 'Percentile of requests'
 
@@ -63,7 +63,7 @@ feature 'Review compare report' do
     end
   end
 
-  scenario 'All requests historgram button opens a plot' do
+  scenario 'Click on a label in Request Data show a plot' do
     visit compare_path(result: [@result1.id, @result2.id])
     click_on 'Requests Data'
     show_plot_btn = find_button 'login :GET'

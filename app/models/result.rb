@@ -265,12 +265,4 @@ class Result < ActiveRecord::Base
       sorted_array[rank]
     end
   end
-
-  def self.handle_backslash(str)
-    str.gsub('\\') { '\\\\' }
-  end
-
-  def self.find_performance_result_labels(label)
-    PerformanceResult.where('label LIKE ?', "%#{label}%").pluck(:label)
-  end
 end

@@ -43,7 +43,7 @@
             <% label_uniq_id = Digest::MD5.hexdigest(group[:name]) %>
             <%= button_to 'Show a plot',
                 compare_performance_plot_path(
-                  group_name: group[:name],
+                  group: group,
                   result1_id: @compare_report.result1.id,
                   result2_id: @compare_report.result2.id,
                   result1_time_cut: @compare_report.result1.time_cutting_percent,

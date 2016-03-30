@@ -163,7 +163,6 @@ class Result < ActiveRecord::Base
   end
 
   def self.percentile(data_set, percent)
-    return 0 if percent.zero?
     return nil if data_set.empty?
 
     sorted_data = data_set.sort
@@ -190,20 +189,16 @@ class Result < ActiveRecord::Base
     (0..100).map { |i| percentile(values, i) }
   end
 
-  def self.performance_plot(result_id, performance_group, cut_percent)
+  def self.performance_seconds_to_values(result_id, labels, cut_percent)
     data = {}
-    performance_group.labels.each do |label_main|
-      label_main_label = handle_backslash(label_main.label)
-      labels = find_performance_result_labels(label_main_label).uniq
-      labels.each do |label|
-        data[label] = {seconds: [], values: []}
-        bottom_timestamp, top_timestamp = border_timestamps(result_id, PerformanceResult, cut_percent)
-        records = PerformanceResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
-        timestamp_min = records.minimum(:timestamp)
-        records.order(:timestamp).each do |record|
-          data[label][:seconds].push (record.timestamp - timestamp_min) / 1000
-          data[label][:values].push record.value
-        end
+    labels.each do |label|
+      data[label] = {seconds: [], values: []}
+      bottom_timestamp, top_timestamp = border_timestamps(result_id, PerformanceResult, cut_percent)
+      records = PerformanceResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
+      timestamp_min = records.minimum(:timestamp)
+      records.order(:timestamp).each do |record|
+        data[label][:seconds].push (record.timestamp - timestamp_min) / 1000
+        data[label][:values].push record.value
       end
     end
     data

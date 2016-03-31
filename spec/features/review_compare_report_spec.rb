@@ -63,10 +63,10 @@ feature 'Review compare report' do
     end
   end
 
-  scenario 'Click on a label in Request Data show a plot' do
+  scenario 'Click on a Show historgram of response time plot button shows a plot' do
     visit compare_path(result: [@result1.id, @result2.id])
     click_on 'Requests Data'
-    show_plot_btn = find_button 'login :GET'
+    show_plot_btn = find('.response-time-plot')
     show_plot_btn.click
 
     within(show_plot_btn['data-target']) do

@@ -1,9 +1,9 @@
 <div class="container-fluid">
   <div class="page-header">
-    <h1>Compare report (id:<%= @compare_report.result1.id %> vs id:<%= @compare_report.result2.id %>)
+    <h1>Compare report <small>(id:<%= @compare_report.result1.id %> vs id:<%= @compare_report.result2.id %>)
       <%= link_to"#{compare_path}?result[]=#{@compare_report.result2.id}&result[]=#{@compare_report.result1.id}", {"data-no-turbolink" => true} do %>
           <i class="fa fa-exchange"></i>
-      <% end %>
+      <% end %></small>
     </h1>
   </div>
 

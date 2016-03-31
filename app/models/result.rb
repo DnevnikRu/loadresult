@@ -17,14 +17,14 @@ class Result < ActiveRecord::Base
   end
 
   def self.upload_and_create(params)
-    default_time_cutting = 10
+    params['time_cutting_percent'].blank? ? time_cutting = 10 : time_cutting = params['time_cutting_percent']
     result = Result.new(
         version: params['version'],
         duration: params['duration'],
         rps: params['rps'],
         profile: params['profile'],
         test_run_date: params['test_run_date'],
-        time_cutting_percent: params['time_cut_percent']||default_time_cutting
+        time_cutting_percent: time_cutting
     )
     result.save
 
@@ -53,13 +53,35 @@ class Result < ActiveRecord::Base
     result
   end
 
+  def self.update_and_recalculate(result, params)
+    previous_time_cut_percent = result.time_cutting_percent
+    result_update = result.update(
+        version: params[:version],
+        rps: params[:rps],
+        duration: params[:duration],
+        profile: params[:profile],
+        time_cutting_percent: params[:time_cutting_percent]
+    )
+
+    if previous_time_cut_percent != result.time_cutting_percent
+
+      if RequestsResult.find_by(result_id: result.id)
+        Result.calc_request_data(result, result.time_cutting_percent)
+      end
+
+      if PerformanceResult.find_by(result_id: result.id)
+        Result.calc_performance_data(result, result.time_cutting_percent)
+      end
+    end
+
+    result_update
+  end
+
   def self.calc_request_data(result, cut_percent)
     bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, RequestsResult, cut_percent)
     labels = RequestsResult.where(result_id: result.id).pluck(:label).uniq
     labels.each do |label|
-      CalculatedRequestsResult.create(
-          result_id: result.id,
-          label: label,
+      CalculatedRequestsResult.find_or_initialize_by(result_id: result.id, label: label).update_attributes!(
           mean: result.request_mean(label, bottom_timestamp, top_timestamp),
           median: result.request_median(label, bottom_timestamp, top_timestamp),
           ninety_percentile: result.request_90percentile(label, bottom_timestamp, top_timestamp),
@@ -75,12 +97,10 @@ class Result < ActiveRecord::Base
     bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, PerformanceResult, cut_percent)
     labels = PerformanceResult.where(result_id: result.id).pluck(:label).uniq
     labels.each do |label|
-      CalculatedPerformanceResult.create(
-          result_id: result.id,
-          label: label,
-          mean: result.performance_mean(label, bottom_timestamp, top_timestamp),
-          max: result.performance_max(label, bottom_timestamp, top_timestamp),
-          min: result.performance_min(label, bottom_timestamp, top_timestamp)
+      CalculatedPerformanceResult.find_or_initialize_by(result_id: result.id, label: label).update_attributes!(
+          :mean => result.performance_mean(label, bottom_timestamp, top_timestamp),
+          :max => result.performance_max(label, bottom_timestamp, top_timestamp),
+          :min => result.performance_min(label, bottom_timestamp, top_timestamp)
       )
     end
   end

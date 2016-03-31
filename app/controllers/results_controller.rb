@@ -22,13 +22,7 @@ class ResultsController < ApplicationController
   end
 
   def update
-    update_result = @result.update(
-        version: params[:version],
-        rps: params[:rps],
-        duration: params[:duration],
-        profile: params[:profile],
-        time_cutting_percent: params[:time_cutting_percent]
-    )
+    update_result = Result.update_and_recalculate(@result, params)
     if update_result
       redirect_to(results_url, notice: 'Result was successfully updated.')
     else

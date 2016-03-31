@@ -10,6 +10,7 @@ gem 'turbolinks', '~> 2.5'
 gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'bootstrap-sass', '~> 3.3.6'
+gem 'font-awesome-sass'
 
 gem 'capistrano', '~> 3.1.0'
 gem 'capistrano-rails', '~> 1.1.0'

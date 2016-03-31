@@ -66,7 +66,18 @@ feature 'Review compare report' do
   scenario 'Click on a Show historgram of response time plot button shows a plot' do
     visit compare_path(result: [@result1.id, @result2.id])
     click_on 'Requests Data'
-    show_plot_btn = find('.response-time-plot')
+    show_plot_btn = find('.requests-histogram-plot-button')
+    show_plot_btn.click
+
+    within(show_plot_btn['data-target']) do
+      expect(page).to have_selector('div.svg-container')
+    end
+  end
+
+  scenario 'Click on a Show requests values to seconds button shows a plot' do
+    visit compare_path(result: [@result1.id, @result2.id])
+    click_on 'Requests Data'
+    show_plot_btn = find('.requests-time-plot-button')
     show_plot_btn.click
 
     within(show_plot_btn['data-target']) do

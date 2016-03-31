@@ -92,8 +92,8 @@
             <td class="hidden-row"></td>
           </tr>
           <% @compare_report.request_labels.each do |label| %>
-              <% requests_histogram_uniq_id = Digest::MD5.hexdigest(label + 'a') %>
-              <% requests_seconds_to_values_uniq_id = Digest::MD5.hexdigest(label + 'b') %>
+              <% requests_histogram_uniq_id = Digest::SHA1.hexdigest(label + '1') %>
+              <% requests_seconds_to_values_uniq_id = Digest::SHA1.hexdigest(label + '2') %>
               <tr>
                 <td class="labelResult">
                   <div class="bottom10"><%= label %></div>
@@ -109,7 +109,7 @@
                                     ),
                                     remote: true,
                                     id: "#{requests_histogram_uniq_id}_button",
-                                    class: 'btn btn-default btn-xs show-plot response-time-plot',
+                                    class: 'btn btn-default btn-xs show-plot requests-histogram-plot-button',
                                     'data-toggle' => 'collapse',
                                     'data-target' => "##{requests_histogram_uniq_id}_div") do %>
                                       <i class="glyphicon glyphicon-pawn"></i>
@@ -126,7 +126,7 @@
                                     ),
                                     remote: true,
                                     id: "#{requests_seconds_to_values_uniq_id}_button",
-                                    class: 'btn btn-default btn-xs show-plot response-time-plot',
+                                    class: 'btn btn-default btn-xs show-plot requests-time-plot-button',
                                     'data-toggle' => 'collapse',
                                     'data-target' => "##{requests_seconds_to_values_uniq_id}_div") do %>
                                       <i class="glyphicon glyphicon-knight"></i>

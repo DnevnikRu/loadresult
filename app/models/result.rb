@@ -147,9 +147,10 @@ class Result < ActiveRecord::Base
   def self.border_timestamps(id, table, cut_percent)
     max_timestamp = table.where(result_id: id).maximum(:timestamp)
     min_timestamp = table.where(result_id: id).minimum(:timestamp)
-    cutted_time = (max_timestamp - min_timestamp) / cut_percent
-    bottom_timestamp = (min_timestamp + cutted_time)
-    top_timestamp = (max_timestamp - cutted_time)
+    cut_percent = cut_percent.to_f/100
+    cutted_time = (max_timestamp - min_timestamp) *cut_percent
+    bottom_timestamp = (min_timestamp + cutted_time.to_i)
+    top_timestamp = (max_timestamp - cutted_time.to_i)
     [bottom_timestamp, top_timestamp]
   end
 

@@ -15,26 +15,32 @@
  */
 @import "bootstrap-sprockets";
 @import "bootstrap";
-
 .form-group.required .control-label:after {
   content: "*";
   color: red;
 }
-
 .hidden-row {
-  padding: 0px !important;
+  padding: 0 !important;
 }
-
+.bottom10 {
+  margin-bottom: 10px;
+}
 .bottom20 {
   margin-bottom: 20px;
 }
-
 .tooltip-inner {
   background-color: #5bc0de;
   color: #fff;
   text-align: left;
 }
-
 .tooltip.bottom .tooltip-arrow {
   border-bottom-color: #5bc0de;
+}
+.btn.show-plot[aria-expanded="true"] {
+  color: #fff;
+  background-color: #286090;
+  border-color: #204d74;
+}
+.inline-block {
+  display: inline-block;
 }

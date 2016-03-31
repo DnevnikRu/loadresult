@@ -94,22 +94,27 @@
           <% @compare_report.request_labels.each do |label| %>
               <% label_uniq_id = Digest::MD5.hexdigest(label) %>
               <tr>
-                <td>
-                  <%= button_to label,
-                                compare_requests_histogram_plot_path(
-                                    label: label,
-                                    result1_id: @compare_report.result1.id,
-                                    result2_id: @compare_report.result2.id,
-                                    result1_time_cut: @compare_report.result1.time_cutting_percent,
-                                    result2_time_cut: @compare_report.result2.time_cutting_percent,
-                                    plot_id: label_uniq_id
-                                ),
-                                remote: true,
-                                id: "#{label_uniq_id}_button",
-                                class: 'btn btn-default show-plot',
-                                data: { disable_with: 'Loading..' },
-                                'data-toggle' => 'collapse',
-                                'data-target' => "##{label_uniq_id}_div" %>
+                <td class="labelResult">
+                  <div class="bottom10"><%= label %></div>
+                  <div class="btn-group" role="group">
+                    <div class="inline-block">
+                      <%= button_to(compare_requests_histogram_plot_path(
+                                        label: label,
+                                        result1_id: @compare_report.result1.id,
+                                        result2_id: @compare_report.result2.id,
+                                        result1_time_cut: @compare_report.result1.time_cutting_percent,
+                                        result2_time_cut: @compare_report.result2.time_cutting_percent,
+                                        plot_id: label_uniq_id
+                                    ),
+                                    remote: true,
+                                    id: "#{label_uniq_id}_button",
+                                    class: 'btn btn-default show-plot btn-xs',
+                                    'data-toggle' => 'collapse',
+                                    'data-target' => "##{label_uniq_id}_div") do %>
+                                      <i class="glyphicon glyphicon-pawn"></i>
+                                    <% end %>
+                    </div>
+                  </div>
                 </td>
                 <td class="mean" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version%> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).mean %></td>
                 <td class="mean" data-toggle="tooltip" title="Version: <%= @compare_report.result2.version%> <br> Test run date: <%= @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M')%>"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).mean %></td>

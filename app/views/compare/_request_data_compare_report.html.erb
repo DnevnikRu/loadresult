@@ -92,7 +92,8 @@
             <td class="hidden-row"></td>
           </tr>
           <% @compare_report.request_labels.each do |label| %>
-              <% label_uniq_id = Digest::MD5.hexdigest(label) %>
+              <% requests_histogram_uniq_id = Digest::SHA1.hexdigest(label + '1') %>
+              <% requests_seconds_to_values_uniq_id = Digest::SHA1.hexdigest(label + '2') %>
               <tr>
                 <td class="labelResult">
                   <div class="bottom10"><%= label %></div>
@@ -104,14 +105,31 @@
                                         result2_id: @compare_report.result2.id,
                                         result1_time_cut: @compare_report.result1.time_cutting_percent,
                                         result2_time_cut: @compare_report.result2.time_cutting_percent,
-                                        plot_id: label_uniq_id
+                                        plot_id: requests_histogram_uniq_id
                                     ),
                                     remote: true,
-                                    id: "#{label_uniq_id}_button",
-                                    class: 'btn btn-default btn-xs show-plot response-time-plot',
+                                    id: "#{requests_histogram_uniq_id}_button",
+                                    class: 'btn btn-default btn-xs show-plot requests-histogram-plot-button',
                                     'data-toggle' => 'collapse',
-                                    'data-target' => "##{label_uniq_id}_div") do %>
-                                      <i class="glyphicon glyphicon-pawn"></i>
+                                    'data-target' => "##{requests_histogram_uniq_id}_div") do %>
+                                      <i class="fa fa-bar-chart"></i>
+                                    <% end %>
+                    </div>
+                    <div class="inline-block">
+                      <%= button_to(compare_requests_seconds_to_values_plot_path(
+                                        label: label,
+                                        result1_id: @compare_report.result1.id,
+                                        result2_id: @compare_report.result2.id,
+                                        result1_time_cut: @compare_report.result1.time_cutting_percent,
+                                        result2_time_cut: @compare_report.result2.time_cutting_percent,
+                                        plot_id: requests_seconds_to_values_uniq_id
+                                    ),
+                                    remote: true,
+                                    id: "#{requests_seconds_to_values_uniq_id}_button",
+                                    class: 'btn btn-default btn-xs show-plot requests-time-plot-button',
+                                    'data-toggle' => 'collapse',
+                                    'data-target' => "##{requests_seconds_to_values_uniq_id}_div") do %>
+                                      <i class="fa fa-area-chart"></i>
                                     <% end %>
                     </div>
                   </div>
@@ -138,7 +156,12 @@
               </tr>
               <tr>
                 <td colspan="100" class="hidden-row">
-                  <div class="collapse" id="<%= "#{label_uniq_id}_div" %>"></div>
+                  <div class="collapse" id="<%= "#{requests_histogram_uniq_id}_div" %>"></div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="100" class="hidden-row">
+                  <div class="collapse" id="<%= "#{requests_seconds_to_values_uniq_id}_div" %>"></div>
                 </td>
               </tr>
           <% end %>

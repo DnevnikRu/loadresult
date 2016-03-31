@@ -1,0 +1,26 @@
+$('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
+
+var result1 = {
+    x: <%= @result1_data[:seconds] %>,
+    y: <%= @result1_data[:values] %>,
+    opacity: 0.75,
+    name: 'id:<%= params[:result1_id] %>',
+    mode: 'lines'
+};
+var result2 = {
+  x: <%= @result2_data[:seconds] %>,
+  y: <%= @result2_data[:values] %>,
+  opacity: 0.75,
+  name: 'id:<%= params[:result2_id] %>',
+  mode: 'lines'
+};
+var layout = {
+    title: 'Response time to seconds',
+    xaxis: {
+        title: 'Time, seconds'
+    },
+    yaxis: {
+        title: 'Response time, ms'
+    }
+};
+Plotly.newPlot('<%= "#{@plot_id}_div" %>', [result1, result2], layout);

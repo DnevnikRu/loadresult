@@ -189,6 +189,18 @@ class Result < ActiveRecord::Base
     (1..100).map { |i| percentile(values, i) }
   end
 
+  def self.requests_seconds_to_values(result_id, label, cut_percent)
+    data = {seconds: [], values: []}
+    bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult, cut_percent)
+    records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
+    timestamp_min = records.minimum(:timestamp)
+    records.order(:timestamp).each do |record|
+      data[:seconds].push (record.timestamp - timestamp_min) / 1000
+      data[:values].push record.value
+    end
+    data
+  end
+
   def self.performance_seconds_to_values(result_id, labels, cut_percent)
     data = {}
     labels.each do |label|

@@ -685,21 +685,51 @@ describe Result do
     end
 
     it 'calculates seconds' do
-      perf_seconds_to_values = Result.performance_seconds_to_values(@result.id, ['cpu_1', 'cpu_2'], 10)
-      expect(perf_seconds_to_values['cpu_1'][:seconds]).to eq([0, 1, 2, 3, 4, 5, 6, 7, 8])
+      perf_sec_to_values = Result.performance_seconds_to_values(@result.id, ['cpu_1', 'cpu_2'], 10)
+      expect(perf_sec_to_values['cpu_1'][:seconds]).to eq([0, 1, 2, 3, 4, 5, 6, 7, 8])
     end
 
     it 'cut sent percent from values' do
-      perf_seconds_to_values = Result.performance_seconds_to_values(@result.id, ['cpu_1', 'cpu_2'], 10)
-      expect(perf_seconds_to_values['cpu_1'][:values]).to eq([1, 2, 3, 4, 5, 6, 7, 8, 9])
+      perf_sec_to_values = Result.performance_seconds_to_values(@result.id, ['cpu_1', 'cpu_2'], 10)
+      expect(perf_sec_to_values['cpu_1'][:values]).to eq([1, 2, 3, 4, 5, 6, 7, 8, 9])
     end
 
     it 'handle all labels' do
-      perf_seconds_to_values = Result.performance_seconds_to_values(@result.id, ['cpu_1', 'cpu_2'], 10)
-      expect(perf_seconds_to_values).to have_key('cpu_1')
-      expect(perf_seconds_to_values).to have_key('cpu_2')
+      perf_sec_to_values = Result.performance_seconds_to_values(@result.id, ['cpu_1', 'cpu_2'], 10)
+      expect(perf_sec_to_values).to have_key('cpu_1')
+      expect(perf_sec_to_values).to have_key('cpu_2')
     end
   end
+
+  describe '.requests_seconds_to_values' do
+    before do
+      @result = create(:result)
+      (0..10).each do |i|
+        create(
+            :requests_result,
+            result_id: @result.id,
+            timestamp: i * 1000,
+            value: i,
+            label: 'login :GET'
+        )
+      end
+    end
+
+    it 'returns a Hash' do
+      expect(Result.requests_seconds_to_values(@result.id, 'login :GET', 10)).to be_a(Hash)
+    end
+
+    it 'calculates seconds' do
+      req_sec_to_values = Result.requests_seconds_to_values(@result.id, 'login :GET', 10)
+      expect(req_sec_to_values[:seconds]).to eq([0, 1, 2, 3, 4, 5, 6, 7, 8])
+    end
+
+    it 'cut sent percent from values' do
+      req_sec_to_values = Result.requests_seconds_to_values(@result.id, 'login :GET', 10)
+      expect(req_sec_to_values[:values]).to eq([1, 2, 3, 4, 5, 6, 7, 8, 9])
+    end
+  end
+
 
   describe '.border_timestamps' do
     before do

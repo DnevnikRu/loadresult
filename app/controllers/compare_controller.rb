@@ -17,6 +17,12 @@ class CompareController < ApplicationController
     @result2_data = Result.values_of_requests(params[:result2_id], params[:label], params[:result2_time_cut].to_i)
   end
 
+  def requests_seconds_to_values_plot
+    @plot_id = params[:plot_id]
+    @result1_data = Result.requests_seconds_to_values(params[:result1_id], params[:label], params[:result1_time_cut].to_i)
+    @result2_data = Result.requests_seconds_to_values(params[:result2_id], params[:label], params[:result2_time_cut].to_i)
+  end
+
   def all_requests_histogram_plot
     @result1_data = Result.values_of_requests(params[:result1_id], params[:result1_time_cut].to_i)
     @result2_data = Result.values_of_requests(params[:result2_id], params[:result2_time_cut].to_i)

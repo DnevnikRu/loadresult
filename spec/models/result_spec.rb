@@ -708,7 +708,7 @@ describe Result do
         create(
             :performance_result,
             result_id: @result.id,
-            timestamp: i * 1000
+            timestamp: i
         )
       end
     end
@@ -717,8 +717,16 @@ describe Result do
       expect(Result.border_timestamps(@result.id, PerformanceResult, 10)).to be_an(Array)
     end
 
-    it 'returns an minimum and maximum timestamp after cutting a percent' do
-      expect(Result.border_timestamps(@result.id, PerformanceResult, 10)).to eq([1000, 9000])
+    it 'returns the minimum and maximum timestamp after cutting 0 percent' do
+      expect(Result.border_timestamps(@result.id, PerformanceResult, 0)).to eq([0, 10])
+    end
+
+    it 'returns the minimum and maximum timestamp after cutting 10 percent' do
+      expect(Result.border_timestamps(@result.id, PerformanceResult, 10)).to eq([1, 9])
+    end
+
+    it 'returns the minimum and maximum timestamp after cutting 20 percent' do
+      expect(Result.border_timestamps(@result.id, PerformanceResult, 20)).to eq([2, 8])
     end
   end
 

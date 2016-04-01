@@ -64,7 +64,7 @@ class Result < ActiveRecord::Base
         time_cutting_percent: time_cutting
     )
 
-    if previous_time_cut_percent != result.time_cutting_percent      
+    if previous_time_cut_percent != result.time_cutting_percent
       Result.calc_request_data(result, result.time_cutting_percent)
 
       if PerformanceResult.find_by(result_id: result.id)

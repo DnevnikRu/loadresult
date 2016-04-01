@@ -13,6 +13,7 @@ describe 'Editing a result' do
       fill_in 'rps', with: '666'
       fill_in 'duration', with: '999'
       fill_in 'profile', with: 'New profile'
+      fill_in 'time_cutting_percent', with: '20'
       click_button 'Update'
     end
 
@@ -22,6 +23,7 @@ describe 'Editing a result' do
         expect(find('.rps')).to have_content('666')
         expect(find('.duration')).to have_content('999')
         expect(find('.profile')).to have_content('New profile')
+        expect(find('.time_cutting_percent')).to have_content('20')
       end
     end
 

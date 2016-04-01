@@ -113,22 +113,4 @@ feature 'Upload load result' do
       expect(page).to have_current_path(results_path)
     end
   end
-
-  context 'API simulation' do
-
-    let(:summary_file_path) { File.join(fixture_path, 'summary.csv').normalize_path }
-
-    scenario 'Upload with json parameters' do
-      summary_base64 = Base64.encode64(File.read(summary_file_path))
-      parameters =
-          {'version' => 'lolo', 'duration' => '123', 'rps' => '123', 'profile' => '123', 'test_run_date' => '11.11.2000', 'requests_data' => {:file => summary_base64, :filename => 'summary.csv'}}
-      result = Result.upload_and_create(parameters)
-      expect(result.errors).to match_array([])
-    end
-
-
-
-
-  end
-
 end

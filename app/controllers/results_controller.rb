@@ -38,7 +38,7 @@ class ResultsController < ApplicationController
   def create
     result = Result.upload_and_create(params)
     if result.errors.empty?
-      if request.content_type =~ /json/
+     if request.content_type =~ /json/
         render :json => {:result_id => result.id, :status => 'created'}
       else
         redirect_to(results_url, notice: 'Result was successfully created.')

@@ -95,4 +95,11 @@ feature 'Review compare report' do
       expect(page).to have_selector('div.svg-container')
     end
   end
+
+  scenario 'Change result order' do
+    visit compare_path(result: [@result1.id, @result2.id])
+    click_on 'changed_results'
+    current_uri = URI(page.current_url)
+    expect("#{current_uri.path}?#{current_uri.query}").to eql(compare_path(result: [@result2.id, @result1.id]))
+  end
 end

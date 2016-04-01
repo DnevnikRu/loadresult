@@ -4,6 +4,9 @@ describe 'Editing a result' do
   context 'When fields are filled properly' do
     before do
       result = create(:result)
+      create(:requests_result, result_id: result.id, timestamp: 1455023039548, value: 2)
+      create(:requests_result, result_id: result.id, timestamp: 1455023040000, value: 123)
+      create(:requests_result, result_id: result.id, timestamp: 1455023045000, value: 121)
       visit '/results/'
       @row_with_result_xpath = "//td[@class='id' and text()='#{result.id}']/.."
       within(:xpath, @row_with_result_xpath) do
@@ -13,6 +16,7 @@ describe 'Editing a result' do
       fill_in 'rps', with: '666'
       fill_in 'duration', with: '999'
       fill_in 'profile', with: 'New profile'
+      fill_in 'time_cutting_percent', with: '20'
       click_button 'Update'
     end
 
@@ -22,6 +26,7 @@ describe 'Editing a result' do
         expect(find('.rps')).to have_content('666')
         expect(find('.duration')).to have_content('999')
         expect(find('.profile')).to have_content('New profile')
+        expect(find('.time_cutting_percent')).to have_content('20')
       end
     end
 
@@ -37,6 +42,9 @@ describe 'Editing a result' do
   context 'When fields are not edited' do
     before do
       @result = create(:result)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
       visit '/results/'
       @row_with_result_xpath = "//td[@class='id' and text()='#{@result.id}']/.."
       within(:xpath, @row_with_result_xpath) do
@@ -51,6 +59,7 @@ describe 'Editing a result' do
         expect(find('.rps')).to have_content(@result.rps)
         expect(find('.duration')).to have_content(@result.duration)
         expect(find('.profile')).to have_content(@result.profile)
+        expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
       end
     end
 
@@ -63,9 +72,35 @@ describe 'Editing a result' do
     end
   end
 
+  context 'When time cut is changed to empty' do
+    before do
+      @result = create(:result)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
+      visit '/results/'
+      @row_with_result_xpath = "//td[@class='id' and text()='#{@result.id}']/.."
+      within(:xpath, @row_with_result_xpath) do
+        find('.editResult').click
+      end
+      fill_in 'time_cutting_percent', with: ''
+      click_button 'Update'
+    end
+
+    scenario 'Edit time cutting percent with empty data' do
+      within(:xpath, @row_with_result_xpath) do
+        expect(find('.time_cutting_percent')).to have_content('0')
+      end
+    end
+
+  end
+
   context 'When fields are changed to empty' do
     before do
       @result = create(:result)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
       visit '/results/'
       @row_with_result_xpath = "//td[@class='id' and text()='#{@result.id}']/.."
       within(:xpath, @row_with_result_xpath) do

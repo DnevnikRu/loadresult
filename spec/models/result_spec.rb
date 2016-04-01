@@ -774,4 +774,58 @@ describe Result do
     end
   end
 
+  describe 'Update and recalculate only with request data' do
+    before(:all) do
+      @result = create(:result, time_cutting_percent: 10)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
+      Result.calc_request_data(@result, @result.time_cutting_percent)
+    end
+
+    it 'not change time cutting' do
+      Result.update_and_recalculate(@result, 'time_cutting_percent' => '10')
+      expect(CalculatedRequestsResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 377.67
+    end
+
+    it 'change time cutting' do
+      Result.update_and_recalculate(@result, 'time_cutting_percent' => 1)
+      expect(CalculatedRequestsResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 314.0
+    end
+  end
+
+  describe 'Update and recalculate only with request and performance data' do
+    before(:all) do
+      @result = create(:result, time_cutting_percent: 10)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
+      Result.calc_request_data(@result, @result.time_cutting_percent)
+      Result.calc_performance_data(@result, @result.time_cutting_percent)
+    end
+
+    it 'not change time cutting' do
+      Result.update_and_recalculate(@result, 'time_cutting_percent' => '10')
+      expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 377.67
+    end
+
+    it 'change time cutting' do
+      Result.update_and_recalculate(@result, 'time_cutting_percent' => 1)
+      expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 314.0
+    end
+  end
+
+
 end

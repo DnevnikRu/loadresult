@@ -54,7 +54,7 @@ groups = [{
               name: 'Network traffic',
               units: 'Mb/sec',
               trend_limit: 100,
-              labels: [PerformanceLabel.create(label: 'Memory\Page/sec'),
+              labels: [PerformanceLabel.create(label: 'Network\Bytes Sent/sec'),
                        PerformanceLabel.create(label: 'Network\Bytes Received/sec')]
           },
           {

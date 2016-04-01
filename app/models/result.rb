@@ -17,7 +17,7 @@ class Result < ActiveRecord::Base
   end
 
   def self.upload_and_create(params)
-    params['time_cutting_percent'].blank? ? time_cutting = 10 : time_cutting = params['time_cutting_percent']
+    params['time_cutting_percent'].blank? ? time_cutting = 0 : time_cutting = params['time_cutting_percent']
     result = Result.new(
         version: params['version'],
         duration: params['duration'],
@@ -54,20 +54,17 @@ class Result < ActiveRecord::Base
   end
 
   def self.update_and_recalculate(result, params)
+    params['time_cutting_percent'].blank? ? time_cutting = 0 : time_cutting = params['time_cutting_percent']
     previous_time_cut_percent = result.time_cutting_percent
     result_update = result.update(
         version: params[:version],
         rps: params[:rps],
         duration: params[:duration],
         profile: params[:profile],
-        time_cutting_percent: params[:time_cutting_percent]
+        time_cutting_percent: time_cutting
     )
 
     if previous_time_cut_percent != result.time_cutting_percent
-
-      if RequestsResult.find_by(result_id: result.id)
-        Result.calc_request_data(result, result.time_cutting_percent)
-      end
 
       if PerformanceResult.find_by(result_id: result.id)
         Result.calc_performance_data(result, result.time_cutting_percent)

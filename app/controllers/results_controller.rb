@@ -4,7 +4,7 @@ class ResultsController < ApplicationController
   before_action :set_result, only: [:show, :edit, :update, :destroy]
 
   def index
-    @results = Result.all
+    @results = Result.order(test_run_date: :desc).all
   end
 
   def show

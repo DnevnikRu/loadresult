@@ -15,4 +15,5 @@
 //= require turbolinks
 //= require bootstrap-sprockets
 //= require plotly
+//= require jquery.stickytableheaders.min
 //= require_tree .

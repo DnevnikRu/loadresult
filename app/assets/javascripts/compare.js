@@ -35,3 +35,7 @@ $(function () {
         'delay': {show: 1200, hide: 20}, container: 'body', placement: 'bottom', html: true
     });
 });
+
+$(document).ready(function () {
+  $('.sticky-header').stickyTableHeaders({cacheHeaderHeight: true});
+});

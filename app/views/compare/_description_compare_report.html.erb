@@ -12,18 +12,22 @@
         <div class="col-md-6">
           <table class="table table-striped table-condensed table-responsive table-bordered">
             <h4>Test run parameters</h4>
-            <tr>
-              <td><b>Parameter</b></td>
-              <td><b>Result id:<%= @compare_report.result1.id %></b></td>
-              <td><b>Result id:<%= @compare_report.result2.id %></b></td>
-            </tr>
-            <% @compare_report.description.each do |key, value|   %>
-                <tr>
-                  <td><%= key %></td>
-                  <td><%=value[:result1] %></td>
-                  <td><%=value[:result2] %></td>
-                </tr>
-            <% end  %>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Result id:<%= @compare_report.result1.id %></th>
+                <th>Result id:<%= @compare_report.result2.id %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @compare_report.description.each do |key, value|   %>
+                  <tr>
+                    <td><%= key %></td>
+                    <td><%=value[:result1] %></td>
+                    <td><%=value[:result2] %></td>
+                  </tr>
+              <% end %>
+            </tbody>
           </table>
         </div>
       </div>

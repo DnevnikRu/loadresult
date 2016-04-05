@@ -21,56 +21,70 @@
       results</a>
   </div>
 <br>
-  <%= form_tag({controller: 'compare', action: 'show'}, {method: 'get', enforce_utf8: false}) do %>
-    <table id="results-table" class="table table-striped table-bordered">
-      <thead>
-      <tr>
-        <th></th>
-        <th>ID</th>
-        <th>Version</th>
-        <th>RPS</th>
-        <th>Duration</th>
-        <th>Profile</th>
-        <th>Test run date</th>
-        <th>Time cutting percent</th>
-        <th></th>
-      </tr>
-      </thead>
+  <table id="results-table" class="table table-striped table-bordered">
+    <thead>
+    <tr>
+      <th></th>
+      <th>ID</th>
+      <th>Version</th>
+      <th>RPS</th>
+      <th>Duration</th>
+      <th>Profile</th>
+      <th>Test run date</th>
+      <th>Time cutting percent</th>
+      <th></th>
+    </tr>
+    </thead>
 
-      <tbody>
-      <% @results.each do |result| %>
-          <tr class="result_row">
-            <td class="checkResult text-center"><%= check_box_tag 'result[]', result.id %></td>
-            <td class="id"><%= result.id %></td>
-            <td class="version"><%= result.version %></td>
-            <td class="rps"><%= result.rps %></td>
-            <td class="duration"><%= result.duration %></td>
-            <td class="profile"><%= result.profile %></td>
-            <td class="test_run_date"><%= result.test_run_date %></td>
-            <td class="time_cutting_percent"><%= result.time_cutting_percent %></td>
-            <td class="actions nostrech">
-              <%= link_to '<i class="glyphicon glyphicon-eye-open"></i>'.html_safe,
-                          result_path(result),
-                          class: 'showResult' %>
-              <%= link_to '<i class="glyphicon glyphicon-pencil"></i>'.html_safe,
-                  edit_result_path(result),
-                  class: 'editResult' %>
-              <%= link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe,
-                  result,
-                  class: 'destroyResult',
-                  method: :delete,
-                  data: { confirm: 'Are you sure?' } %>
-            </td>
-          </tr>
-      <% end %>
-      </tbody>
-    </table>
-    <div id="paginator">
-      <%= paginate @results %>
-    </div>
-    <div class="row">
-      <input class="btn btn-success btn-lg pull-right" type="submit" value="Compare"/>
-    </div>
-  <% end %>
-
+    <tbody>
+    <% @results.each do |result| %>
+        <tr class="result_row">
+          <td class="checkResult text-center">
+            <%= check_box_tag 'result_id', result.id, @checked_results.try(:include?, result.id.to_s),
+                data: {
+                  remote: true,
+                  url: result_toggle_path(result.id),
+                  method: :put
+                }
+            %>
+          </td>
+          <td class="id"><%= result.id %></td>
+          <td class="version"><%= result.version %></td>
+          <td class="rps"><%= result.rps %></td>
+          <td class="duration"><%= result.duration %></td>
+          <td class="profile"><%= result.profile %></td>
+          <td class="test_run_date"><%= result.test_run_date %></td>
+          <td class="time_cutting_percent"><%= result.time_cutting_percent %></td>
+          <td class="actions nostrech">
+            <%= link_to '<i class="glyphicon glyphicon-eye-open"></i>'.html_safe,
+                        result_path(result),
+                        class: 'showResult' %>
+            <%= link_to '<i class="glyphicon glyphicon-pencil"></i>'.html_safe,
+                edit_result_path(result),
+                class: 'editResult' %>
+            <%= link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe,
+                result,
+                class: 'destroyResult',
+                method: :delete,
+                data: { confirm: 'Are you sure?' } %>
+          </td>
+        </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <div id="paginator">
+    <%= paginate @results %>
+  </div>
+  <div class="row" id="result-to-compare-list">
+    <%= render 'results/result_to_compare_list' %>
+  </div>
+  <div class="row">
+    <%= link_to(
+          'Compare',
+          compare_path(result: @checked_results),
+          class: 'btn btn-success btn-lg pull-right',
+          id: 'compare-button'
+        )
+    %>
+  </div>
 </div>

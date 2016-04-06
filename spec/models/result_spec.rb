@@ -54,8 +54,8 @@ describe Result do
       before(:all) do
         @summary.open
         @perfmon.open
-        perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon)
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+        perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
             'version' => 'edu',
             'rps' => 150,
@@ -76,7 +76,7 @@ describe Result do
       end
 
       it 'result saved' do
-        expect(Result.find(@result.id)).not_to be_nil
+        expect(Result.find_by(id: @result.id)).not_to be_nil
       end
 
       it 'request data save' do
@@ -95,13 +95,21 @@ describe Result do
         expect(CalculatedPerformanceResult.find_by result_id: @result.id).not_to be_nil
       end
 
+      it 'summary file name saved in database' do
+        expect(@result.summary_identifier).to eql 'summary.csv'
+      end
+
+      it 'summary file saved in filesystem' do
+        expect(File.exist?(@result.summary.current_path)).to be(true), "Can not find file with path #{@result.summary.current_path} in filesystem"
+      end
+
     end
 
     describe 'some parameters absence' do
       describe 'perfmon data is absence' do
         before(:all) do
           @summary.open
-          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
           params = {
               'version' => 'edu',
               'rps' => 150,
@@ -130,8 +138,8 @@ describe Result do
         before(:all) do
           @summary.open
           @perfmon.open
-          perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon)
-          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+          perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
           params = {
               'rps' => 150,
               'duration' => 123,
@@ -159,7 +167,7 @@ describe Result do
 
       it 'rps is absence, other required fields presence' do
         @summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
             'version' => 'asd',
             'duration' => 123,
@@ -174,7 +182,7 @@ describe Result do
 
       it 'duration is absence, other required fields presence' do
         @summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
             'version' => 'asd',
             'rps' => 150,
@@ -189,7 +197,7 @@ describe Result do
 
       it 'profile is absence, other required fields presence' do
         @summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
             'version' => 'asd',
             'duration' => 123,
@@ -205,7 +213,7 @@ describe Result do
 
       it 'date is absence, other required fields presence' do
         @summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
             'version' => 'asd',
             'duration' => 123,
@@ -253,7 +261,7 @@ describe Result do
 
         before(:all) do
           @invalid_summary.open
-          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_summary)
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_summary, filename: 'summary_invalid_header.csv')
           params = {
               'version' => 'edu',
               'rps' => 150,
@@ -298,8 +306,8 @@ describe Result do
         before(:all) do
           @summary.open
           @invalid_perfmon.open
-          perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_perfmon)
-          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+          perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_perfmon, filename: 'perfmon_invalid_header.csv')
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
           params = {
               'version' => 'edu',
               'rps' => 150,
@@ -826,6 +834,5 @@ describe Result do
       expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 314.0
     end
   end
-
 
 end

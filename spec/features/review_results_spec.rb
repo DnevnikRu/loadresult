@@ -2,6 +2,8 @@ require 'feature_helper'
 require 'active_support/time_with_zone'
 
 feature 'Review results' do
+  before { DatabaseCleaner.clean }
+
   scenario 'Uploaded results exist on the results page' do
     result = create(:result)
     expected_result =
@@ -46,5 +48,77 @@ feature 'Review results' do
       end
       expect(results_rows.include?(expected_row)).to be(true), 'Just uploaded result is not displayed'
     end
+  end
+
+  context 'Paginator' do
+    scenario 'Paginator is visible when there are more than 20 results' do
+      21.times { create(:result) }
+
+      visit '/results/'
+
+      expect(find('#paginator').text).to eq('1 2 Next › Last »')
+    end
+
+    scenario 'There is only one result on the second page when there are 21 results' do
+      21.times { create(:result) }
+
+      visit '/results/'
+      click_on 'Next ›'
+
+      expect(page).to have_selector('.result_row', count: 1)
+    end
+
+    scenario 'Paginator is not visible when there are 20 or less results' do
+      20.times { create(:result) }
+
+      visit '/results/'
+
+      expect(find('#paginator').text).to eq('')
+    end
+
+    scenario 'Selecting two results on different pages and clicking on Compare opens Compare page' do
+      21.times { create(:result) }
+
+      visit '/results/'
+      page.all('.result_row').first.click
+      click_on 'Next ›'
+      find('.result_row').click
+      click_on 'Compare'
+
+      expect(page).to have_content('Compare report')
+    end
+  end
+
+  scenario 'Selecting two results and clicking on Compare clear checked results' do
+    2.times { create(:result) }
+
+    visit '/results/'
+    page.all('.result_row').each(&:click)
+    click_on 'Compare'
+    visit '/results/'
+
+    page.all('.result-checkbox').each do |checkbox|
+      expect(checkbox).to_not be_checked
+    end
+  end
+
+  scenario 'Results are not checked by default' do
+    10.times { create(:result) }
+
+    visit '/results/'
+
+    page.all('.result-checkbox').each do |checkbox|
+      expect(checkbox).to_not be_checked
+    end
+  end
+
+  scenario 'Selecting two results and clicking on Compare opens Compare page' do
+    3.times { create(:result) }
+
+    visit '/results/'
+    page.all('.result_row').each(&:click)
+    click_on 'Compare'
+
+    expect(page).to have_content('Compare report')
   end
 end

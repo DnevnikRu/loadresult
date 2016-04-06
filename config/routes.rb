@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   root 'results#index'
-  resources :results
+
+  resources :results do
+    put 'toggle'
+  end
+
   get 'compare' => 'compare#show'
   namespace 'compare' do
     post 'requests_histogram_plot'

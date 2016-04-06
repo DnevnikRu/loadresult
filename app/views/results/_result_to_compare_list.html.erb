@@ -1,4 +1,4 @@
-<% if @checked_results.any? %>
+<% if @checked_results.present? %>
   <div class="pull-right">
     <%= "Results to compare: #{@checked_results.join(', ')}" %>
   </div>

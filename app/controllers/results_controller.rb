@@ -1,6 +1,4 @@
 class ResultsController < ApplicationController
-  # protect_from_forgery with: :reset_session
-
   before_action :set_result, only: [:show, :edit, :update, :destroy]
 
   def index
@@ -38,15 +36,16 @@ class ResultsController < ApplicationController
 
   def create
     result = Result.upload_and_create(params)
-    if result.errors.empty?
-      if request.content_type =~ /json/
+
+    if json_request?
+      if result.errors.empty?
         render json: { result_id: result.id, status: 'created' }
       else
-        redirect_to(results_url, notice: 'Result was successfully created.')
-       end
-    else
-      if request.content_type =~ /json/
         render json: result.errors.full_messages
+      end
+    else
+      if result.errors.empty?
+        redirect_to(results_url, notice: 'Result was successfully created.')
       else
         flash[:version] = result[:version]
         flash[:rps] = result[:rps]
@@ -82,5 +81,9 @@ class ResultsController < ApplicationController
 
   def set_result
     @result = Result.find(params[:id])
+  end
+
+  def json_request?
+    request.content_type =~ /json/
   end
 end

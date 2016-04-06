@@ -1,1 +1,5 @@
-<div class="pull-right"><%= "Results to compare: #{@checked_results.join(', ')}" %></div>
+<% if @checked_results.any? %>
+  <div class="pull-right">
+    <%= "Results to compare: #{@checked_results.join(', ')}" %>
+  </div>
+<% end %>

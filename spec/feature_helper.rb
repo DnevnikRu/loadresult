@@ -8,9 +8,9 @@ if ENV['CI']
   Capybara.app_host = "http://#{ci_config['test_host']}:#{ci_config['test_port']}"
   Capybara.register_driver :selenium do |app|
     Capybara::Selenium::Driver.new(app,
-                                   :browser => :remote,
-                                   :url => ci_config['hub_url'],
-                                   :desired_capabilities => :firefox)
+                                   browser: :remote,
+                                   url: ci_config['hub_url'],
+                                   desired_capabilities: :firefox)
   end
   Capybara.run_server = false
 end

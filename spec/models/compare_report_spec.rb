@@ -13,7 +13,6 @@ describe CompareReport do
       @description = @compare_report.description
     end
 
-
     it 'is a Hash' do
       expect(@description).to be_a(Hash)
     end

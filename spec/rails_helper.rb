@@ -17,12 +17,9 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
 
-  config.before(:suite) do
-    DatabaseCleaner.clean_with(:truncation , {:except => %w[performance_groups performance_labels]})
-  end
-  DatabaseCleaner.strategy = :truncation, {:except => %w[performance_groups performance_labels]}
+  DatabaseCleaner.strategy = :truncation, { except: %w(performance_groups performance_labels) }
 
-  config.after(:all) do
+  config.before(:context) do
     DatabaseCleaner.clean
   end
 

@@ -143,17 +143,35 @@ feature 'Review compare report' do
           test_run_date: '01.01.1979 00:00',
           time_cutting_percent: 20
         )
+
+        ['per. the same label', 'per. only first has', 'per. only first has 2'].each do |label|
+          create(:calculated_performance_result, result_id: result1.id, label: label)
+        end
+        ['per. the same label', 'per. only second has', 'per. only second has 2'].each do |label|
+          create(:calculated_performance_result, result_id: result2.id, label: label)
+        end
+        ['req. the same label', 'req. only first has', 'req. only first has 2'].each do |label|
+          create(:calculated_requests_result, result_id: result1.id, label: label)
+        end
+        ['req. the same label', 'req. only second has', 'req. only second has 2'].each do |label|
+          create(:calculated_requests_result, result_id: result2.id, label: label)
+        end
+
         visit compare_path(result: [result1.id, result2.id])
       end
 
       scenario 'Difference warning appears' do
         difference_warning_text = find('#different-warning').text
         expected_warning =
-          'Warning! You are comparing results that has differences: ' \
+          'Warning! ' \
           "Duration: id:500 has '100' but id:501 has '200' " \
           "Rps: id:500 has '100' but id:501 has '200' " \
           "Profile: id:500 has 'all_site1' but id:501 has 'all_site2' " \
-          "Time cutting percent: id:500 has '10' but id:501 has '20'"
+          "Time cutting percent: id:500 has '10' but id:501 has '20' " \
+          "id:500 has extra performance labels: 'per. only first has', 'per. only first has 2' " \
+          "id:501 has extra performance labels: 'per. only second has', 'per. only second has 2' " \
+          "id:500 has extra request labels: 'req. only first has', 'req. only first has 2' " \
+          "id:501 has extra request labels: 'req. only second has', 'req. only second has 2'"
         expect(difference_warning_text).to eq(expected_warning)
       end
 

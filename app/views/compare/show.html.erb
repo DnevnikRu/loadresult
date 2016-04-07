@@ -7,6 +7,12 @@
     </h1>
   </div>
 
+  <% if @differences.present? %>
+    <div class="row">
+      <%= render 'compare/differences' %>
+    </div>
+  <% end %>
+
   <div class="row">
     <%= render 'compare/description_compare_report' %>
   </div>

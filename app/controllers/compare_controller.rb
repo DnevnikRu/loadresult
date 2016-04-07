@@ -9,6 +9,7 @@ class CompareController < ApplicationController
       return redirect_to results_path, alert: "Can't find selected results"
     end
     session[:result_ids] = [] # reset choosen results on the result index page
+    @differences = find_differences(result1, result2)
     @compare_report = CompareReport.new(result1, result2)
   end
 
@@ -41,5 +42,26 @@ class CompareController < ApplicationController
     @plot_id = params[:plot_id]
     @result1_data = Result.performance_seconds_to_values(params[:result1_id], group[:labels], params[:result1_time_cut].to_i)
     @result2_data = Result.performance_seconds_to_values(params[:result2_id], group[:labels], params[:result1_time_cut].to_i)
+  end
+
+  private
+
+  def find_differences(result1, result2)
+    messages = []
+    template = "%s: id:%d has '%s' but id:%d has '%s'"
+    fields_to_check = {
+      duration: 'Duration',
+      rps: 'Rps',
+      profile: 'Profile',
+      time_cutting_percent: 'Time cutting percent'
+    }
+    fields_to_check.each do |field, field_name|
+      result1_value = result1.send(field)
+      result2_value = result2.send(field)
+      if result1_value != result2_value
+        messages.push template % [field_name, result1.id, result1_value, result2.id, result2_value]
+      end
+    end
+    messages
   end
 end

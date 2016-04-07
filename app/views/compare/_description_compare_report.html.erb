@@ -20,12 +20,16 @@
               </tr>
             </thead>
             <tbody>
-              <% @compare_report.description.each do |key, value|   %>
-                  <tr>
-                    <td><%= key %></td>
-                    <td><%=value[:result1] %></td>
-                    <td><%=value[:result2] %></td>
-                  </tr>
+              <% @compare_report.description.each do |key, value| %>
+                <% if value[:result1] != value[:result2] && (['Rps', 'Duration', 'Profile', 'Time cutting percent'].include? key) %>
+                <tr class="row-warning">
+                <% else %>
+                <tr>
+                <% end %>
+                  <td><%= key %></td>
+                  <td><%=value[:result1] %></td>
+                  <td><%=value[:result2] %></td>
+                </tr>
               <% end %>
             </tbody>
           </table>

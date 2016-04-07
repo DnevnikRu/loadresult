@@ -1,5 +1,5 @@
 class ResultsController < ApplicationController
-  before_action :set_result, only: [:show, :edit, :update, :destroy]
+  before_action :set_result, only: [:show, :edit, :update, :destroy, :download_summary]
 
   def index
     @results = Result.order(test_run_date: :desc).page params[:page]
@@ -77,10 +77,14 @@ class ResultsController < ApplicationController
     end
   end
 
+  def download_summary
+    send_file Result.find_by(id: params[:result_id]).summary.current_path
+  end
+
   private
 
   def set_result
-    @result = Result.find(params[:id])
+    @result = Result.find_by(id: params[:id])
   end
 
   def json_request?

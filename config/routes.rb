@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   resources :results do
     put 'toggle'
+    get 'download_summary'
   end
 
   get 'compare' => 'compare#show'

@@ -99,10 +99,6 @@ describe Result do
         expect(@result.summary_identifier).to eql 'summary.csv'
       end
 
-      it 'summary file saved in filesystem' do
-        expect(File.exist?(@result.summary.current_path)).to be(true), "Can not find file with path #{@result.summary.current_path} in filesystem"
-      end
-
     end
 
     describe 'some parameters absence' do

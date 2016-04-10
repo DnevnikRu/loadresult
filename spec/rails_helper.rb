@@ -16,6 +16,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
+  config.include Requests::JsonHelpers
 
   DatabaseCleaner.strategy = :truncation, { except: %w(performance_groups performance_labels) }
 

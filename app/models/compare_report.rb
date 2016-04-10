@@ -13,7 +13,7 @@ class CompareReport
       values = {}
       values[:result1] = result1.send(key)
       values[:result2] = result2.send(key)
-      description[key.tr('_', ' ').capitalize] = values
+      description[key.humanize] = values
     end
     description
   end

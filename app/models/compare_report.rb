@@ -1,4 +1,5 @@
 class CompareReport
+  include ArrayUtils
   attr_reader :result1, :result2
 
   def initialize(request1, request2)
@@ -103,9 +104,5 @@ class CompareReport
       diff.push template % [result2.id, 'request', join_with_quotes(result2_extra_request_labels)]
     end
     diff
-  end
-
-  def join_with_quotes(arr)
-    %('#{arr.join("', '")}')
   end
 end

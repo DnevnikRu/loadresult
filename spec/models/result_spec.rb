@@ -821,12 +821,12 @@ describe Result do
     end
 
     it 'not change time cutting' do
-      Result.update_and_recalculate(@result, 'time_cutting_percent' => '10')
+      Result.update_and_recalculate(@result, :time_cutting_percent => '10')
       expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 377.67
     end
 
     it 'change time cutting' do
-      Result.update_and_recalculate(@result, 'time_cutting_percent' => 1)
+      Result.update_and_recalculate(@result, :time_cutting_percent => 1)
       expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 314.0
     end
   end

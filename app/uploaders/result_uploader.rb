@@ -13,10 +13,4 @@ class ResultUploader < CarrierWave::Uploader::Base
     "#{Rails.root}/tmp"
   end
 
-
-  def extension_white_list
-    %w(csv)
-  end
-
-
 end

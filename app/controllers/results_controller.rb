@@ -13,11 +13,11 @@ class ResultsController < ApplicationController
   end
 
   def edit
-    flash[:version] = @result[:version]
-    flash[:rps] = @result[:rps]
-    flash[:duration] = @result[:duration]
-    flash[:profile] = @result[:profile]
-    flash[:time_cutting_percent] = @result[:time_cutting_percent]
+    flash.now[:version] = @result[:version]
+    flash.now[:rps] = @result[:rps]
+    flash.now[:duration] = @result[:duration]
+    flash.now[:profile] = @result[:profile]
+    flash.now[:time_cutting_percent] = @result[:time_cutting_percent]
   end
 
   def update
@@ -25,12 +25,13 @@ class ResultsController < ApplicationController
     if update_result
       redirect_to(results_url, notice: 'Result was successfully updated.')
     else
-      flash[:version] = params[:version]
-      flash[:rps] = params[:rps]
-      flash[:duration] = params[:duration]
-      flash[:profile] = params[:profile]
-      flash[:time_cutting_percent] = params[:time_cutting_percent]
-      redirect_to({action: :edit}, alert: @result.errors.full_messages)
+      flash.now[:version] = params[:version]
+      flash.now[:rps] = params[:rps]
+      flash.now[:duration] = params[:duration]
+      flash.now[:profile] = params[:profile]
+      flash.now[:time_cutting_percent] = params[:time_cutting_percent]
+      flash.now[:alert] = @result.errors.full_messages
+      render action: :edit
     end
   end
 
@@ -40,13 +41,14 @@ class ResultsController < ApplicationController
     if result.errors.empty?
       redirect_to(results_url, notice: 'Result was successfully created.')
     else
-      flash[:version] = result[:version]
-      flash[:rps] = result[:rps]
-      flash[:duration] = result[:duration]
-      flash[:profile] = result[:profile]
-      flash[:test_run_date] = result[:test_run_date].try(:strftime, '%d.%m.%Y %H:%M')
-      flash[:time_cutting_percent] = result[:time_cutting_percent]
-      redirect_to({action: :new}, alert: result.errors.full_messages)
+      flash.now[:version] = result[:version]
+      flash.now[:rps] = result[:rps]
+      flash.now[:duration] = result[:duration]
+      flash.now[:profile] = result[:profile]
+      flash.now[:test_run_date] = result[:test_run_date].try(:strftime, '%d.%m.%Y %H:%M')
+      flash.now[:time_cutting_percent] = result[:time_cutting_percent]
+      flash.now[:alert] = result.errors.full_messages
+      render action: :new
     end
   end
 

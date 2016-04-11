@@ -95,8 +95,8 @@ describe Result do
         expect(CalculatedPerformanceResult.find_by result_id: @result.id).not_to be_nil
       end
 
-      it 'summary file name saved in database' do
-        expect(@result.summary_identifier).to eql 'summary.csv'
+      it 'requests data file name saved in database' do
+        expect(@result.requests_data_identifier).to eql 'summary.csv'
       end
 
     end

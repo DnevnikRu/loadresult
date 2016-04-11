@@ -23,6 +23,6 @@ describe 'Show Result page' do
   scenario 'Show Result without summary file' do
     visit result_path(@result)
 
-    expect(page).to have_content('Summary file does not exist')
+    expect(page).to have_content('Requests data file does not exist')
   end
 end

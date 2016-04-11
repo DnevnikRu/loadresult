@@ -12,7 +12,7 @@ class Result < ActiveRecord::Base
   validates :profile, presence: true
   validate :test_run_date_is_datetime
 
-  mount_uploader :summary, ResultUploader
+  mount_uploader :requests_data, ResultUploader
 
   def test_run_date_is_datetime
     errors.add(:test_run_date, 'must be in a datetime format') if test_run_date.nil?
@@ -34,7 +34,7 @@ class Result < ActiveRecord::Base
       if params['requests_data'].is_a?(Hash)
         file_from_json(params, 'requests_data')
       end
-      result.summary = params['requests_data']
+      result.requests_data = params['requests_data']
       result.save
       result.destroy unless save_request_data(result)
     else
@@ -69,7 +69,7 @@ class Result < ActiveRecord::Base
     )
     if params[:requests_data].present?
       result.requests_results.delete_all
-      result.summary = params[:requests_data]
+      result.requests_data = params[:requests_data]
       result.save
       save_request_data(result)
     end
@@ -269,7 +269,7 @@ class Result < ActiveRecord::Base
   end
 
   def self.save_request_data(result)
-    request_data = CSV.new(File.read(result.summary.current_path))
+    request_data = CSV.new(File.read(result.requests_data.current_path))
     header = request_data.first
     validate_header(result, header, 'request', %w(timeStamp label responseCode Latency)) # TODO: move list of required column to model
     return if result.errors.any?

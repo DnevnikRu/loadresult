@@ -1,5 +1,5 @@
 class ResultsController < ApplicationController
-  before_action :set_result, only: [:show, :edit, :update, :destroy, :download_summary]
+  before_action :set_result, only: [:show, :edit, :update, :destroy, :download_requests_data]
 
   def index
     @results = Result.order(test_run_date: :desc).page params[:page]
@@ -18,7 +18,7 @@ class ResultsController < ApplicationController
     flash[:duration] = @result[:duration]
     flash[:profile] = @result[:profile]
     flash[:time_cutting_percent] = @result[:time_cutting_percent]
-    flash[:summary_identifier] =  @result.summary_identifier
+    flash[:requests_data_identifier] =  @result.requests_data_identifier
   end
 
   def update
@@ -31,7 +31,7 @@ class ResultsController < ApplicationController
       flash[:duration] = params[:duration]
       flash[:profile] = params[:profile]
       flash[:time_cutting_percent] = params[:time_cutting_percent]
-      flash[:summary_identifier] =  params[:summary_identifier]
+      flash[:requests_data_identifier] =  params[:requests_data_identifier]
       redirect_to({ action: :edit }, alert: @result.errors.full_messages)
     end
   end
@@ -79,8 +79,8 @@ class ResultsController < ApplicationController
     end
   end
 
-  def download_summary
-    send_file Result.find_by(id: params[:result_id]).summary.current_path
+  def download_requests_data
+    send_file Result.find_by(id: params[:result_id]).requests_data.current_path
   end
 
   private

@@ -34,15 +34,15 @@
           </div>
 
 
-          <div id="download_requests_data" class="<%= 'hidden' if flash[:summary_identifier].nil? %>">
+          <div id="download_requests_data" class="<%= 'hidden' if flash[:requests_data_identifier].nil? %>">
             <%= label_tag 'Requests data', nil, class: "control-label" %>
             <div>
-            <%= link_to(flash[:summary_identifier], result_download_summary_path(@result), id: 'download_summary')%>
+            <%= link_to(flash[:requests_data_identifier], result_download_requests_data_path(@result))%>
               <i class="fa fa-pencil-square-o" id="edit_requests_data"></i>
             </div>
           </div>
 
-          <div class="form-group required <%= 'hidden' unless flash[:summary_identifier].nil? %>" id="upload_requests_data">
+          <div class="form-group required <%= 'hidden' unless flash[:requests_data_identifier].nil? %>" id="upload_requests_data">
             <%= label_tag :requests_data, nil, class: "control-label" %>
             <%= file_field_tag :requests_data%>
           </div>

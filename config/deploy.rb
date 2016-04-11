@@ -10,4 +10,4 @@ set :ssh_options, {
     password: ENV['DEPLOYER_PASSWORD']
 }
 
-set :linked_dirs, fetch(:linked_dirs) + %w{storage}
+set :linked_dirs, %w{storage}

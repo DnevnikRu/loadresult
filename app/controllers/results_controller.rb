@@ -3,7 +3,8 @@ class ResultsController < ApplicationController
 
   def index
     @results = Result.order(test_run_date: :desc).page params[:page]
-    @checked_results = session[:result_ids]
+    flash.keep(:result_ids)
+    @checked_results = flash[:result_ids]
   end
 
   def show
@@ -58,13 +59,14 @@ class ResultsController < ApplicationController
   end
 
   def toggle
-    session[:result_ids] ||= []
-    if session[:result_ids].include? params[:result_id]
-      session[:result_ids].delete params[:result_id]
+    flash[:result_ids] ||= []
+    if flash[:result_ids].include? params[:result_id]
+      flash[:result_ids].delete params[:result_id]
     else
-      session[:result_ids].push params[:result_id]
+      flash[:result_ids].push params[:result_id]
     end
-    @checked_results = session[:result_ids]
+    flash.keep(:result_ids)
+    @checked_results = flash[:result_ids]
 
     respond_to do |format|
       format.js

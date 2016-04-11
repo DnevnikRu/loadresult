@@ -7,6 +7,19 @@
     </h1>
   </div>
 
+  <% if @warnings.present? %>
+    <div class="row">
+      <div id="different-warning" class="alert alert-warning" role="alert">
+        <strong>Warning!</strong>
+        <ul>
+          <% @warnings.each do |warning| %>
+            <li><%= warning %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
   <div class="row">
     <%= render 'compare/description_compare_report' %>
   </div>
@@ -24,5 +37,4 @@
   <div class="row">
     <%= render 'compare/request_data_compare_report' %>
   </div>
-
 </div>

@@ -20,12 +20,14 @@
               </tr>
             </thead>
             <tbody>
-              <% @compare_report.description.each do |key, value|   %>
-                  <tr>
-                    <td><%= key %></td>
-                    <td><%=value[:result1] %></td>
-                    <td><%=value[:result2] %></td>
-                  </tr>
+              <% @compare_report.description.each do |parameter, value| %>
+                <tr class="
+                <%= 'row-warning' if parameter_to_compare?(parameter) && value[:result1] != value[:result2] %>
+                ">
+                  <td><%= parameter %></td>
+                  <td><%= value[:result1] %></td>
+                  <td><%= value[:result2] %></td>
+                </tr>
               <% end %>
             </tbody>
           </table>

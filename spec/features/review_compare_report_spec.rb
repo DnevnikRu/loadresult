@@ -102,4 +102,88 @@ feature 'Review compare report' do
     current_uri = URI(page.current_url)
     expect("#{current_uri.path}?#{current_uri.query}").to eql(compare_path(result: [@result2.id, @result1.id]))
   end
+
+  context 'Showing difference in attrubutes of results' do
+    context 'When there are no differences' do
+      before do
+        result1 = create(:result)
+        result2 = create(:result)
+        visit compare_path(result: [result1.id, result2.id])
+      end
+
+      scenario 'Difference warning does not appear' do
+        expect(page).to_not have_selector('#different-warning')
+      end
+
+      scenario 'In description block rows are not highlighted' do
+        expect(page.all('.row-warning')).to be_empty
+      end
+    end
+
+    context 'When there are differences' do
+      before do
+        DatabaseCleaner.clean
+        result1 = create(
+          :result,
+          id: 500,
+          version: 'first',
+          duration: 100,
+          rps: 100,
+          profile: 'all_site1',
+          test_run_date: '01.01.1978 00:00',
+          time_cutting_percent: 10
+        )
+        result2 = create(
+          :result,
+          id: 501,
+          version: 'second',
+          duration: 200,
+          rps: 200,
+          profile: 'all_site2',
+          test_run_date: '01.01.1979 00:00',
+          time_cutting_percent: 20
+        )
+
+        ['per. the same label', 'per. only first has', 'per. only first has 2'].each do |label|
+          create(:calculated_performance_result, result_id: result1.id, label: label)
+        end
+        ['per. the same label', 'per. only second has', 'per. only second has 2'].each do |label|
+          create(:calculated_performance_result, result_id: result2.id, label: label)
+        end
+        ['req. the same label', 'req. only first has', 'req. only first has 2'].each do |label|
+          create(:calculated_requests_result, result_id: result1.id, label: label)
+        end
+        ['req. the same label', 'req. only second has', 'req. only second has 2'].each do |label|
+          create(:calculated_requests_result, result_id: result2.id, label: label)
+        end
+
+        visit compare_path(result: [result1.id, result2.id])
+      end
+
+      scenario 'Difference warning appears' do
+        difference_warning_text = find('#different-warning').text
+        expected_warning =
+          'Warning! ' \
+          "Duration: id:500 has '100' but id:501 has '200' " \
+          "Rps: id:500 has '100' but id:501 has '200' " \
+          "Profile: id:500 has 'all_site1' but id:501 has 'all_site2' " \
+          "Time cutting percent: id:500 has '10' but id:501 has '20' " \
+          "id:500 has extra performance labels: 'per. only first has', 'per. only first has 2' " \
+          "id:501 has extra performance labels: 'per. only second has', 'per. only second has 2' " \
+          "id:500 has extra request labels: 'req. only first has', 'req. only first has 2' " \
+          "id:501 has extra request labels: 'req. only second has', 'req. only second has 2'"
+        expect(difference_warning_text).to eq(expected_warning)
+      end
+
+      scenario 'In description block rows with differences highlighted' do
+        rows_with_warning = [
+          'Rps 100 200',
+          'Duration 100 200',
+          'Profile all_site1 all_site2',
+          'Time cutting percent 10 20'
+        ]
+        expect(page.all('.row-warning').map(&:text)).to match_array(rows_with_warning)
+      end
+    end
+  end
 end

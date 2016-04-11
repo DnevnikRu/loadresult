@@ -113,13 +113,6 @@ describe 'Editing a result' do
       click_button 'Update'
     end
 
-    scenario 'All edited fields have previous text' do
-      expect(page).to have_field('version', with: @result.version)
-      expect(page).to have_field('rps', with: @result.rps)
-      expect(page).to have_field('duration', with: @result.duration)
-      expect(page).to have_field('profile', with: @result.profile)
-    end
-
     scenario 'Message with error appears' do
       expect(page).to have_content(%(Version can't be blank
             Duration can't be blank

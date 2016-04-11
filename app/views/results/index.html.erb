@@ -17,10 +17,9 @@
   </div>
 
   <div class="row">
-    <a id="upload_result" class="btn btn-primary btn-lg pull-right" href="/results/new" role="button">Upload
-      results</a>
+    <%= link_to 'Upload results', new_result_path, class: "btn btn-primary btn-lg pull-right" %>
   </div>
-<br>
+  <br>
   <table id="results-table" class="table table-striped table-bordered">
     <thead>
     <tr>
@@ -41,12 +40,12 @@
         <tr class="result_row">
           <td class="checkResult text-center">
             <%= check_box_tag 'result-checkbox', result.id, @checked_results.try(:include?, result.id.to_s),
-                class: 'result-checkbox',
-                data: {
-                  remote: true,
-                  url: result_toggle_path(result.id),
-                  method: :put
-                }
+                              class: 'result-checkbox',
+                              data: {
+                                  remote: true,
+                                  url: result_toggle_path(result.id),
+                                  method: :put
+                              }
             %>
           </td>
           <td class="id"><%= result.id %></td>
@@ -61,13 +60,13 @@
                         result_path(result),
                         class: 'showResult' %>
             <%= link_to '<i class="glyphicon glyphicon-pencil"></i>'.html_safe,
-                edit_result_path(result),
-                class: 'editResult' %>
+                        edit_result_path(result),
+                        class: 'editResult' %>
             <%= link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe,
-                result,
-                class: 'destroyResult',
-                method: :delete,
-                data: { confirm: 'Are you sure?' } %>
+                        result,
+                        class: 'destroyResult',
+                        method: :delete,
+                        data: {confirm: 'Are you sure?'} %>
           </td>
         </tr>
     <% end %>
@@ -81,11 +80,11 @@
   </div>
   <div class="row">
     <%= link_to(
-          'Compare',
-          compare_path(result: @checked_results),
-          class: 'btn btn-success btn-lg pull-right',
-          id: 'compare-button',
-          "data-no-turbolink" => true
+            'Compare',
+            compare_path(result: @checked_results),
+            class: 'btn btn-success btn-lg pull-right',
+            id: 'compare-button',
+            "data-no-turbolink" => true
         )
     %>
   </div>

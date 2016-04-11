@@ -6,6 +6,10 @@ Rails.application.routes.draw do
     get 'download_requests_data'
   end
 
+  namespace :api do
+    resources :results, only: [:create]
+  end
+
   get 'compare' => 'compare#show'
   namespace 'compare' do
     post 'requests_histogram_plot'

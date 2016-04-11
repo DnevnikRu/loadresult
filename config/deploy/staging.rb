@@ -9,6 +9,8 @@ set :deploy_to, '/var/www/loadresult_test'
 set :rails_env, 'test'
 set :bundle_without, nil
 
+set :branch, :saved_files
+
 namespace :deploy do
   after 'deploy:migrate', :db_seed
   after :publishing, :restart_nginx

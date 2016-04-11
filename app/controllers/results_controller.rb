@@ -18,6 +18,7 @@ class ResultsController < ApplicationController
     flash[:duration] = @result[:duration]
     flash[:profile] = @result[:profile]
     flash[:time_cutting_percent] = @result[:time_cutting_percent]
+    flash[:summary_identifier] =  @result.summary_identifier
   end
 
   def update
@@ -30,6 +31,7 @@ class ResultsController < ApplicationController
       flash[:duration] = params[:duration]
       flash[:profile] = params[:profile]
       flash[:time_cutting_percent] = params[:time_cutting_percent]
+      flash[:summary_identifier] =  params[:summary_identifier]
       redirect_to({ action: :edit }, alert: @result.errors.full_messages)
     end
   end

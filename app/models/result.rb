@@ -58,24 +58,30 @@ class Result < ActiveRecord::Base
   end
 
   def self.update_and_recalculate(result, params)
-    params['time_cutting_percent'].blank? ? time_cutting = 0 : time_cutting = params['time_cutting_percent']
+    params[:time_cutting_percent] = params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent]
     previous_time_cut_percent = result.time_cutting_percent
     result_update = result.update(
         version: params[:version],
         rps: params[:rps],
         duration: params[:duration],
         profile: params[:profile],
-        time_cutting_percent: time_cutting
+        time_cutting_percent: params[:time_cutting_percent]
     )
-
-    if previous_time_cut_percent != result.time_cutting_percent
-      Result.calc_request_data(result, result.time_cutting_percent)
-
-      if PerformanceResult.find_by(result_id: result.id)
-        Result.calc_performance_data(result, result.time_cutting_percent)
-      end
+    if params[:requests_data].present?
+      result.requests_results.delete_all
+      result.summary = params[:requests_data]
+      result.save
+      save_request_data(result)
     end
 
+    Result.calc_request_data(result, result.time_cutting_percent) if need_recalculate?(result.time_cutting_percent,
+                                                                                       previous_time_cut_percent,
+                                                                                       params[:requests_data])
+    if PerformanceResult.find_by(result_id: result.id) && need_recalculate?(result.time_cutting_percent,
+                                                                           previous_time_cut_percent,
+                                                                           params[:perfmon_data])
+      Result.calc_performance_data(result, result.time_cutting_percent)
+    end
     result_update
   end
 
@@ -83,7 +89,7 @@ class Result < ActiveRecord::Base
     bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, RequestsResult, cut_percent)
     labels = RequestsResult.where(result_id: result.id).pluck(:label).uniq
     labels.each do |label|
-      CalculatedRequestsResult.find_or_initialize_by(result_id: result.id, label: label).update_attributes!(
+      CalculatedRequestsResult.find_or_create_by(result_id: result.id, label: label).update_attributes!(
           mean: result.request_mean(label, bottom_timestamp, top_timestamp),
           median: result.request_median(label, bottom_timestamp, top_timestamp),
           ninety_percentile: result.request_90percentile(label, bottom_timestamp, top_timestamp),
@@ -99,7 +105,7 @@ class Result < ActiveRecord::Base
     bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, PerformanceResult, cut_percent)
     labels = PerformanceResult.where(result_id: result.id).pluck(:label).uniq
     labels.each do |label|
-      CalculatedPerformanceResult.find_or_initialize_by(result_id: result.id, label: label).update_attributes!(
+      CalculatedPerformanceResult.find_or_create_by(result_id: result.id, label: label).update_attributes!(
           :mean => result.performance_mean(label, bottom_timestamp, top_timestamp),
           :max => result.performance_max(label, bottom_timestamp, top_timestamp),
           :min => result.performance_min(label, bottom_timestamp, top_timestamp)
@@ -240,6 +246,10 @@ class Result < ActiveRecord::Base
   end
 
   private
+
+  def self.need_recalculate?(actual_time_cutting_percent, previous_time_cut_percent, data)
+    !data.nil? || previous_time_cut_percent != actual_time_cutting_percent
+  end
 
   def self.file_from_json(params, data)
     file_hash = params[data]

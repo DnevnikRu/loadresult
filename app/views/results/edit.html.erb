@@ -32,7 +32,22 @@
             <%= label_tag :time_cutting_percent, nil, class: "control-label" %>
             <%= text_field_tag :time_cutting_percent, flash[:time_cutting_percent], class: "form-control", placeholder: '0' %>
           </div>
-          <%= button_tag "Update", class: "btn btn-primary", 'data-disable-with' => 'Loading..' %>
+
+
+          <div id="download_requests_data" class="<%= 'hidden' if flash[:summary_identifier].nil? %>">
+            <%= label_tag 'Requests data', nil, class: "control-label" %>
+            <div>
+            <%= link_to(flash[:summary_identifier], result_download_summary_path(@result), id: 'download_summary')%>
+              <i class="fa fa-pencil-square-o" id="edit_requests_data"></i>
+            </div>
+          </div>
+
+          <div class="form-group required <%= 'hidden' unless flash[:summary_identifier].nil? %>" id="upload_requests_data">
+            <%= label_tag :requests_data, nil, class: "control-label" %>
+            <%= file_field_tag :requests_data%>
+          </div>
+
+          <%= button_tag "Update", class: "btn btn-primary top10", 'data-disable-with' => 'Loading..' %>
       <% end %>
 
     </div>

@@ -18,7 +18,9 @@
         <li class="<%= 'active' if action_name == "123"%>"><a href="#">Trends</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li class="<%= 'active' if action_name == "new"%>"><a href="/results/new">Upload results</a></li>
+        <li class="<%= 'active' if action_name == "new"%>">
+          <%= link_to 'Upload results', new_result_path %>
+        </li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->

@@ -5,6 +5,10 @@ Rails.application.routes.draw do
     put 'toggle'
   end
 
+  namespace :api do
+    resources :results, only: [:create]
+  end
+
   get 'compare' => 'compare#show'
   namespace 'compare' do
     post 'requests_histogram_plot'

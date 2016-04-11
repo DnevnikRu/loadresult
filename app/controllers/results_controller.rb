@@ -30,31 +30,23 @@ class ResultsController < ApplicationController
       flash[:duration] = params[:duration]
       flash[:profile] = params[:profile]
       flash[:time_cutting_percent] = params[:time_cutting_percent]
-      redirect_to({ action: :edit }, alert: @result.errors.full_messages)
+      redirect_to({action: :edit}, alert: @result.errors.full_messages)
     end
   end
 
   def create
     result = Result.upload_and_create(params)
 
-    if json_request?
-      if result.errors.empty?
-        render json: { result_id: result.id, status: 'created' }
-      else
-        render json: result.errors.full_messages
-      end
+    if result.errors.empty?
+      redirect_to(results_url, notice: 'Result was successfully created.')
     else
-      if result.errors.empty?
-        redirect_to(results_url, notice: 'Result was successfully created.')
-      else
-        flash[:version] = result[:version]
-        flash[:rps] = result[:rps]
-        flash[:duration] = result[:duration]
-        flash[:profile] = result[:profile]
-        flash[:test_run_date] = result[:test_run_date].try(:strftime, '%d.%m.%Y %H:%M')
-        flash[:time_cutting_percent] = result[:time_cutting_percent]
-        redirect_to({ action: :new }, alert: result.errors.full_messages)
-      end
+      flash[:version] = result[:version]
+      flash[:rps] = result[:rps]
+      flash[:duration] = result[:duration]
+      flash[:profile] = result[:profile]
+      flash[:test_run_date] = result[:test_run_date].try(:strftime, '%d.%m.%Y %H:%M')
+      flash[:time_cutting_percent] = result[:time_cutting_percent]
+      redirect_to({action: :new}, alert: result.errors.full_messages)
     end
   end
 
@@ -81,9 +73,5 @@ class ResultsController < ApplicationController
 
   def set_result
     @result = Result.find(params[:id])
-  end
-
-  def json_request?
-    request.content_type =~ /json/
   end
 end

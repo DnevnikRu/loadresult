@@ -1,5 +1,5 @@
 ready = ->
-  $('#results-table tr').click (event) ->
+  $('#results-table tbody tr').click (event) ->
     return if event.target.className.match(/glyphicon/)
     checkbox = $(':checkbox', this)
     checkbox.trigger 'click' if event.target.type isnt 'checkbox'

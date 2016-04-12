@@ -38,15 +38,9 @@
     <tbody>
     <% @results.each do |result| %>
         <tr class="result_row">
-          <td class="checkResult text-center">
+          <td class="check-result text-center">
             <%= check_box_tag 'result-checkbox', result.id, @checked_results.try(:include?, result.id.to_s),
-                              class: 'result-checkbox',
-                              data: {
-                                  remote: true,
-                                  url: result_toggle_path(result.id),
-                                  method: :put
-                              }
-            %>
+                              class: 'result-checkbox' %>
           </td>
           <td class="id"><%= result.id %></td>
           <td class="version"><%= result.version %></td>

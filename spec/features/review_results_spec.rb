@@ -33,7 +33,7 @@ feature 'Review results' do
       fill_in 'profile', with: 'all_sites'
       fill_in 'test_run_date', with: '14.02.2016 17:45'
       attach_file 'requests_data', summary_file_path
-      attach_file 'perfmon_data', perfmon_file_path
+      attach_file 'performance_data', perfmon_file_path
       click_button 'Upload'
       expected_row = ['edu sharding', '600', '600', 'all_sites', '14.02.2016 17:45']
       results_rows = []

@@ -20,12 +20,12 @@ class ResultsController < ApplicationController
     flash.now[:profile] = @result[:profile]
     flash.now[:time_cutting_percent] = @result[:time_cutting_percent]
     flash.now[:requests_data_identifier] = @result.requests_data_identifier
-    flash.now[:performance_data_identifier] = @result.requests_data_identifier
+    flash.now[:performance_data_identifier] = @result.performance_data_identifier
   end
 
   def update
-    update_result = Result.update_and_recalculate(@result, params)
-    if update_result
+    result = Result.update_and_recalculate(@result, params)
+    if result.errors.empty?
       redirect_to(results_url, notice: 'Result was successfully updated.')
     else
       flash.now[:version] = params[:version]
@@ -33,9 +33,9 @@ class ResultsController < ApplicationController
       flash.now[:duration] = params[:duration]
       flash.now[:profile] = params[:profile]
       flash.now[:time_cutting_percent] = params[:time_cutting_percent]
-      flash.now[:requests_data_identifier] = params[:requests_data_identifier]
-      flash.now[:performance_data_identifier] = params[:performance_data_identifier]
-      flash.now[:alert] = @result.errors.full_messages
+      flash.now[:requests_data_identifier] = @result.requests_data_identifier
+      flash.now[:performance_data_identifier] = @result.performance_data_identifier
+      flash.now[:alert] = result.errors.full_messages
       render action: :edit
     end
   end

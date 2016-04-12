@@ -11,7 +11,7 @@ ready = ->
         url: "/results/#{resultId}/toggle"
         type: 'PUT'
         dataType: 'script'
-        success: (data) ->
+        complete: ->
           $(".result-checkbox").removeAttr("disabled")
       })
     toggleRequest() unless checkbox.is(":disabled")

@@ -1,17 +1,20 @@
 ready = ->
   $('#results-table tr').click (event) ->
-    if event.target.type isnt 'checkbox' and not event.target.className.match(/glyphicon/)
-      $(':checkbox', this).trigger 'click'
-      checkbox_value = $(':checkbox', this).attr("value")
-      $.ajax
-        url: "results/#{checkbox_value}/toggle"
+    return if event.target.className.match(/glyphicon/)
+    checkbox = $(':checkbox', this)
+    checkbox.trigger 'click' if event.target.type isnt 'checkbox'
+    resultId = checkbox.attr("value")
+    toggleRequest = ->
+      $(".result-checkbox").attr("disabled", true)
+      $("#compare-button").removeAttr("href")
+      $.ajax({
+        url: "/results/#{resultId}/toggle"
         type: 'PUT'
-        dataType: 'json'
-#        async: false
-        success: (responseText) ->
-          ????
-
-
+        dataType: 'script'
+        success: (data) ->
+          $(".result-checkbox").removeAttr("disabled")
+      })
+    toggleRequest() unless checkbox.is(":disabled")
 
 $(document).ready(ready)
 $(document).on('page:load', ready)

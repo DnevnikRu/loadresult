@@ -59,7 +59,6 @@ class ResultsController < ApplicationController
   end
 
   def toggle
-    sleep 1
     flash[:result_ids] ||= []
     if flash[:result_ids].include? params[:result_id]
       flash[:result_ids].delete params[:result_id]

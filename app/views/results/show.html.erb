@@ -25,8 +25,8 @@
         <dd><%= @result.time_cutting_percent %></dd>
         <dt>Requests data</dt>
         <dd><%= @result.requests_data_identifier.nil? ? 'Requests data file does not exist' : link_to('Download',  result_download_requests_data_path(@result)) %></dd>
-        <dt>Has performance? </dt>
-        <dd><%= @result.performance_results.exists? %></dd>
+        <dt>Performance data </dt>
+        <dd><%= @result.performance_data_identifier.nil? ? 'Performance data file does not exist' : link_to('Download',  result_download_performance_data_path(@result)) %></dd>
       </dl>
 
       <%= link_to 'Edit', edit_result_path(@result), class: "btn btn-primary" %>

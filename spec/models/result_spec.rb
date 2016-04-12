@@ -54,7 +54,7 @@ describe Result do
       before(:all) do
         @summary.open
         @perfmon.open
-        perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
+        performance_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
         requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
             'version' => 'edu',
@@ -63,7 +63,7 @@ describe Result do
             'profile' => 'asd',
             'test_run_date' => '2016-02-11 11:21',
             'requests_data' => requests_data,
-            'perfmon_data' => perfmon_data
+            'performance_data' => performance_data
         }
 
         @result = Result.upload_and_create(params)
@@ -142,7 +142,7 @@ describe Result do
               'profile' => 'asd',
               'test_run_date' => '2016-02-11 11:21',
               'requests_data' => requests_data,
-              'perfmon_data' => perfmon_data
+              'performance_data' => perfmon_data
           }
           @result = Result.upload_and_create(params)
           @summary.close
@@ -311,7 +311,7 @@ describe Result do
               'profile' => 'asd',
               'test_run_date' => '2016-02-11 11:21',
               'requests_data' => requests_data,
-              'perfmon_data' => perfmon_data
+              'performance_data' => perfmon_data
           }
 
           @result = Result.upload_and_create(params)

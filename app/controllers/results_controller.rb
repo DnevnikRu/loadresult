@@ -19,6 +19,7 @@ class ResultsController < ApplicationController
     flash.now[:profile] = @result[:profile]
     flash.now[:time_cutting_percent] = @result[:time_cutting_percent]
     flash.now[:requests_data_identifier] = @result.requests_data_identifier
+    flash.now[:performance_data_identifier] = @result.requests_data_identifier
   end
 
   def update
@@ -32,6 +33,7 @@ class ResultsController < ApplicationController
       flash.now[:profile] = params[:profile]
       flash.now[:time_cutting_percent] = params[:time_cutting_percent]
       flash.now[:requests_data_identifier] = params[:requests_data_identifier]
+      flash.now[:performance_data_identifier] = params[:performance_data_identifier]
       flash.now[:alert] = @result.errors.full_messages
       render action: :edit
     end
@@ -74,6 +76,10 @@ class ResultsController < ApplicationController
 
   def download_requests_data
     send_file Result.find_by(id: params[:result_id]).requests_data.current_path
+  end
+
+  def download_performance_data
+    send_file Result.find_by(id: params[:result_id]).performance_data.current_path
   end
 
   private

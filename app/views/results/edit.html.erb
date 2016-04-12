@@ -47,6 +47,19 @@
             <%= file_field_tag :requests_data%>
           </div>
 
+          <div id="download_performance_data" class="<%= 'hidden' if flash[:performance_data_identifier].nil? %>">
+            <%= label_tag 'Performance data', nil, class: "control-label" %>
+            <div>
+              <%= link_to(flash[:performance_data_identifier], result_download_performance_data_path(@result))%>
+              <i class="fa fa-pencil-square-o" id="edit_performance_data"></i>
+            </div>
+          </div>
+
+          <div class="form-group required <%= 'hidden' unless flash[:performance_data_identifier].nil? %>" id="upload_performance_data">
+            <%= label_tag :performance_data, nil, class: "control-label" %>
+            <%= file_field_tag :performance_data%>
+          </div>
+
           <%= button_tag "Update", class: "btn btn-primary top10", 'data-disable-with' => 'Loading..' %>
       <% end %>
 

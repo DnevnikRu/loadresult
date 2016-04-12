@@ -13,6 +13,7 @@ class Result < ActiveRecord::Base
   validate :test_run_date_is_datetime
 
   mount_uploader :requests_data, ResultUploader
+  mount_uploader :performance_data, ResultUploader
 
   def test_run_date_is_datetime
     errors.add(:test_run_date, 'must be in a datetime format') if test_run_date.nil?
@@ -42,11 +43,13 @@ class Result < ActiveRecord::Base
       result.errors.add(:base, 'Request data is required')
     end
 
-    if params['perfmon_data']
-      if params['perfmon_data'].is_a?(Hash)
-        file_from_json(params, 'perfmon_data')
+    if params['performance_data']
+      if params['performance_data'].is_a?(Hash)
+        file_from_json(params, 'performance_data')
       end
-      result.destroy unless save_perfmon_data(params['perfmon_data'], result)
+      result.performance_data = params['performance_data']
+      result.save
+      result.destroy unless save_performance_data(result)
     end
 
     unless result.errors.any?
@@ -67,19 +70,17 @@ class Result < ActiveRecord::Base
         profile: params[:profile],
         time_cutting_percent: params[:time_cutting_percent]
     )
-    if params[:requests_data].present?
-      result.requests_results.delete_all
-      result.requests_data = params[:requests_data]
-      result.save
-      save_request_data(result)
-    end
+
+    replace_requests_data(result, params[:requests_data]) if params[:requests_data].present?
+    replace_performance_data(result, params[:performance_data]) if params[:performance_data].present?
+
 
     Result.calc_request_data(result, result.time_cutting_percent) if need_recalculate?(result.time_cutting_percent,
                                                                                        previous_time_cut_percent,
                                                                                        params[:requests_data])
     if PerformanceResult.find_by(result_id: result.id) && need_recalculate?(result.time_cutting_percent,
-                                                                           previous_time_cut_percent,
-                                                                           params[:perfmon_data])
+                                                                            previous_time_cut_percent,
+                                                                            params[:performance_data])
       Result.calc_performance_data(result, result.time_cutting_percent)
     end
     result_update
@@ -247,6 +248,20 @@ class Result < ActiveRecord::Base
 
   private
 
+  def self.replace_requests_data(result, requests_data)
+    result.requests_results.delete_all
+    result.requests_data = requests_data
+    result.save
+    save_request_data(result)
+  end
+
+  def self.replace_performance_data(result, performance_data)
+    result.performance_results.delete_all
+    result.performance_data = performance_data
+    result.save
+    save_performance_data(result)
+  end
+
   def self.need_recalculate?(actual_time_cutting_percent, previous_time_cut_percent, data)
     !data.nil? || previous_time_cut_percent != actual_time_cutting_percent
   end
@@ -283,18 +298,18 @@ class Result < ActiveRecord::Base
     result
   end
 
-  def self.save_perfmon_data(perfmon_data, result)
-    perfmon_data = CSV.new(perfmon_data.read)
-    header = perfmon_data.first
-    validate_header(result, header, 'perfmon', %w(timeStamp label elapsed)) # TODO: move list of required column to model
+  def self.save_performance_data(result)
+    performance_data = CSV.new(File.read(result.performance_data.current_path))
+    header = performance_data.first
+    validate_header(result, header, 'performance', %w(timeStamp label elapsed)) # TODO: move list of required column to model
     return if result.errors.any?
-    perfmons_data = perfmon_data.map do |line|
+    performance_results = performance_data.map do |line|
       "(#{result.id}, #{line[header.index('timeStamp')]},
       '#{line[header.index('label')]}', #{line[header.index('elapsed')].to_i / 1000},
        '#{Time.now}', '#{Time.now}')"
     end
     ActiveRecord::Base.connection.execute(%(INSERT INTO performance_results (result_id, timestamp, label, value, created_at, updated_at)
-                                            VALUES #{perfmons_data.join(', ')}))
+                                            VALUES #{performance_results.join(', ')}))
     result
   end
 

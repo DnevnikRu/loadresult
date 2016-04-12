@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :results do
     put 'toggle'
     get 'download_requests_data'
+    get 'download_performance_data'
   end
 
   namespace :api do

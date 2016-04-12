@@ -34,7 +34,7 @@ feature 'Upload load result' do
       fill_in 'profile', with: 'all_sites'
       fill_in 'test_run_date', with: '14.02.2016 17:45'
       attach_file 'requests_data', summary_file_path
-      attach_file 'perfmon_data', perfmon_file_path
+      attach_file 'performance_data', perfmon_file_path
       click_button 'Upload'
 
       expect(page).to have_content('Result was successfully created.')
@@ -80,7 +80,7 @@ feature 'Upload load result' do
       fill_in 'duration', with: '600'
       fill_in 'profile', with: 'all_sites'
       fill_in 'test_run_date', with: '14.02.2016 17:45'
-      attach_file 'perfmon_data', perfmon_file_path
+      attach_file 'performance_data', perfmon_file_path
       click_button 'Upload'
 
       expect(page).to have_content('Request data is required')

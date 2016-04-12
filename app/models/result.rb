@@ -12,37 +12,35 @@ class Result < ActiveRecord::Base
   validates :profile, presence: true
   validate :test_run_date_is_datetime
 
+  mount_uploader :requests_data, ResultUploader
+  mount_uploader :performance_data, ResultUploader
+
   def test_run_date_is_datetime
     errors.add(:test_run_date, 'must be in a datetime format') if test_run_date.nil?
   end
 
   def self.upload_and_create(params)
-    params['time_cutting_percent'].blank? ? time_cutting = 0 : time_cutting = params['time_cutting_percent']
     result = Result.new(
         version: params['version'],
         duration: params['duration'],
         rps: params['rps'],
         profile: params['profile'],
         test_run_date: params['test_run_date'],
-        time_cutting_percent: time_cutting
+        requests_data: params['requests_data'].is_a?(Hash) ? file_from_json(params, 'requests_data') : params['requests_data'],
+        performance_data: params['performance_data'].is_a?(Hash) ? file_from_json(params, 'performance_data') : params['performance_data'],
+        time_cutting_percent: params['time_cutting_percent'].blank? ? 0 : params['time_cutting_percent']
     )
     result.save
 
-    if params['requests_data']
-      if params['requests_data'].is_a?(Hash)
-        file_from_json(params, 'requests_data')
-      end
-      result.destroy unless save_request_data(params['requests_data'], result)
+    if result.requests_data.present?
+      result.destroy unless save_request_data(result)
     else
       result.destroy
       result.errors.add(:base, 'Request data is required')
     end
 
-    if params['perfmon_data']
-      if params['perfmon_data'].is_a?(Hash)
-        file_from_json(params, 'perfmon_data')
-      end
-      result.destroy unless save_perfmon_data(params['perfmon_data'], result)
+    if result.performance_data.present?
+      result.destroy unless save_performance_data(result)
     end
 
     unless result.errors.any?
@@ -54,54 +52,23 @@ class Result < ActiveRecord::Base
   end
 
   def self.update_and_recalculate(result, params)
-    params['time_cutting_percent'].blank? ? time_cutting = 0 : time_cutting = params['time_cutting_percent']
     previous_time_cut_percent = result.time_cutting_percent
-    result_update = result.update(
+    result.update(
         version: params[:version],
         rps: params[:rps],
         duration: params[:duration],
         profile: params[:profile],
-        time_cutting_percent: time_cutting
+        requests_data: params[:requests_data],
+        performance_data: params[:performance_data],
+        time_cutting_percent: params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent]
     )
 
-    if previous_time_cut_percent != result.time_cutting_percent
-      Result.calc_request_data(result, result.time_cutting_percent)
+    update_requests(result, previous_time_cut_percent)
+    update_performance(result, previous_time_cut_percent)
 
-      if PerformanceResult.find_by(result_id: result.id)
-        Result.calc_performance_data(result, result.time_cutting_percent)
-      end
-    end
-
-    result_update
+    result
   end
 
-  def self.calc_request_data(result, cut_percent)
-    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, RequestsResult, cut_percent)
-    labels = RequestsResult.where(result_id: result.id).pluck(:label).uniq
-    labels.each do |label|
-      CalculatedRequestsResult.find_or_initialize_by(result_id: result.id, label: label).update_attributes!(
-          mean: result.request_mean(label, bottom_timestamp, top_timestamp),
-          median: result.request_median(label, bottom_timestamp, top_timestamp),
-          ninety_percentile: result.request_90percentile(label, bottom_timestamp, top_timestamp),
-          max: result.request_max(label, bottom_timestamp, top_timestamp),
-          min: result.request_min(label, bottom_timestamp, top_timestamp),
-          throughput: result.request_throughput(label, bottom_timestamp, top_timestamp),
-          failed_results: result.failed_requests(label, bottom_timestamp, top_timestamp)
-      )
-    end
-  end
-
-  def self.calc_performance_data(result, cut_percent)
-    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, PerformanceResult, cut_percent)
-    labels = PerformanceResult.where(result_id: result.id).pluck(:label).uniq
-    labels.each do |label|
-      CalculatedPerformanceResult.find_or_initialize_by(result_id: result.id, label: label).update_attributes!(
-          :mean => result.performance_mean(label, bottom_timestamp, top_timestamp),
-          :max => result.performance_max(label, bottom_timestamp, top_timestamp),
-          :min => result.performance_min(label, bottom_timestamp, top_timestamp)
-      )
-    end
-  end
 
   def request_mean(label, bottom_timestamp, top_timestamp)
     records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
@@ -237,6 +204,62 @@ class Result < ActiveRecord::Base
 
   private
 
+  def self.update_requests(result, previous_time_cut_percent)
+    if result.requests_data.present?
+      validate_requests_data(result)
+      return if result.errors.any?
+      result.requests_results.delete_all
+      save_request_data(result)
+      calc_request_data(result, result.time_cutting_percent)
+    else
+      if previous_time_cut_percent != result.time_cutting_percent && result.errors.empty?
+        calc_request_data(result, result.time_cutting_percent)
+      end
+    end
+  end
+
+  def self.update_performance(result, previous_time_cut_percent)
+    if result.performance_data.present?
+      validate_performance_data(result)
+      return if result.errors.any?
+      result.performance_data.delete_all
+      save_performance_data(result)
+      calc_performance_data(result, result.time_cutting_percent)
+    else
+      if previous_time_cut_percent != result.time_cutting_percent && result.performance_results.present? && result.errors.empty?
+        calc_performance_data(result, result.time_cutting_percent)
+      end
+    end
+  end
+
+  def self.calc_request_data(result, cut_percent)
+    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, RequestsResult, cut_percent)
+    labels = RequestsResult.where(result_id: result.id).pluck(:label).uniq
+    labels.each do |label|
+      CalculatedRequestsResult.find_or_create_by(result_id: result.id, label: label).update_attributes!(
+          mean: result.request_mean(label, bottom_timestamp, top_timestamp),
+          median: result.request_median(label, bottom_timestamp, top_timestamp),
+          ninety_percentile: result.request_90percentile(label, bottom_timestamp, top_timestamp),
+          max: result.request_max(label, bottom_timestamp, top_timestamp),
+          min: result.request_min(label, bottom_timestamp, top_timestamp),
+          throughput: result.request_throughput(label, bottom_timestamp, top_timestamp),
+          failed_results: result.failed_requests(label, bottom_timestamp, top_timestamp)
+      )
+    end
+  end
+
+  def self.calc_performance_data(result, cut_percent)
+    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, PerformanceResult, cut_percent)
+    labels = PerformanceResult.where(result_id: result.id).pluck(:label).uniq
+    labels.each do |label|
+      CalculatedPerformanceResult.find_or_create_by(result_id: result.id, label: label).update_attributes!(
+          :mean => result.performance_mean(label, bottom_timestamp, top_timestamp),
+          :max => result.performance_max(label, bottom_timestamp, top_timestamp),
+          :min => result.performance_min(label, bottom_timestamp, top_timestamp)
+      )
+    end
+  end
+
   def self.file_from_json(params, data)
     file_hash = params[data]
     tempfile = Tempfile.new('file')
@@ -248,17 +271,27 @@ class Result < ActiveRecord::Base
     params[data] = real_file
   end
 
+  def self.validate_requests_data(result)
+    header = File.open(result.requests_data.current_path) {|f| f.readline}
+    validate_header(result, header, 'request', %w(timeStamp label responseCode Latency))
+  end
+
+  def self.validate_performance_data(result)
+    header = File.open(result.performance_data.current_path) {|f| f.readline}
+    validate_header(result, header, 'performance', %w(timeStamp label elapsed))
+  end
+
   def self.validate_header(result, header, data_type, required_fields)
     required_fields.each do |column_name|
       result.errors.add(:base, "#{column_name} column in #{data_type} data is required!") unless header.include?(column_name)
     end
   end
 
-  def self.save_request_data(request_data, result)
-    request_data = CSV.new(request_data.read)
-    header = request_data.first
-    validate_header(result, header, 'request', %w(timeStamp label responseCode Latency)) # TODO: move list of required column to model
+  def self.save_request_data(result)
+    validate_requests_data(result)
     return if result.errors.any?
+    request_data = CSV.new(File.read(result.requests_data.current_path))
+    header = request_data.first
     requests_results = request_data.map do |line|
       "(#{result.id}, #{line[header.index('timeStamp')]},
        '#{line[header.index('label')]}', '#{line[header.index('responseCode')]}',
@@ -269,18 +302,18 @@ class Result < ActiveRecord::Base
     result
   end
 
-  def self.save_perfmon_data(perfmon_data, result)
-    perfmon_data = CSV.new(perfmon_data.read)
-    header = perfmon_data.first
-    validate_header(result, header, 'perfmon', %w(timeStamp label elapsed)) # TODO: move list of required column to model
+  def self.save_performance_data(result)
+    validate_performance_data(result)
     return if result.errors.any?
-    perfmons_data = perfmon_data.map do |line|
+    performance_data = CSV.new(File.read(result.performance_data.current_path))
+    header = performance_data.first
+    performance_results = performance_data.map do |line|
       "(#{result.id}, #{line[header.index('timeStamp')]},
       '#{line[header.index('label')]}', #{line[header.index('elapsed')].to_i / 1000},
        '#{Time.now}', '#{Time.now}')"
     end
     ActiveRecord::Base.connection.execute(%(INSERT INTO performance_results (result_id, timestamp, label, value, created_at, updated_at)
-                                            VALUES #{perfmons_data.join(', ')}))
+                                            VALUES #{performance_results.join(', ')}))
     result
   end
 

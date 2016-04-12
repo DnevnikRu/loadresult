@@ -19,4 +19,10 @@ describe 'Show Result page' do
 
     expect(page).to have_content(@result.id)
   end
+
+  scenario 'Show Result without summary file' do
+    visit result_path(@result)
+
+    expect(page).to have_content('Requests data file does not exist')
+  end
 end

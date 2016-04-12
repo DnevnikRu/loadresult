@@ -17,6 +17,8 @@ gem 'capistrano-rails', '~> 1.1.0'
 gem 'capistrano-bundler', '~> 1.1.4'
 gem 'capistrano-rvm', '~> 0.1.2'
 
+gem 'carrierwave', '~> 0.11.0'
+
 group :development do
   gem 'web-console', '~> 2.0'
   gem 'spring'

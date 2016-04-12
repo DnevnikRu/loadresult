@@ -54,8 +54,8 @@ describe Result do
       before(:all) do
         @summary.open
         @perfmon.open
-        perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon)
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+        performance_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
             'version' => 'edu',
             'rps' => 150,
@@ -63,7 +63,7 @@ describe Result do
             'profile' => 'asd',
             'test_run_date' => '2016-02-11 11:21',
             'requests_data' => requests_data,
-            'perfmon_data' => perfmon_data
+            'performance_data' => performance_data
         }
 
         @result = Result.upload_and_create(params)
@@ -76,7 +76,7 @@ describe Result do
       end
 
       it 'result saved' do
-        expect(Result.find(@result.id)).not_to be_nil
+        expect(Result.find_by(id: @result.id)).not_to be_nil
       end
 
       it 'request data save' do
@@ -95,13 +95,21 @@ describe Result do
         expect(CalculatedPerformanceResult.find_by result_id: @result.id).not_to be_nil
       end
 
+      it 'requests data file name saved in database' do
+        expect(@result.requests_data_identifier).to eql 'summary.csv'
+      end
+
+      it 'performance data file name saved in database' do
+        expect(@result.performance_data_identifier).to eql 'perfmon.csv'
+      end
+
     end
 
     describe 'some parameters absence' do
       describe 'perfmon data is absence' do
         before(:all) do
           @summary.open
-          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
           params = {
               'version' => 'edu',
               'rps' => 150,
@@ -130,15 +138,15 @@ describe Result do
         before(:all) do
           @summary.open
           @perfmon.open
-          perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon)
-          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+          performance_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
           params = {
               'rps' => 150,
               'duration' => 123,
               'profile' => 'asd',
               'test_run_date' => '2016-02-11 11:21',
               'requests_data' => requests_data,
-              'perfmon_data' => perfmon_data
+              'performance_data' => performance_data
           }
           @result = Result.upload_and_create(params)
           @summary.close
@@ -159,7 +167,7 @@ describe Result do
 
       it 'rps is absence, other required fields presence' do
         @summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
             'version' => 'asd',
             'duration' => 123,
@@ -174,7 +182,7 @@ describe Result do
 
       it 'duration is absence, other required fields presence' do
         @summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
             'version' => 'asd',
             'rps' => 150,
@@ -189,7 +197,7 @@ describe Result do
 
       it 'profile is absence, other required fields presence' do
         @summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
             'version' => 'asd',
             'duration' => 123,
@@ -205,7 +213,7 @@ describe Result do
 
       it 'date is absence, other required fields presence' do
         @summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
             'version' => 'asd',
             'duration' => 123,
@@ -253,7 +261,7 @@ describe Result do
 
         before(:all) do
           @invalid_summary.open
-          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_summary)
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_summary, filename: 'summary_invalid_header.csv')
           params = {
               'version' => 'edu',
               'rps' => 150,
@@ -298,8 +306,8 @@ describe Result do
         before(:all) do
           @summary.open
           @invalid_perfmon.open
-          perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_perfmon)
-          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary)
+          perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_perfmon, filename: 'perfmon_invalid_header.csv')
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
           params = {
               'version' => 'edu',
               'rps' => 150,
@@ -307,7 +315,7 @@ describe Result do
               'profile' => 'asd',
               'test_run_date' => '2016-02-11 11:21',
               'requests_data' => requests_data,
-              'perfmon_data' => perfmon_data
+              'performance_data' => perfmon_data
           }
 
           @result = Result.upload_and_create(params)
@@ -319,7 +327,7 @@ describe Result do
           errors = []
           required_column = %w(timeStamp label elapsed)
           required_column.each do |column|
-            errors.push "#{column} column in perfmon data is required!"
+            errors.push "#{column} column in performance data is required!"
           end
           expect(@result.errors).to match_array(errors)
         end
@@ -730,7 +738,6 @@ describe Result do
     end
   end
 
-
   describe '.border_timestamps' do
     before do
       @result = create(:result)
@@ -774,58 +781,158 @@ describe Result do
     end
   end
 
-  describe 'Update and recalculate only with request data' do
-    before(:all) do
-      @result = create(:result, time_cutting_percent: 10)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
-      Result.calc_request_data(@result, @result.time_cutting_percent)
+  describe '.update_and_recalculate' do
+
+    describe 'Update and recalculate only with request data' do
+      before(:all) do
+        @result = create(:result, time_cutting_percent: 10)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
+        Result.calc_request_data(@result, @result.time_cutting_percent)
+      end
+
+      it 'not change time cutting' do
+        Result.update_and_recalculate(@result, {version: @result.version,
+                                                duration: @result.duration,
+                                                rps: @result.rps,
+                                                profile: @result.profile,
+                                                time_cutting_percent: '10'})
+        expect(CalculatedRequestsResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 377.67
+      end
+
+      it 'change time cutting' do
+        Result.update_and_recalculate(@result, {version: @result.version,
+                                                duration: @result.duration,
+                                                rps: @result.rps,
+                                                profile: @result.profile,
+                                                time_cutting_percent: '1'})
+        expect(CalculatedRequestsResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 314.0
+      end
     end
 
-    it 'not change time cutting' do
-      Result.update_and_recalculate(@result, 'time_cutting_percent' => '10')
-      expect(CalculatedRequestsResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 377.67
+    describe 'Update and recalculate only with request and performance data' do
+      before(:all) do
+        @result = create(:result, time_cutting_percent: 10)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
+        create(:performance_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+        create(:performance_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+        create(:performance_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
+        create(:performance_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
+        create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
+        create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
+        Result.calc_request_data(@result, @result.time_cutting_percent)
+        Result.calc_performance_data(@result, @result.time_cutting_percent)
+      end
+
+      it 'not change time cutting' do
+        Result.update_and_recalculate(@result, {version: @result.version,
+                                                duration: @result.duration,
+                                                rps: @result.rps,
+                                                profile: @result.profile,
+                                                time_cutting_percent: '10'})
+        expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 377.67
+      end
+
+      it 'change time cutting' do
+        Result.update_and_recalculate(@result, {version: @result.version,
+                                                duration: @result.duration,
+                                                rps: @result.rps,
+                                                profile: @result.profile,
+                                                time_cutting_percent: '1'})
+        expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 314.0
+      end
+
+
     end
 
-    it 'change time cutting' do
-      Result.update_and_recalculate(@result, 'time_cutting_percent' => 1)
-      expect(CalculatedRequestsResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 314.0
+    describe 'some parameters absence or invalid' do
+      before(:all) do
+        @summary = Tempfile.new('requests_data_temp')
+        @perfmon = Tempfile.new('perfmon_data_temp')
+        File.open(File.join(fixture_path, 'summary.csv'), 'r') do |f|
+          @summary.write f.read
+        end
+        File.open(File.join(fixture_path, 'perfmon.csv'), 'r') do |f|
+          @perfmon.write f.read
+        end
+        @summary.close
+        @perfmon.close
+        @summary.open
+        @perfmon.open
+        performance_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
+        params = {
+            'version' => 'edu',
+            'rps' => 150,
+            'duration' => 123,
+            'profile' => 'asd',
+            'test_run_date' => '2016-02-11 11:21',
+            'requests_data' => requests_data,
+            'performance_data' => performance_data
+        }
+
+        @result = Result.upload_and_create(params)
+        @summary.close
+        @perfmon.close
+      end
+
+      it 'version is absence' do
+        @summary.open
+        @perfmon.open
+        performance_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
+        params = {
+            :rps => 150,
+            :duration => 123,
+            :profile => 'asd',
+            :test_run_date => '2016-02-11 11:21',
+            :requests_data => requests_data,
+            :performance_data => performance_data
+        }
+        updated_result = Result.update_and_recalculate(@result, params)
+        @summary.close
+        @perfmon.close
+
+
+        expect(updated_result.errors.full_messages).to include("Version can't be blank")
+      end
+
+      it 'absence required columns in request data' do
+        @invalid_summary = Tempfile.new('requests_data_temp')
+        File.open(File.join(fixture_path, 'summary_invalid_header.csv'), 'r') do |f|
+          @invalid_summary.write f.read
+        end
+        @invalid_summary.close
+        @invalid_summary.open
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_summary, filename: 'summary_invalid_header.csv')
+        params = {
+            version: 'test',
+            rps: 150,
+            duration: 123,
+            profile: 'asd',
+            test_run_date: '2016-02-11 11:21',
+            requests_data: requests_data
+        }
+
+        updated_result = Result.update_and_recalculate(@result, params)
+        @invalid_summary.close
+
+
+        expected_errors =['timeStamp column in request data is required!',
+                          'label column in request data is required!',
+                          'responseCode column in request data is required!',
+                          'Latency column in request data is required!']
+        expect(updated_result.errors.full_messages).to match_array(expected_errors)
+      end
     end
   end
-
-  describe 'Update and recalculate only with request and performance data' do
-    before(:all) do
-      @result = create(:result, time_cutting_percent: 10)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
-      Result.calc_request_data(@result, @result.time_cutting_percent)
-      Result.calc_performance_data(@result, @result.time_cutting_percent)
-    end
-
-    it 'not change time cutting' do
-      Result.update_and_recalculate(@result, 'time_cutting_percent' => '10')
-      expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 377.67
-    end
-
-    it 'change time cutting' do
-      Result.update_and_recalculate(@result, 'time_cutting_percent' => 1)
-      expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 314.0
-    end
-  end
-
-
 end

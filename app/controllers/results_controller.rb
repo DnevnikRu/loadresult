@@ -1,5 +1,5 @@
 class ResultsController < ApplicationController
-  before_action :set_result, only: [:show, :edit, :update, :destroy]
+  before_action :set_result, only: [:show, :edit, :update, :destroy, :download_requests_data]
 
   def index
     @results = Result.order(test_run_date: :desc).page params[:page]
@@ -19,11 +19,13 @@ class ResultsController < ApplicationController
     flash.now[:duration] = @result[:duration]
     flash.now[:profile] = @result[:profile]
     flash.now[:time_cutting_percent] = @result[:time_cutting_percent]
+    flash.now[:requests_data_identifier] = @result.requests_data_identifier
+    flash.now[:performance_data_identifier] = @result.performance_data_identifier
   end
 
   def update
-    update_result = Result.update_and_recalculate(@result, params)
-    if update_result
+    result = Result.update_and_recalculate(@result, params)
+    if result.errors.empty?
       redirect_to(results_url, notice: 'Result was successfully updated.')
     else
       flash.now[:version] = params[:version]
@@ -31,14 +33,15 @@ class ResultsController < ApplicationController
       flash.now[:duration] = params[:duration]
       flash.now[:profile] = params[:profile]
       flash.now[:time_cutting_percent] = params[:time_cutting_percent]
-      flash.now[:alert] = @result.errors.full_messages
+      flash.now[:requests_data_identifier] = @result.requests_data_identifier
+      flash.now[:performance_data_identifier] = @result.performance_data_identifier
+      flash.now[:alert] = result.errors.full_messages
       render action: :edit
     end
   end
 
   def create
     result = Result.upload_and_create(params)
-
     if result.errors.empty?
       redirect_to(results_url, notice: 'Result was successfully created.')
     else
@@ -73,9 +76,17 @@ class ResultsController < ApplicationController
     end
   end
 
+  def download_requests_data
+    send_file Result.find_by(id: params[:result_id]).requests_data.current_path
+  end
+
+  def download_performance_data
+    send_file Result.find_by(id: params[:result_id]).performance_data.current_path
+  end
+
   private
 
   def set_result
-    @result = Result.find(params[:id])
+    @result = Result.find_by(id: params[:id])
   end
 end

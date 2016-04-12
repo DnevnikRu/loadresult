@@ -81,8 +81,10 @@ feature 'Review results' do
 
       visit '/results/'
       page.all('.result_row').first.click
+      wait_for_ajax
       click_on 'Next ›'
       find('.result_row').click
+      wait_for_ajax
       click_on 'Compare'
 
       expect(page).to have_content('Compare report')
@@ -93,7 +95,10 @@ feature 'Review results' do
     2.times { create(:result) }
 
     visit '/results/'
-    page.all('.result_row').each(&:click)
+    page.all('.result_row').each do |row|
+      row.click
+      wait_for_ajax
+    end
     click_on 'Compare'
     visit '/results/'
 

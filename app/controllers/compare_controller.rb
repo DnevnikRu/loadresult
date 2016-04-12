@@ -8,7 +8,8 @@ class CompareController < ApplicationController
     if result1.nil? || result2.nil?
       return redirect_to results_path, alert: "Can't find selected results"
     end
-    session[:result_ids] = [] # reset choosen results on the result index page
+    flash[:result_ids] = nil # reset choosen results on the result index page
+
     @compare_report = CompareReport.new(result1, result2)
     @warnings = @compare_report.differences
   end

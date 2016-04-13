@@ -100,6 +100,8 @@ feature 'Review results' do
       wait_for_ajax
     end
     click_on 'Compare'
+    wait_for_ajax
+    expect(page).to have_content('Compare report')
     visit '/results/'
 
     page.all('.result-checkbox').each do |checkbox|

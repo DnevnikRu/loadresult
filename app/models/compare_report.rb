@@ -29,7 +29,7 @@ class CompareReport
   def performance_groups
     labels = result1.calculated_performance_results.pluck(:label) & result2.calculated_performance_results.pluck(:label)
     label_groups = []
-    PerformanceGroup.all.each do |group|
+    PerformanceGroup.find_each do |group|
       labels_in_group = labels.select { |label| !group.labels.pluck(:label).select { |l| label.include? l }.empty? }
       next if labels_in_group.empty?
       label_groups.push(name: group.name,

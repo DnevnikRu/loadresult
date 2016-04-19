@@ -1,2 +1,3 @@
 $("#compare-button").prop("href", "<%= compare_path(result: @checked_results).html_safe %>");
+$("#trend-button").prop("href", "<%= trend_path(result: @checked_results).html_safe %>");
 $("#result-to-compare-list").html("<%= escape_javascript(render partial: 'result_to_compare_list', locals: { items: @checked_results} ) %>");

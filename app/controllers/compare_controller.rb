@@ -1,5 +1,6 @@
 class CompareController < ApplicationController
   def show
+    flash.keep(:result_ids)
     if params[:result].nil? || params[:result].size == 1
       return redirect_to results_path, alert: 'You should select 2 or more results to compare them'
     end

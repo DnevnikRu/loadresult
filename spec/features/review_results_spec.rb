@@ -152,4 +152,17 @@ feature 'Review results' do
       expect(checkbox).to_not be_checked
     end
   end
+
+  scenario 'Text with selected ids appears' do
+    result1 = create(:result)
+    result2 = create(:result)
+
+    visit '/results/'
+    page.all('.result_row').each do |row|
+      row.click
+      wait_for_ajax
+    end
+
+    expect(page).to have_content("Selected results: #{result1.id}, #{result2.id}")
+  end
 end

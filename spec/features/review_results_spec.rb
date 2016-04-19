@@ -153,8 +153,7 @@ feature 'Review results' do
   end
 
   scenario 'Selected results are still selected after an error on Compare or Trend page' do
-    result1 = create(:result)
-    result2 = create(:result)
+    2.times { create(:result) }
 
     visit '/results/'
     page.all('.result-checkbox')[0].click

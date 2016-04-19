@@ -11,12 +11,22 @@ class Result < ActiveRecord::Base
   validates :rps, presence: true
   validates :profile, presence: true
   validate :test_run_date_is_datetime
+  validates :value_smoothing_interval, numericality: { only_integer: true }, allow_nil: true
+  validate :value_smoothing_interval_cannot_be_even
 
   mount_uploader :requests_data, ResultUploader
   mount_uploader :performance_data, ResultUploader
 
+  include Statistics
+
   def test_run_date_is_datetime
     errors.add(:test_run_date, 'must be in a datetime format') if test_run_date.nil?
+  end
+
+  def value_smoothing_interval_cannot_be_even
+    if !value_smoothing_interval.nil? && value_smoothing_interval.even?
+      errors.add(:value_smoothing_interval, 'can`t be even')
+    end
   end
 
   def self.upload_and_create(params)
@@ -28,7 +38,8 @@ class Result < ActiveRecord::Base
         test_run_date: params['test_run_date'],
         requests_data: params['requests_data'].is_a?(Hash) ? file_from_json(params, 'requests_data') : params['requests_data'],
         performance_data: params['performance_data'].is_a?(Hash) ? file_from_json(params, 'performance_data') : params['performance_data'],
-        time_cutting_percent: params['time_cutting_percent'].blank? ? 0 : params['time_cutting_percent']
+        time_cutting_percent: params['time_cutting_percent'].blank? ? 0 : params['time_cutting_percent'],
+        value_smoothing_interval: params['value_smoothing_interval']
     )
     result.save
 
@@ -236,12 +247,16 @@ class Result < ActiveRecord::Base
     bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, RequestsResult, cut_percent)
     labels = RequestsResult.where(result_id: result.id).pluck(:label).uniq
     labels.each do |label|
+      data = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp)).pluck(:value)
+      data = result.value_smoothing_interval.present? ? simple_moving_average(data, result.value_smoothing_interval) : data
+      duration = (top_timestamp - bottom_timestamp)
+      duration = (duration == 0 || duration / 1000.0 <= 1) ? 1 : duration / 1000.0
       CalculatedRequestsResult.find_or_create_by(result_id: result.id, label: label).update_attributes!(
-          mean: result.request_mean(label, bottom_timestamp, top_timestamp),
-          median: result.request_median(label, bottom_timestamp, top_timestamp),
-          ninety_percentile: result.request_90percentile(label, bottom_timestamp, top_timestamp),
-          max: result.request_max(label, bottom_timestamp, top_timestamp),
-          min: result.request_min(label, bottom_timestamp, top_timestamp),
+          mean: data.inject(:+) / data.count,
+          median: median(data),
+          ninety_percentile: percentile(data, 90),
+          max: data.max,
+          min: data.min,
           throughput: result.request_throughput(label, bottom_timestamp, top_timestamp),
           failed_results: result.failed_requests(label, bottom_timestamp, top_timestamp)
       )

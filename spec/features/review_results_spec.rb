@@ -91,7 +91,7 @@ feature 'Review results' do
     end
   end
 
-  scenario 'Selecting two results and clicking on Compare clear checked results' do
+  scenario 'Selecting two results and clicking on Compare opens Compare page and clear checked results' do
     2.times { create(:result) }
 
     visit '/results/'
@@ -109,31 +109,7 @@ feature 'Review results' do
     end
   end
 
-  scenario 'Results are not checked by default' do
-    10.times { create(:result) }
-
-    visit '/results/'
-
-    page.all('.result-checkbox').each do |checkbox|
-      expect(checkbox).to_not be_checked
-    end
-  end
-
-  scenario 'Selecting two results and clicking on Compare opens Compare page' do
-    2.times { create(:result) }
-
-    visit '/results/'
-    page.all('.result_row').each do |row|
-      row.click
-      wait_for_ajax
-    end
-    click_on 'Compare'
-    wait_for_ajax
-
-    expect(find('h1')).to have_content('Compare report')
-  end
-
-  scenario 'Selecting results and clicking on Trend opens Trend page and clear checked results' do
+  scenario 'Selecting two results and clicking on Trend opens Trend page and clear checked results' do
     create(:result, test_run_date: '01.01.1978 00:01')
     create(:result, test_run_date: '01.01.1978 00:02')
     create(:result, test_run_date: '01.01.1978 00:03')
@@ -146,6 +122,16 @@ feature 'Review results' do
     click_on 'Trend'
 
     expect(find('h1')).to have_content('Trend')
+    visit '/results/'
+
+    page.all('.result-checkbox').each do |checkbox|
+      expect(checkbox).to_not be_checked
+    end
+  end
+
+  scenario 'Results are not checked by default' do
+    10.times { create(:result) }
+
     visit '/results/'
 
     page.all('.result-checkbox').each do |checkbox|

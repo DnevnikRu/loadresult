@@ -7,6 +7,7 @@ ready = ->
     toggleRequest = ->
       $(".result-checkbox").attr("disabled", true)
       $("#compare-button").removeAttr("href")
+      $("#trend-button").removeAttr("href")
       $.ajax({
         url: "/results/#{resultId}/toggle"
         type: 'PUT'

@@ -132,4 +132,24 @@ feature 'Review results' do
 
     expect(find('h1')).to have_content('Compare report')
   end
+
+  scenario 'Selecting results and clicking on Trend opens Trend page and clear checked results' do
+    create(:result, test_run_date: '01.01.1978 00:01')
+    create(:result, test_run_date: '01.01.1978 00:02')
+    create(:result, test_run_date: '01.01.1978 00:03')
+
+    visit '/results/'
+    page.all('.result_row').first.click
+    wait_for_ajax
+    page.all('.result_row').last.click
+    wait_for_ajax
+    click_on 'Trend'
+
+    expect(find('h1')).to have_content('Trend')
+    visit '/results/'
+
+    page.all('.result-checkbox').each do |checkbox|
+      expect(checkbox).to_not be_checked
+    end
+  end
 end

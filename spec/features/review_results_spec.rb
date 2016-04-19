@@ -87,7 +87,7 @@ feature 'Review results' do
       wait_for_ajax
       click_on 'Compare'
 
-      expect(page).to have_content('Compare report')
+      expect(find('h1')).to have_content('Compare report')
     end
   end
 
@@ -101,7 +101,7 @@ feature 'Review results' do
     end
     click_on 'Compare'
     wait_for_ajax
-    expect(page).to have_content('Compare report')
+    expect(find('h1')).to have_content('Compare report')
     visit '/results/'
 
     page.all('.result-checkbox').each do |checkbox|
@@ -123,8 +123,12 @@ feature 'Review results' do
     2.times { create(:result) }
 
     visit '/results/'
-    page.all('.result_row').each(&:click)
+    page.all('.result_row').each do |row|
+      row.click
+      wait_for_ajax
+    end
     click_on 'Compare'
+    wait_for_ajax
 
     expect(find('h1')).to have_content('Compare report')
   end

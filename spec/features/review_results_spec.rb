@@ -65,7 +65,7 @@ feature 'Review results' do
       visit '/results/'
       click_on 'Next ›'
 
-      expect(page).to have_selector('.result_row', count: 1)
+      expect(page).to have_selector('.result-checkbox', count: 1)
     end
 
     scenario 'Paginator is not visible when there are 20 or less results' do
@@ -80,10 +80,10 @@ feature 'Review results' do
       21.times { create(:result) }
 
       visit '/results/'
-      page.all('.result_row').first.click
+      page.all('.result-checkbox').first.click
       wait_for_ajax
       click_on 'Next ›'
-      find('.result_row').click
+      find('.result-checkbox').click
       wait_for_ajax
       click_on 'Compare'
 
@@ -95,7 +95,7 @@ feature 'Review results' do
     2.times { create(:result) }
 
     visit '/results/'
-    page.all('.result_row').each do |row|
+    page.all('.result-checkbox').each do |row|
       row.click
       wait_for_ajax
     end
@@ -115,9 +115,9 @@ feature 'Review results' do
     create(:result, test_run_date: '01.01.1978 00:03')
 
     visit '/results/'
-    page.all('.result_row').first.click
+    page.all('.result-checkbox').first.click
     wait_for_ajax
-    page.all('.result_row').last.click
+    page.all('.result-checkbox').last.click
     wait_for_ajax
     click_on 'Trend'
 
@@ -144,7 +144,7 @@ feature 'Review results' do
     result2 = create(:result)
 
     visit '/results/'
-    page.all('.result_row').each do |row|
+    page.all('.result-checkbox').each do |row|
       row.click
       wait_for_ajax
     end

@@ -28,6 +28,13 @@
               id: 'compare-button'
           )
       %>
+      <%= link_to(
+              'Trend',
+              trend_path(result: @checked_results),
+              class: 'btn btn-success btn-lg',
+              id: 'trend-button'
+          )
+      %>
     </div>
   </div>
 

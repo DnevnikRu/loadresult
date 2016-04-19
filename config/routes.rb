@@ -19,4 +19,6 @@ Rails.application.routes.draw do
     post 'percentile_requests_plot'
     post 'performance_plot'
   end
+
+  get 'trend' => 'trend#show'
 end

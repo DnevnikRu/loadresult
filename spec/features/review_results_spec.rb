@@ -128,4 +128,36 @@ feature 'Review results' do
 
     expect(page).to have_content('Compare report')
   end
+
+  scenario 'Selecting three results and clicking on Trend opens Trend page' do
+    3.times { create(:result) }
+
+    visit '/results/'
+    page.all('.result_row').each do |row|
+      row.click
+      wait_for_ajax
+    end
+    click_on 'Trend'
+
+    expect(find('h1')).to have_content('Trend')
+  end
+
+  scenario 'Selecting results and clicking on Trend clear checked results' do
+    3.times { create(:result) }
+
+    visit '/results/'
+    page.all('.result_row').each do |row|
+      row.click
+      wait_for_ajax
+    end
+    click_on 'Trend'
+    wait_for_ajax
+
+    expect(find('h1')).to have_content('Trend')
+    visit '/results/'
+
+    page.all('.result-checkbox').each do |checkbox|
+      expect(checkbox).to_not be_checked
+    end
+  end
 end

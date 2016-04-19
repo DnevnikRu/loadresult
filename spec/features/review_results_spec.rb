@@ -168,4 +168,15 @@ feature 'Review results' do
     expect(page.all('.result-checkbox')[0]).to be_checked
     expect(page.all('.result-checkbox')[1]).to_not be_checked
   end
+
+  fscenario 'Clicking on a row checks a checkbox in this row' do
+    2.times { create(:result) }
+
+    visit '/results/'
+    page.all('.result_row')[1].click
+    wait_for_ajax
+
+    expect(page.all('.result-checkbox')[1]).to be_checked
+    expect(page.all('.result-checkbox')[0]).to_not be_checked
+  end
 end

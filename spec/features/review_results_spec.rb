@@ -120,12 +120,12 @@ feature 'Review results' do
   end
 
   scenario 'Selecting two results and clicking on Compare opens Compare page' do
-    3.times { create(:result) }
+    2.times { create(:result) }
 
     visit '/results/'
     page.all('.result_row').each(&:click)
     click_on 'Compare'
 
-    expect(page).to have_content('Compare report')
+    expect(find('h1')).to have_content('Compare report')
   end
 end

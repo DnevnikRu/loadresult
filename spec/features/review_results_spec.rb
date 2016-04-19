@@ -129,29 +129,17 @@ feature 'Review results' do
     expect(page).to have_content('Compare report')
   end
 
-  scenario 'Selecting three results and clicking on Trend opens Trend page' do
-    3.times { create(:result) }
+  scenario 'Selecting results and clicking on Trend opens Trend page and clear checked results' do
+    create(:result, test_run_date: '01.01.1978 00:01')
+    create(:result, test_run_date: '01.01.1978 00:02')
+    create(:result, test_run_date: '01.01.1978 00:03')
 
     visit '/results/'
-    page.all('.result_row').each do |row|
-      row.click
-      wait_for_ajax
-    end
-    click_on 'Trend'
-
-    expect(find('h1')).to have_content('Trend')
-  end
-
-  scenario 'Selecting results and clicking on Trend clear checked results' do
-    3.times { create(:result) }
-
-    visit '/results/'
-    page.all('.result_row').each do |row|
-      row.click
-      wait_for_ajax
-    end
-    click_on 'Trend'
+    page.all('.result_row').first.click
     wait_for_ajax
+    page.all('.result_row').last.click
+    wait_for_ajax
+    click_on 'Trend'
 
     expect(find('h1')).to have_content('Trend')
     visit '/results/'

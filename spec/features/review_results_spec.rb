@@ -169,7 +169,7 @@ feature 'Review results' do
     expect(page.all('.result-checkbox')[1]).to_not be_checked
   end
 
-  fscenario 'Clicking on a row checks a checkbox in this row' do
+  scenario 'Clicking on a row checks a checkbox in this row' do
     2.times { create(:result) }
 
     visit '/results/'

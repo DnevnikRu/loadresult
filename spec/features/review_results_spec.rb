@@ -151,4 +151,22 @@ feature 'Review results' do
 
     expect(page).to have_content("Selected results: #{result1.id}, #{result2.id}")
   end
+
+  scenario 'Selected results are still selected after an error on Compare or Trend page' do
+    result1 = create(:result)
+    result2 = create(:result)
+
+    visit '/results/'
+    page.all('.result-checkbox')[0].click
+    wait_for_ajax
+    click_on 'Compare'
+
+    expect(page.all('.result-checkbox')[0]).to be_checked
+    expect(page.all('.result-checkbox')[1]).to_not be_checked
+
+    click_on 'Trend'
+
+    expect(page.all('.result-checkbox')[0]).to be_checked
+    expect(page.all('.result-checkbox')[1]).to_not be_checked
+  end
 end

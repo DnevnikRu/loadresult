@@ -50,6 +50,7 @@
       <th>Profile</th>
       <th>Test run date</th>
       <th>Time cutting percent</th>
+      <th>Release date</th>
       <th></th>
     </tr>
     </thead>
@@ -69,6 +70,7 @@
           <td class="profile"><%= result.profile %></td>
           <td class="test_run_date"><%= result.test_run_date %></td>
           <td class="time_cutting_percent"><%= result.time_cutting_percent %></td>
+          <td class="release_date"><%= result.release_date %></td>
           <td class="actions nostrech">
             <%= link_to '<i class="glyphicon glyphicon-eye-open"></i>'.html_safe,
                         result_path(result),

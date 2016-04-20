@@ -64,7 +64,8 @@ class Result < ActiveRecord::Base
         profile: params[:profile],
         requests_data: params[:requests_data],
         performance_data: params[:performance_data],
-        time_cutting_percent: params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent]
+        time_cutting_percent: params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent],
+        release_date: params[:release_date]
     )
 
     update_requests(result, previous_time_cut_percent)

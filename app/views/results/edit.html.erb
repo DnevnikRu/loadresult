@@ -37,6 +37,11 @@
             <%= text_field_tag :time_cutting_percent, flash[:time_cutting_percent], class: "form-control", placeholder: '0' %>
           </div>
 
+          <div class="form-group">
+            <%= label_tag :release_date, nil, class: "control-label" %>
+            <%= datetime_local_field_tag :release_date, flash[:release_date], class: "form-control", placeholder: '10.02.2016 18:59' %>
+          </div>
+
 
           <div id="download_requests_data" class="<%= 'hidden' if flash[:requests_data_identifier].nil? %>">
             <%= label_tag 'Requests data', nil, class: "control-label" %>

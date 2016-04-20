@@ -13,6 +13,10 @@
 
       <%= form_tag({action: :update}, multipart: true, method: :put) do %>
           <div class="form-group required">
+            <%= label_tag :project, nil, class: "control-label" %>
+            <%= select_tag :project, options_for_select(Project.all.collect {|p| [p.project_name, p.id]}, Project.where(id: @result.project_id).pluck(:id).join(" ")), class: "form-control", include_blank: true %>
+          </div>
+          <div class="form-group required">
             <%= label_tag :version, nil, class: "control-label" %>
             <%= text_field_tag :version, flash[:version], class: "form-control", placeholder: 'edu sharding' %>
           </div>

@@ -43,6 +43,7 @@
     <tr>
       <th></th>
       <th>ID</th>
+      <th>Project</th>
       <th>Version</th>
       <th>RPS</th>
       <th>Duration</th>
@@ -61,6 +62,7 @@
                               class: 'result-checkbox' %>
           </td>
           <td class="id"><%= result.id %></td>
+          <td class="project"><%= result.project.project_name %></td>
           <td class="version"><%= result.version %></td>
           <td class="rps"><%= result.rps %></td>
           <td class="duration"><%= result.duration %></td>

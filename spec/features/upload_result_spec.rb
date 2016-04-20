@@ -19,6 +19,7 @@ feature 'Upload load result' do
     end
 
     scenario 'Upload a result with all fields filled' do
+      select 'Dnevnik', from: 'project'
       fill_in 'version', with: 'edu sharding'
       fill_in 'rps', with: '600'
       fill_in 'duration', with: '600'
@@ -32,6 +33,7 @@ feature 'Upload load result' do
     end
 
     scenario 'Upload a result without a perfmon file' do
+      select 'Dnevnik', from: 'project'
       fill_in 'version', with: 'edu sharding'
       fill_in 'rps', with: '600'
       fill_in 'duration', with: '600'
@@ -46,7 +48,8 @@ feature 'Upload load result' do
     scenario 'Can not upload a result without filling information' do
       click_button 'Upload'
 
-      expect(page).to have_content(%(Version can't be blank
+      expect(page).to have_content(%(Project can't be blank
+        Version can't be blank
         Duration can't be blank
         Rps can't be blank
         Profile can't be blank
@@ -58,7 +61,8 @@ feature 'Upload load result' do
       attach_file 'requests_data', summary_file_path
       click_button 'Upload'
 
-      expect(page).to have_content(%(Version can't be blank
+      expect(page).to have_content(%(Project can't be blank
+        Version can't be blank
         Duration can't be blank
         Rps can't be blank
         Profile can't be blank
@@ -66,6 +70,7 @@ feature 'Upload load result' do
     end
 
     scenario 'Can not upload a result without a summary file' do
+      select 'Dnevnik', from: 'project'
       fill_in 'version', with: 'edu sharding'
       fill_in 'rps', with: '600'
       fill_in 'duration', with: '600'
@@ -78,6 +83,7 @@ feature 'Upload load result' do
     end
 
     scenario 'Data in the form is saved if there is an error' do
+      select 'Dnevnik', from: 'project'
       fill_in 'version', with: 'first version'
       fill_in 'rps', with: '500'
       fill_in 'duration', with: '450'
@@ -93,6 +99,7 @@ feature 'Upload load result' do
     end
 
     scenario 'Redirects to the results page' do
+      select 'Dnevnik', from: 'project'
       fill_in 'version', with: 'first version'
       fill_in 'rps', with: '500'
       fill_in 'duration', with: '450'

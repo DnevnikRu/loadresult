@@ -5,7 +5,9 @@ class Result < ActiveRecord::Base
   has_many :requests_results, dependent: :delete_all
   has_many :calculated_requests_results, dependent: :delete_all
   has_many :calculated_performance_results, dependent: :delete_all
+  belongs_to :project
 
+  validates :project_id, presence: true
   validates :version, presence: true
   validates :duration, presence: true
   validates :rps, presence: true
@@ -21,6 +23,7 @@ class Result < ActiveRecord::Base
 
   def self.upload_and_create(params)
     result = Result.new(
+        project_id: params['project'],
         version: params['version'],
         duration: params['duration'],
         rps: params['rps'],
@@ -54,6 +57,7 @@ class Result < ActiveRecord::Base
   def self.update_and_recalculate(result, params)
     previous_time_cut_percent = result.time_cutting_percent
     result.update(
+        project_id: params[:project],
         version: params[:version],
         rps: params[:rps],
         duration: params[:duration],
@@ -272,12 +276,12 @@ class Result < ActiveRecord::Base
   end
 
   def self.validate_requests_data(result)
-    header = File.open(result.requests_data.current_path) {|f| f.readline}
+    header = File.open(result.requests_data.current_path) { |f| f.readline }
     validate_header(result, header, 'request', %w(timeStamp label responseCode Latency))
   end
 
   def self.validate_performance_data(result)
-    header = File.open(result.performance_data.current_path) {|f| f.readline}
+    header = File.open(result.performance_data.current_path) { |f| f.readline }
     validate_header(result, header, 'performance', %w(timeStamp label elapsed))
   end
 

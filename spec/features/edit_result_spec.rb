@@ -12,6 +12,7 @@ describe 'Editing a result' do
       within(:xpath, @row_with_result_xpath) do
         find('.editResult').click
       end
+      select 'Contingent', from: 'project'
       fill_in 'version', with: 'New version'
       fill_in 'rps', with: '666'
       fill_in 'duration', with: '999'
@@ -22,6 +23,7 @@ describe 'Editing a result' do
 
     scenario 'All edited fields on the results page are changed' do
       within(:xpath, @row_with_result_xpath) do
+        expect(find('.project')).to have_content('Contingent')
         expect(find('.version')).to have_content('New version')
         expect(find('.rps')).to have_content('666')
         expect(find('.duration')).to have_content('999')
@@ -55,6 +57,7 @@ describe 'Editing a result' do
 
     scenario 'All fields on the results page are remain unchanged' do
       within(:xpath, @row_with_result_xpath) do
+        expect(find('.project')).to have_content('Dnevnik')
         expect(find('.version')).to have_content(@result.version)
         expect(find('.rps')).to have_content(@result.rps)
         expect(find('.duration')).to have_content(@result.duration)
@@ -106,6 +109,7 @@ describe 'Editing a result' do
       within(:xpath, @row_with_result_xpath) do
         find('.editResult').click
       end
+      select '', from: 'project'
       fill_in 'version', with: ''
       fill_in 'rps', with: ''
       fill_in 'duration', with: ''
@@ -114,7 +118,8 @@ describe 'Editing a result' do
     end
 
     scenario 'Message with error appears' do
-      expect(page).to have_content(%(Version can't be blank
+      expect(page).to have_content(%(Project can't be blank
+            Version can't be blank
             Duration can't be blank
             Rps can't be blank
             Profile can't be blank))
@@ -124,6 +129,7 @@ describe 'Editing a result' do
       scenario 'All fields are remain unchanged' do
         visit '/results/'
         within(:xpath, @row_with_result_xpath) do
+          expect(find('.project')).to have_content('Dnevnik')
           expect(find('.version')).to have_content(@result.version)
           expect(find('.rps')).to have_content(@result.rps)
           expect(find('.duration')).to have_content(@result.duration)

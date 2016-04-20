@@ -25,6 +25,10 @@ describe Result do
     expect(build(:result, :test_run_date => 'das')).not_to be_valid
   end
 
+  it 'invalid without project id' do
+    expect(build(:result, :project_id => nil)).not_to be_valid
+  end
+
   it 'do not create not valid object' do
     expect { create(:result, :test_run_date => 'das') }.to raise_error(ActiveRecord::RecordInvalid)
   end
@@ -57,6 +61,7 @@ describe Result do
         performance_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
         requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
+            'project' => 1,
             'version' => 'edu',
             'rps' => 150,
             'duration' => 123,
@@ -111,6 +116,7 @@ describe Result do
           @summary.open
           requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
           params = {
+              'project' => 1,
               'version' => 'edu',
               'rps' => 150,
               'duration' => 123,
@@ -141,6 +147,7 @@ describe Result do
           performance_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
           requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
           params = {
+              'project' => 1,
               'rps' => 150,
               'duration' => 123,
               'profile' => 'asd',
@@ -165,10 +172,43 @@ describe Result do
         end
       end
 
+      describe 'project is absence, other required fields presence' do
+        before(:all) do
+          @summary.open
+          @perfmon.open
+          performance_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
+          requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
+          params = {
+              'version' => 'edu',
+              'rps' => 150,
+              'duration' => 123,
+              'profile' => 'asd',
+              'test_run_date' => '2016-02-11 11:21',
+              'requests_data' => requests_data,
+              'performance_data' => performance_data
+          }
+          @result = Result.upload_and_create(params)
+          @summary.close
+          @perfmon.close
+        end
+        it 'errors present without project' do
+          expect(@result.errors).to match_array(["Project can't be blank"])
+        end
+
+        it 'calculated request results not save without version' do
+          expect(CalculatedRequestsResult.find_by result_id: @result.id).to be nil
+        end
+
+        it 'calculated performance results not save without version' do
+          expect(CalculatedPerformanceResult.find_by result_id: @result.id).to be nil
+        end
+      end
+
       it 'rps is absence, other required fields presence' do
         @summary.open
         requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
+            'project' => 1,
             'version' => 'asd',
             'duration' => 123,
             'profile' => 'asd',
@@ -184,6 +224,7 @@ describe Result do
         @summary.open
         requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
+            'project' => 1,
             'version' => 'asd',
             'rps' => 150,
             'profile' => 'asd',
@@ -199,6 +240,7 @@ describe Result do
         @summary.open
         requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
+            'project' => 1,
             'version' => 'asd',
             'duration' => 123,
             'rps' => 150,
@@ -215,6 +257,7 @@ describe Result do
         @summary.open
         requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
+            'project' => 1,
             'version' => 'asd',
             'duration' => 123,
             'rps' => 150,
@@ -229,6 +272,7 @@ describe Result do
 
       it 'request data is absence, other required fields presence' do
         params = {
+            'project' => 1,
             'version' => 'asd',
             'duration' => 123,
             'rps' => 150,
@@ -263,6 +307,7 @@ describe Result do
           @invalid_summary.open
           requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_summary, filename: 'summary_invalid_header.csv')
           params = {
+              'project' => 1,
               'version' => 'edu',
               'rps' => 150,
               'duration' => 123,
@@ -309,6 +354,7 @@ describe Result do
           perfmon_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_perfmon, filename: 'perfmon_invalid_header.csv')
           requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
           params = {
+              'project' => 1,
               'version' => 'edu',
               'rps' => 150,
               'duration' => 123,
@@ -796,7 +842,8 @@ describe Result do
       end
 
       it 'not change time cutting' do
-        Result.update_and_recalculate(@result, {version: @result.version,
+        Result.update_and_recalculate(@result, {project: @result.project_id,
+                                                version: @result.version,
                                                 duration: @result.duration,
                                                 rps: @result.rps,
                                                 profile: @result.profile,
@@ -805,7 +852,8 @@ describe Result do
       end
 
       it 'change time cutting' do
-        Result.update_and_recalculate(@result, {version: @result.version,
+        Result.update_and_recalculate(@result, {project: @result.project_id,
+                                                version: @result.version,
                                                 duration: @result.duration,
                                                 rps: @result.rps,
                                                 profile: @result.profile,
@@ -834,7 +882,8 @@ describe Result do
       end
 
       it 'not change time cutting' do
-        Result.update_and_recalculate(@result, {version: @result.version,
+        Result.update_and_recalculate(@result, {project: @result.project_id,
+                                                version: @result.version,
                                                 duration: @result.duration,
                                                 rps: @result.rps,
                                                 profile: @result.profile,
@@ -843,7 +892,8 @@ describe Result do
       end
 
       it 'change time cutting' do
-        Result.update_and_recalculate(@result, {version: @result.version,
+        Result.update_and_recalculate(@result, {project: @result.project_id,
+                                                version: @result.version,
                                                 duration: @result.duration,
                                                 rps: @result.rps,
                                                 profile: @result.profile,
@@ -871,6 +921,7 @@ describe Result do
         performance_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
         requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
+            'project' => 1,
             'version' => 'edu',
             'rps' => 150,
             'duration' => 123,
@@ -891,6 +942,7 @@ describe Result do
         performance_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
         requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
+            :project => 1,
             :rps => 150,
             :duration => 123,
             :profile => 'asd',
@@ -915,6 +967,7 @@ describe Result do
         @invalid_summary.open
         requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @invalid_summary, filename: 'summary_invalid_header.csv')
         params = {
+            project: 1,
             version: 'test',
             rps: 150,
             duration: 123,

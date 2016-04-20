@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160411145259) do
+ActiveRecord::Schema.define(version: 20160419084958) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,6 +56,10 @@ ActiveRecord::Schema.define(version: 20160411145259) do
     t.integer  "timestamp",  limit: 8
   end
 
+  create_table "projects", force: :cascade do |t|
+    t.string "project_name", null: false
+  end
+
   create_table "requests_results", force: :cascade do |t|
     t.integer  "result_id"
     t.string   "label"
@@ -77,6 +81,7 @@ ActiveRecord::Schema.define(version: 20160411145259) do
     t.integer  "time_cutting_percent"
     t.string   "requests_data"
     t.string   "performance_data"
+    t.integer  "project_id"
   end
 
 end

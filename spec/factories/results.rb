@@ -1,5 +1,6 @@
 FactoryGirl.define do
   factory :result do
+    project_id 1
     version 'master'
     duration 600
     rps 150

@@ -384,79 +384,67 @@ describe Result do
   describe '#timestamps and request calculate with nonexistent label' do
 
     before(:all) do
-      @result = create(:result)
+      @result = create(:result, time_cutting_percent: 10)
       create(:requests_result, result_id: @result.id, timestamp: 1455023039548)
       create(:requests_result, result_id: @result.id, timestamp: 1455023040000)
       create(:requests_result, result_id: @result.id, timestamp: 1455023045000)
       create(:requests_result, result_id: @result.id, timestamp: 1455023050000)
       create(:requests_result, result_id: @result.id, timestamp: 1455023055000)
       create(:requests_result, result_id: @result.id, timestamp: 1455023060000)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
+      Result.calc_request_data(@result)
+      @calculated_results = @result.calculated_requests_results
     end
 
     it 'timestamp borders are correct' do
-      expect([@bottom_timestamp, @top_timestamp]).to match_array([1455023041593, 1455023057955])
+      borders = Result.border_timestamps(@result.id, RequestsResult, 10)
+      expect(borders).to match_array([1455023041593, 1455023057955])
     end
 
-    it 'request mean is nill with wrong label' do
-      expect(@result.request_mean('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
+    it 'request calculated results is nill with wrong label' do
+      expect(@calculated_results.find_by(label: 'root /invites.aspx:GET')).to eql nil
     end
-    it 'request median is nill with wrong label' do
-      expect(@result.request_median('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
-    end
-    it 'request 90 percent is nill with wrong label' do
-      expect(@result.request_90percentile('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
-    end
-    it 'request max is nill with wrong label' do
-      expect(@result.request_max('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
-    end
-    it 'request min is nill with wrong label' do
-      expect(@result.request_min('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
-    end
-    it 'request failed tests percentage is nill with wrong label' do
-      expect(@result.failed_requests('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
-    end
-    it 'request throughput is nill with wrong label' do
-      expect(@result.request_throughput('root /invites.aspx:GET', @bottom_timestamp, @top_timestamp)).to eql nil
-    end
+
   end
 
   describe '#request calculate with standard values' do
 
     before(:all) do
-      @result = create(:result)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123, response_code: 600)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 1400, response_code: 500)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050500, value: 1, response_code: 499)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 346, response_code: 400)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 345, response_code: 599)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 344, response_code: 399)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 343, response_code: 501)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 342, response_code: 401)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 341, response_code: 200)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 348, response_code: 100)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 1238, response_code: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 123, response_code: 9880)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
+      @result = create(:result, time_cutting_percent: 10)
+      @label = 'children /marks.aspx:GET:tab=subject'
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123, response_code: 600, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 1400, response_code: 500, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050500, value: 1, response_code: 499, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 346, response_code: 400, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 345, response_code: 599, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 344, response_code: 399, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 343, response_code: 501, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 342, response_code: 401, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 341, response_code: 200, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 348, response_code: 100, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 1238, response_code: 123, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 123, response_code: 9880, label: @label)
+      Result.calc_request_data(@result)
+      @calculated_results = @result.calculated_requests_results
+
     end
 
     it 'request mean is correct with standard values' do
-      expect(@result.request_mean('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 504.8
+      expect(@calculated_results.find_by(label: @label).mean).to eql 504.8
     end
     it 'request median is correct with standard values' do
-      expect(@result.request_median('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 344.5
+      expect(@calculated_results.find_by(label: @label).median).to eql 344.5
     end
     it 'request 90 percent is correct with standard values' do
-      expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 1238
+      expect(@calculated_results.find_by(label: @label).ninety_percentile).to eql 1238.0
     end
     it 'request max is correct with standard values' do
-      expect(@result.request_max('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 1400
+      expect(@calculated_results.find_by(label: @label).max).to eql 1400.0
     end
     it 'request min is correct with standard values' do
-      expect(@result.request_min('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 1
+      expect(@calculated_results.find_by(label: @label).min).to eql 1.0
     end
     it 'failed tests percentage is correct with standard values' do
-      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 60.0
+      expect(@calculated_results.find_by(label: @label).failed_results).to eql 60.0
     end
   end
 
@@ -464,34 +452,36 @@ describe Result do
 
     before(:all) do
       @result = create(:result)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123, response_code: 600)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 0, response_code: 500)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050500, value: 0.1, response_code: 499)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 346, response_code: nil)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 345, response_code: 599)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 344, response_code: 'Non HTTP response code: org.apache.http.ConnectionClosedException')
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 343, response_code: 1)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 123, response_code: 9880)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
+      @label = 'children /marks.aspx:GET:tab=subject'
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123, response_code: 600, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 0, response_code: 500, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050500, value: 0.1, response_code: 499, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 346, response_code: nil, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 345, response_code: 599, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 344, response_code: 'Non HTTP response code: org.apache.http.ConnectionClosedException', label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 343, response_code: 1, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 123, response_code: 9880, label: @label)
+      Result.calc_request_data(@result)
+      @calculated_results = @result.calculated_requests_results
     end
 
     it 'request mean is correct with different values' do
-      expect(@result.request_mean('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 229.67
+      expect(@calculated_results.find_by(label: @label).mean).to eql 229.67
     end
     it 'request median is correct with different values' do
-      expect(@result.request_median('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 343.5
+      expect(@calculated_results.find_by(label: @label).median).to eql 343.5
     end
     it 'request 90 percent is correct with different values' do
-      expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 345.5
+      expect(@calculated_results.find_by(label: @label).ninety_percentile).to eql 345.5
     end
     it 'request max is correct with different values' do
-      expect(@result.request_max('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 346
+      expect(@calculated_results.find_by(label: @label).max).to eql 346.0
     end
     it 'request min is correct with different values' do
-      expect(@result.request_min('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 0
+      expect(@calculated_results.find_by(label: @label).min).to eql 0.0
     end
     it 'failed tests percentage is correct with different values' do
-      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 83.33
+      expect(@calculated_results.find_by(label: @label).failed_results).to eql 83.33
     end
   end
 
@@ -499,32 +489,34 @@ describe Result do
 
     before(:all) do
       @result = create(:result)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123, response_code: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 123, response_code: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023047500, value: 123, response_code: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050500, value: 123, response_code: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 123, response_code: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023050601, value: 123, response_code: 123)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
+      @label = 'children /marks.aspx:GET:tab=subject'
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123, response_code: 123, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 123, response_code: 123, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023047500, value: 123, response_code: 123, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050500, value: 123, response_code: 123, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050600, value: 123, response_code: 123, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023050601, value: 123, response_code: 123, label: @label)
+      Result.calc_request_data(@result)
+      @calculated_results = @result.calculated_requests_results
     end
 
     it 'request mean is correct with same values' do
-      expect(@result.request_mean('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123.0
+      expect(@calculated_results.find_by(label: @label).mean).to eql 123.0
     end
     it 'request median is correct with same values' do
-      expect(@result.request_median('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123.0
+      expect(@calculated_results.find_by(label: @label).median).to eql 123.0
     end
     it 'request 90 percent is correct with same values' do
-      expect(@result.request_90percentile('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123.0
+      expect(@calculated_results.find_by(label: @label).ninety_percentile).to eql 123.0
     end
     it 'request max is correct with same values' do
-      expect(@result.request_max('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123
+      expect(@calculated_results.find_by(label: @label).max).to eql 123.0
     end
     it 'request min is correct with same values' do
-      expect(@result.request_min('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 123
+      expect(@calculated_results.find_by(label: @label).min).to eql 123.0
     end
     it 'failed tests percentage is correct with same values' do
-      expect(@result.failed_requests('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 0.0
+      expect(@calculated_results.find_by(label: @label).failed_results).to eql 0.0
     end
   end
 
@@ -532,23 +524,25 @@ describe Result do
 
     before(:all) do
       @result = create(:result)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040000)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040700)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040800)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040900)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023041000)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023041100)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023041200)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023041300)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023041400)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023041500)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023041600)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
+      @label = 'children /marks.aspx:GET:tab=subject'
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040600, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040700, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040800, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040900, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041000, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041100, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041200, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041300, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041400, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041500, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023041600, label: @label)
+      Result.calc_request_data(@result)
+      @calculated_results = @result.calculated_requests_results
     end
 
     it 'request throughput with different timestamps' do
-      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 7.03
+      expect(@calculated_results.find_by(label: @label).throughput).to eql 7.03
     end
   end
 
@@ -556,17 +550,19 @@ describe Result do
 
     before(:all) do
       @result = create(:result)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040500)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040600)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040700)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, RequestsResult, 10)
+      @label = 'children /marks.aspx:GET:tab=subject'
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040500, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040600, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040600, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040600, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040600, label: @label)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040700, label: @label)
+      Result.calc_request_data(@result)
+      @calculated_results = @result.calculated_requests_results
     end
 
     it 'request throughput with same timestamps' do
-      expect(@result.request_throughput('children /marks.aspx:GET:tab=subject', @bottom_timestamp, @top_timestamp)).to eql 4.0
+      expect(@calculated_results.find_by(label: @label).throughput).to eql 4.0
     end
   end
 
@@ -575,37 +571,32 @@ describe Result do
 
     before(:all) do
       @result = create(:result)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
-      create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
-      @bottom_timestamp, @top_timestamp = @result.class.border_timestamps(@result.id, PerformanceResult, 10)
+      @label = 'EXEC Network\Bytes Sent/sec'
+      create(:performance_result, result_id: @result.id, timestamp: 1455023039548, value: 2, label: @label)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023040000, value: 123, label: @label)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023045000, value: 121, label: @label)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023050000, value: 1000, label: @label)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 12, label: @label)
+      create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 6, label: @label)
+      Result.calc_performance_data(@result)
+      @calculated_results = @result.calculated_performance_results
     end
 
     it 'performance mean is correct' do
-      expect(@result.performance_mean('EXEC Network\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql 377.67
+      expect(@calculated_results.find_by(label: @label).mean).to eql 377.67
     end
 
     it 'performance minimum is correct' do
-      expect(@result.performance_min('EXEC Network\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql 12
+      expect(@calculated_results.find_by(label: @label).min).to eql 12.0
     end
 
     it 'performance maximum is correct' do
-      expect(@result.performance_max('EXEC Network\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql 1000
+      expect(@calculated_results.find_by(label: @label).max).to eql 1000.0
     end
-    it 'performance mean is nill with nonexistent label' do
-      expect(@result.performance_mean('EXEC Events\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql nil
-    end
-
-    it 'performance minimum is nill with nonexistent label' do
-      expect(@result.performance_min('EXEC Events\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql nil
+    it 'performance results is nill with nonexistent label' do
+      expect(@calculated_results.find_by(label: 'EXEC Events\Bytes Sent/sec')).to eql nil
     end
 
-    it 'performance maximum is nill with nonexistent label' do
-      expect(@result.performance_max('EXEC Events\Bytes Sent/sec', @bottom_timestamp, @top_timestamp)).to eql nil
-    end
   end
 
   describe 'destroying result' do
@@ -796,20 +787,6 @@ describe Result do
     end
   end
 
-  describe '.percentile' do
-    it 'finds percentile of an array' do
-      expect(Result.percentile([1, 2, 3, 4], 50)).to eq(2)
-    end
-
-    it 'finds percentile of an unsorted array' do
-      expect(Result.percentile([3, 1, 2, 4], 50)).to eq(2)
-    end
-
-    it 'find percentile of array with odd number of elements' do
-      expect(Result.percentile([1, 2, 3, 4, 5], 50)).to eq(2.5)
-    end
-  end
-
   describe '.update_and_recalculate' do
 
     describe 'Update and recalculate only with request data' do
@@ -821,7 +798,7 @@ describe Result do
         create(:requests_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
         create(:requests_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
         create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
-        Result.calc_request_data(@result, @result.time_cutting_percent)
+        Result.calc_request_data(@result)
       end
 
       it 'not change time cutting' do
@@ -858,8 +835,8 @@ describe Result do
         create(:performance_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
         create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
         create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
-        Result.calc_request_data(@result, @result.time_cutting_percent)
-        Result.calc_performance_data(@result, @result.time_cutting_percent)
+        Result.calc_request_data(@result)
+        Result.calc_performance_data(@result)
       end
 
       it 'not change time cutting' do
@@ -954,7 +931,6 @@ describe Result do
 
         updated_result = Result.update_and_recalculate(@result, params)
         @invalid_summary.close
-
 
         expected_errors =['timeStamp column in request data is required!',
                           'label column in request data is required!',

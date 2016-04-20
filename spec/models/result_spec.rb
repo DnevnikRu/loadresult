@@ -300,6 +300,7 @@ describe Result do
         @summary.open
         requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
         params = {
+            'project' => 1,
             'version' => 'asd',
             'duration' => 123,
             'rps' => 150,

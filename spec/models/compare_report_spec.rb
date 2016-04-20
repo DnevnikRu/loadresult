@@ -18,7 +18,7 @@ describe CompareReport do
     end
 
     it 'has all keys' do
-      keys = ['Duration', 'Profile', 'Rps', 'Test run date', 'Time cutting percent', 'Version']
+      keys = ['Duration', 'Profile', 'Rps', 'Test run date', 'Time cutting percent', 'Version', 'Value smoothing interval']
       expect(@description.keys).to match_array(keys)
     end
 

@@ -49,11 +49,11 @@ ActiveRecord::Schema.define(version: 20160420100914) do
 
   create_table "performance_results", force: :cascade do |t|
     t.integer  "result_id"
-    t.integer  "timestamp",  limit: 8
     t.string   "label"
     t.integer  "value",      limit: 8
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
+    t.integer  "timestamp",  limit: 8
   end
 
   create_table "projects", force: :cascade do |t|
@@ -62,25 +62,26 @@ ActiveRecord::Schema.define(version: 20160420100914) do
 
   create_table "requests_results", force: :cascade do |t|
     t.integer  "result_id"
-    t.integer  "timestamp",     limit: 8
     t.string   "label"
     t.integer  "value",         limit: 8
     t.string   "response_code"
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
+    t.integer  "timestamp",     limit: 8
   end
 
   create_table "results", force: :cascade do |t|
-    t.string   "version",              null: false
-    t.integer  "duration",             null: false
-    t.integer  "rps",                  null: false
-    t.string   "profile",              null: false
-    t.datetime "test_run_date",        null: false
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.string   "version",                  null: false
+    t.integer  "duration",                 null: false
+    t.integer  "rps",                      null: false
+    t.string   "profile",                  null: false
+    t.datetime "test_run_date",            null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
     t.integer  "time_cutting_percent"
     t.string   "requests_data"
     t.string   "performance_data"
+    t.integer  "value_smoothing_interval"
     t.integer  "project_id"
     t.datetime "release_date"
   end

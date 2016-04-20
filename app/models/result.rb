@@ -65,6 +65,7 @@ class Result < ActiveRecord::Base
 
   def self.update_and_recalculate(result, params)
     previous_time_cut_percent = result.time_cutting_percent
+    previous_smooth_interval = result.value_smoothing_interval
     result.update(
         project_id: params[:project],
         version: params[:version],
@@ -72,13 +73,14 @@ class Result < ActiveRecord::Base
         duration: params[:duration],
         profile: params[:profile],
         time_cutting_percent: params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent],
+        value_smoothing_interval: params[:value_smoothing_interval],
         requests_data: params[:requests_data],
         performance_data: params[:performance_data],
         release_date: params[:release_date]
     )
 
-    update_requests(result,  params[:requests_data],  previous_time_cut_percent)
-    update_performance(result,  params[:performance_data], previous_time_cut_percent)
+    update_requests(result, params[:requests_data], previous_time_cut_percent, previous_smooth_interval)
+    update_performance(result, params[:performance_data], previous_time_cut_percent, previous_smooth_interval)
 
     result
   end
@@ -105,7 +107,8 @@ class Result < ActiveRecord::Base
   def self.values_of_requests(result_id, label = nil, cut_percent)
     bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult, cut_percent)
     records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
-    records.map(&:value)
+    result = Result.find_by(id: result_id)
+    result.value_smoothing_interval.present? ? Statistics(records.map(&:value), result.value_smoothing_interval) : records.map(&:value)
   end
 
   def self.percentile_of_values_of_requests(result_id, cut_percent)
@@ -116,12 +119,15 @@ class Result < ActiveRecord::Base
   def self.requests_seconds_to_values(result_id, label, cut_percent)
     data = {seconds: [], values: []}
     bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult, cut_percent)
-    records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
+    records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp)).order(:timestamp)
+    result = Result.find_by(id: result_id)
     timestamp_min = records.minimum(:timestamp)
-    records.order(:timestamp).each do |record|
-      data[:seconds].push (record.timestamp - timestamp_min) / 1000
-      data[:values].push record.value
-    end
+    data[:seconds] = records.pluck(:timestamp).map { |timestamp| (timestamp - timestamp_min) / 1000 }
+    data[:values] = if result.value_smoothing_interval.present?
+                      Statistics.simple_moving_average(records.pluck(:value), result.value_smoothing_interval)
+                    else
+                      records.pluck(:value)
+                    end
     data
   end
 
@@ -131,18 +137,21 @@ class Result < ActiveRecord::Base
       data[label] = {seconds: [], values: []}
       bottom_timestamp, top_timestamp = border_timestamps(result_id, PerformanceResult, cut_percent)
       records = PerformanceResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
+      result = Result.find_by(id: result_id)
       timestamp_min = records.minimum(:timestamp)
-      records.order(:timestamp).each do |record|
-        data[label][:seconds].push (record.timestamp - timestamp_min) / 1000
-        data[label][:values].push record.value
-      end
+      data[label][:seconds] = records.pluck(:timestamp).map { |timestamp| (timestamp - timestamp_min) / 1000 }
+      data[label][:values] = if result.value_smoothing_interval.present?
+                               Statistics.simple_moving_average(records.pluck(:value), result.value_smoothing_interval)
+                             else
+                               records.pluck(:value)
+                             end
     end
     data
   end
 
   private
 
-  def self.update_requests(result, requests_data, previous_time_cut_percent)
+  def self.update_requests(result, requests_data, previous_time_cut_percent, previous_smooth_interval)
     if requests_data.present?
       result.requests_data = requests_data
       validate_requests_data(result)
@@ -152,13 +161,15 @@ class Result < ActiveRecord::Base
       save_request_data(result)
       calc_request_data(result)
     else
-      if previous_time_cut_percent != result.time_cutting_percent && result.errors.empty?
+      if result.errors.empty? &&
+          (previous_time_cut_percent != result.time_cutting_percent ||
+              previous_smooth_interval != result.value_smoothing_interval)
         calc_request_data(result)
       end
     end
   end
 
-  def self.update_performance(result, performance_data, previous_time_cut_percent)
+  def self.update_performance(result, performance_data, previous_time_cut_percent, previous_smooth_interval)
     if performance_data.present?
       result.performance_data = performance_data
       validate_performance_data(result)
@@ -168,7 +179,10 @@ class Result < ActiveRecord::Base
       save_performance_data(result)
       calc_performance_data(result)
     else
-      if previous_time_cut_percent != result.time_cutting_percent && result.performance_results.present? && result.errors.empty?
+      if result.errors.empty? &&
+          result.performance_results.present? &&
+          (previous_time_cut_percent != result.time_cutting_percent ||
+              previous_smooth_interval != result.value_smoothing_interval)
         calc_performance_data(result)
       end
     end
@@ -182,7 +196,7 @@ class Result < ActiveRecord::Base
       records = RequestsResult.where(where_conditional(result.id, label, bottom_timestamp, top_timestamp))
       unless records.empty?
         data = records.pluck(:value)
-        data = result.value_smoothing_interval.present? ? Statistics.simple_moving_average(data, result.value_smoothing_interval) : data
+        data = Statistics.simple_moving_average(data, result.value_smoothing_interval) if result.value_smoothing_interval.present?
         calculated_request_result.update_attributes!(
             mean: Statistics.average(data).round(2),
             median: Statistics.median(data).round(2),
@@ -204,7 +218,7 @@ class Result < ActiveRecord::Base
       records = PerformanceResult.where(where_conditional(result.id, label, bottom_timestamp, top_timestamp))
       if records
         data = records.pluck(:value)
-        data = result.value_smoothing_interval.present? ? Statistics.simple_moving_average(data, result.value_smoothing_interval) : data
+        data = Statistics.simple_moving_average(data, result.value_smoothing_interval) if result.value_smoothing_interval.present?
         calculated_performance_result.update_attributes!(
             mean: Statistics.average(data).round(2),
             max: data.max,

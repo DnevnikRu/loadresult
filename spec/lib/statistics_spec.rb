@@ -13,7 +13,7 @@ describe Statistics do
       expect(Statistics.simple_moving_average([1, 2, 3], nil)).to match_array([1, 2, 3])
     end
 
-    it 'raise exception when interval not Integer' do
+    it 'return data without smoothing when interval not Integer' do
       interval = 'abc'
       data  = [1,2,3]
       expect(Statistics.simple_moving_average(data, interval)).to match_array(data)

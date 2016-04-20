@@ -43,7 +43,9 @@ class CompareReport
   def trend(type, metric, label, limit = 0)
     first = result1.send(type).find_by(label: label).send(metric)
     second = result2.send(type).find_by(label: label).send(metric)
-    if ((first == 0.0 || first.nil?) && (second == 0.00 || second.nil?)) || ((first + second) / 2 < limit)
+    first = 0.0 if first.nil?
+    second = 0.0 if second.nil?
+    if (first == 0.0 && second == 0.00) || ((first + second) / 2 < limit)
       0.00
     elsif first == 0.0 || first.nil?
       100.0

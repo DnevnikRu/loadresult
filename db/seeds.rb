@@ -1,7 +1,6 @@
-load(Rails.root.join('db', 'deployment_seeds.rb')) if Rails.env == 'development'
-
 PerformanceGroup.destroy_all
 PerformanceLabel.destroy_all
+Project.destroy_all
 groups = [{
               name: 'Processor',
               units: '%',
@@ -110,3 +109,8 @@ groups = [{
                        PerformanceLabel.create(label: 'SQLServer Number of Deadlocks')]
           } ]
 groups.each { |group| PerformanceGroup.create(group) }
+
+Project.create(id: 1, project_name: 'Dnevnik')
+Project.create(id: 2, project_name: 'Contingent')
+
+load(Rails.root.join('db', 'deployment_seeds.rb')) if Rails.env == 'development'

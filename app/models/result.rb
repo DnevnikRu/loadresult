@@ -5,7 +5,9 @@ class Result < ActiveRecord::Base
   has_many :requests_results, dependent: :delete_all
   has_many :calculated_requests_results, dependent: :delete_all
   has_many :calculated_performance_results, dependent: :delete_all
+  belongs_to :project
 
+  validates :project_id, presence: true
   validates :version, presence: true
   validates :duration, presence: true
   validates :rps, presence: true
@@ -29,6 +31,7 @@ class Result < ActiveRecord::Base
 
   def self.upload_and_create(params)
     result = Result.new(
+        project_id: params['project'],
         version: params['version'],
         duration: params['duration'],
         rps: params['rps'],
@@ -63,11 +66,15 @@ class Result < ActiveRecord::Base
   def self.update_and_recalculate(result, params)
     previous_time_cut_percent = result.time_cutting_percent
     result.update(
+        project_id: params[:project],
         version: params[:version],
         rps: params[:rps],
         duration: params[:duration],
         profile: params[:profile],
-        time_cutting_percent: params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent]
+        time_cutting_percent: params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent],
+        requests_data: params[:requests_data],
+        performance_data: params[:performance_data],
+        release_date: params[:release_date]
     )
 
     update_requests(result,  params[:requests_data],  previous_time_cut_percent)

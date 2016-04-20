@@ -20,7 +20,7 @@ RSpec.configure do |config|
   config.include Requests::JsonHelpers, type: :request
   config.include WaitForAjax, type: :feature
 
-  DatabaseCleaner.strategy = :truncation, { except: %w(performance_groups performance_labels) }
+  DatabaseCleaner.strategy = :truncation, { except: %w(performance_groups performance_labels projects) }
 
   config.before(:context) do
     DatabaseCleaner.clean

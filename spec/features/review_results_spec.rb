@@ -27,6 +27,7 @@ feature 'Review results' do
 
     scenario 'The table with results contains the uploaded results' do
       visit '/results/new'
+      select 'Dnevnik', from: 'project'
       fill_in 'version', with: 'edu sharding'
       fill_in 'rps', with: '600'
       fill_in 'duration', with: '600'
@@ -35,16 +36,17 @@ feature 'Review results' do
       attach_file 'requests_data', summary_file_path
       attach_file 'performance_data', perfmon_file_path
       click_button 'Upload'
-      expected_row = ['edu sharding', '600', '600', 'all_sites', '14.02.2016 17:45']
+      expected_row = ['Dnevnik', 'edu sharding', '600', '600', 'all_sites', '14.02.2016 17:45']
       results_rows = []
       page.all('table#results-table tr.result_row').each do |row|
+        project = row.find('td.project').text
         version = row.find('td.version').text
         rps = row.find('td.rps').text
         duration = row.find('td.duration').text
         profile = row.find('td.profile').text
         run_date = Time.parse(row.find('td.test_run_date').text)
         run_date = run_date.strftime('%d.%m.%Y %H:%M')
-        results_rows.push [version, rps, duration, profile, run_date]
+        results_rows.push [project, version, rps, duration, profile, run_date]
       end
       expect(results_rows.include?(expected_row)).to be(true), 'Just uploaded result is not displayed'
     end

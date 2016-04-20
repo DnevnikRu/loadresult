@@ -12,6 +12,7 @@ describe 'Results API', type: :request do
 
   it 'creates a result if correct parameters and summary' do
     params = {
+        project: 'Dnevnik',
         version: 'version3',
         duration: '123',
         rps: '123',
@@ -26,6 +27,7 @@ describe 'Results API', type: :request do
 
   it 'creates a result if correct parameters and summary plus performance' do
     params = {
+        project: 'Dnevnik',
         version: 'version3',
         duration: '123',
         rps: '123',
@@ -41,6 +43,7 @@ describe 'Results API', type: :request do
 
   it 'creates a result if correct parameters with time cutting and summary plus performance' do
     params = {
+        project: 'Dnevnik',
         version: 'version3',
         duration: '123',
         rps: '123',
@@ -57,6 +60,7 @@ describe 'Results API', type: :request do
 
   it 'does not create a result if correct parameters but without summary' do
     params = {
+        project: 'Dnevnik',
         version: 'version3',
         duration: '123',
         rps: '123',
@@ -68,8 +72,23 @@ describe 'Results API', type: :request do
     expect(json_response_body).to eq(['Request data is required'])
   end
 
+  it 'does not create a result with wrong project' do
+    params = {
+        project: 'Dnvnik',
+        version: 'version3',
+        duration: '123',
+        rps: '123',
+        profile: '123',
+        test_run_date: '11.11.2000'
+    }
+    expect { post '/api/results', params }.to_not change { Result.count }
+    expect(response.status).to eq(400)
+    expect(json_response_body).to eq(['Project undefined'])
+  end
+
   it 'does not create a result if absent parameter' do
     params = {
+        project: 'Dnevnik',
         version: 'version3',
         duration: '123',
         rps: '123',

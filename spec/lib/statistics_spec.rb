@@ -15,17 +15,19 @@ describe Statistics do
 
     it 'raise exception when interval not Integer' do
       interval = 'abc'
-      expect {Statistics.simple_moving_average([1,2,3], interval)}.to raise_error(ArgumentError, %{invalid value for Integer(): "#{interval}"})
+      data  = [1,2,3]
+      expect(Statistics.simple_moving_average(data, interval)).to match_array(data)
     end
 
-    it 'raise exception when interval more than data size' do
+    it 'return data without smoothing when interval more than data size' do
       data = [1,2,3]
       interval = 4
-      expect {Statistics.simple_moving_average(data, interval)}.to raise_error("#{interval} >= #{data.count}! Interval can not be more or equal data size")
+      expect(Statistics.simple_moving_average(data, interval)).to match_array(data)
     end
 
-    it 'interval can not be even' do
-      expect {Statistics.simple_moving_average([1,2,3], 2)}.to raise_error('Interval can not be even!')
+    it 'return data without smoothing if interval even' do
+      data = [1,2,3]
+      expect(Statistics.simple_moving_average(data, 2)).to match_array(data)
     end
 
     it 'data with emissions after smooth is correct' do

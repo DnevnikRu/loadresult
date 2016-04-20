@@ -3,9 +3,13 @@ module Statistics
 
   def self.simple_moving_average(data, interval)
     return data if interval == 0 || interval.nil?
-    interval = Integer(interval)
-    raise "#{interval} >= #{data.count}! Interval can not be more or equal data size" if interval >= data.count
-    raise 'Interval can not be even!' if interval.even?
+    begin
+      interval = Integer(interval)
+    rescue
+      return data
+    end
+    return data if interval >= data.count
+    return data if interval.even?
     split_interval(data, interval).map { |data_interval| average(data_interval).round(2) }
   end
 

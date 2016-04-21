@@ -9,7 +9,7 @@ class CompareReport
 
   def description
     description = {}
-    %w(version rps duration profile test_run_date time_cutting_percent).each do |key|
+    %w(version rps duration profile test_run_date time_cutting_percent value_smoothing_interval).each do |key|
       values = {}
       values[:result1] = result1.send(key)
       values[:result2] = result2.send(key)
@@ -43,7 +43,9 @@ class CompareReport
   def trend(type, metric, label, limit = 0)
     first = result1.send(type).find_by(label: label).send(metric)
     second = result2.send(type).find_by(label: label).send(metric)
-    if ((first == 0.0 || first.nil?) && (second == 0.00 || second.nil?)) || ((first + second) / 2 < limit)
+    first = 0.0 if first.nil?
+    second = 0.0 if second.nil?
+    if (first == 0.0 && second == 0.00) || ((first + second) / 2 < limit)
       0.00
     elsif first == 0.0 || first.nil?
       100.0
@@ -68,7 +70,8 @@ class CompareReport
       duration: 'Duration',
       rps: 'Rps',
       profile: 'Profile',
-      time_cutting_percent: 'Time cutting percent'
+      time_cutting_percent: 'Time cutting percent',
+      value_smoothing_interval: 'Value smoothing interval'
     }
     description_to_check.each do |field, field_name|
       result1_value = result1.send(field)

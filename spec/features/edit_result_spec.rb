@@ -63,6 +63,7 @@ describe 'Editing a result' do
         expect(find('.duration')).to have_content(@result.duration)
         expect(find('.profile')).to have_content(@result.profile)
         expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
+        expect(find('.value_smoothing_interval')).to have_content(@result.value_smoothing_interval)
       end
     end
 

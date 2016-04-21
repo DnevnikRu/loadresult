@@ -13,12 +13,20 @@ class Result < ActiveRecord::Base
   validates :rps, presence: true
   validates :profile, presence: true
   validate :test_run_date_is_datetime
+  validates :value_smoothing_interval, numericality: {only_integer: true}, allow_nil: true
+  validate :value_smoothing_interval_cannot_be_even
 
   mount_uploader :requests_data, ResultUploader
   mount_uploader :performance_data, ResultUploader
 
   def test_run_date_is_datetime
     errors.add(:test_run_date, 'must be in a datetime format') if test_run_date.nil?
+  end
+
+  def value_smoothing_interval_cannot_be_even
+    if !value_smoothing_interval.nil? && value_smoothing_interval.even?
+      errors.add(:value_smoothing_interval, 'can`t be even')
+    end
   end
 
   def self.upload_and_create(params)
@@ -31,7 +39,8 @@ class Result < ActiveRecord::Base
         test_run_date: params['test_run_date'],
         requests_data: params['requests_data'].is_a?(Hash) ? file_from_json(params, 'requests_data') : params['requests_data'],
         performance_data: params['performance_data'].is_a?(Hash) ? file_from_json(params, 'performance_data') : params['performance_data'],
-        time_cutting_percent: params['time_cutting_percent'].blank? ? 0 : params['time_cutting_percent']
+        time_cutting_percent: params['time_cutting_percent'].blank? ? 0 : params['time_cutting_percent'],
+        value_smoothing_interval: params['value_smoothing_interval']
     )
     result.save
 
@@ -47,8 +56,8 @@ class Result < ActiveRecord::Base
     end
 
     unless result.errors.any?
-      calc_request_data(result, result.time_cutting_percent)
-      calc_performance_data(result, result.time_cutting_percent) unless result.performance_results.empty?
+      calc_request_data(result)
+      calc_performance_data(result) unless result.performance_results.empty?
     end
 
     result
@@ -56,82 +65,24 @@ class Result < ActiveRecord::Base
 
   def self.update_and_recalculate(result, params)
     previous_time_cut_percent = result.time_cutting_percent
+    previous_smooth_interval = result.value_smoothing_interval
     result.update(
         project_id: params[:project],
         version: params[:version],
         rps: params[:rps],
         duration: params[:duration],
         profile: params[:profile],
+        time_cutting_percent: params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent],
+        value_smoothing_interval: params[:value_smoothing_interval],
         requests_data: params[:requests_data],
         performance_data: params[:performance_data],
-        time_cutting_percent: params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent],
         release_date: params[:release_date]
     )
 
-    update_requests(result, previous_time_cut_percent)
-    update_performance(result, previous_time_cut_percent)
+    update_requests(result, params[:requests_data], previous_time_cut_percent, previous_smooth_interval)
+    update_performance(result, params[:performance_data], previous_time_cut_percent, previous_smooth_interval)
 
     result
-  end
-
-
-  def request_mean(label, bottom_timestamp, top_timestamp)
-    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    records.exists? ? records.average(:value).round(2) : nil
-  end
-
-  def request_median(label, bottom_timestamp, top_timestamp)
-    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    records.exists? ? median(records.pluck(:value)) : nil
-  end
-
-  def request_90percentile(label, bottom_timestamp, top_timestamp)
-    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    records.exists? ? self.class.percentile(records.pluck(:value), 90) : nil
-  end
-
-  def request_min(label, bottom_timestamp, top_timestamp)
-    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    records.exists? ? records.minimum(:value) : nil
-  end
-
-  def request_max(label, bottom_timestamp, top_timestamp)
-    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    records.exists? ? records.maximum(:value) : nil
-  end
-
-  def request_throughput(label, bottom_timestamp, top_timestamp)
-    duration = (top_timestamp - bottom_timestamp)
-    duration = (duration == 0 || duration / 1000.0 <= 1) ? 1 : duration / 1000.0
-    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    records.exists? ? (records.count.to_f / duration.to_f).round(2) : nil
-  end
-
-  def failed_requests(label, bottom_timestamp, top_timestamp)
-    records = RequestsResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    if records.exists?
-      int_codes = records.pluck(:response_code).map { |code| code.to_i }
-      client_errors = int_codes.count { |code| code.between?(400, 499) }
-      server_errors = int_codes.count { |code| code.between?(500, 599) }
-      unrecognized_errors = int_codes.count { |code| code == 0 }
-      failed_count = client_errors + server_errors + unrecognized_errors
-      ((failed_count.to_f / int_codes.count) * 100).round(2)
-    end
-  end
-
-  def performance_mean(label, bottom_timestamp, top_timestamp)
-    records = PerformanceResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    records.exists? ? records.average(:value).round(2) : nil
-  end
-
-  def performance_min(label, bottom_timestamp, top_timestamp)
-    records = PerformanceResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    records.exists? ? records.minimum(:value) : nil
-  end
-
-  def performance_max(label, bottom_timestamp, top_timestamp)
-    records = PerformanceResult.where(self.class.where_conditional(id, label, bottom_timestamp, top_timestamp))
-    records.exists? ? records.maximum(:value) : nil
   end
 
   def self.border_timestamps(id, table, cut_percent)
@@ -153,42 +104,30 @@ class Result < ActiveRecord::Base
     where_request.size > 1 ? where_request.join(' AND ') : where_request.join
   end
 
-  def self.percentile(data_set, percent)
-    return nil if data_set.empty?
-
-    sorted_data = data_set.sort
-    index = (percent.to_f / 100 * data_set.length) - 1
-    return sorted_data.first if index < 0
-
-    if index.to_s.split('.').last.to_i.zero? # whole number?
-      sorted_data[index] # return an element of data_set
-    else
-      left = sorted_data[index.floor]
-      right = sorted_data[index.ceil]
-      (left + right) / 2.0 # return average
-    end
-  end
-
   def self.values_of_requests(result_id, label = nil, cut_percent)
     bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult, cut_percent)
     records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
-    records.map(&:value)
+    result = Result.find_by(id: result_id)
+    result.value_smoothing_interval.present? ? Statistics(records.map(&:value), result.value_smoothing_interval) : records.map(&:value)
   end
 
   def self.percentile_of_values_of_requests(result_id, cut_percent)
     values = values_of_requests(result_id, cut_percent)
-    (1..100).map { |i| percentile(values, i) }
+    (1..100).map { |i| Statistics.percentile(values, i) }
   end
 
   def self.requests_seconds_to_values(result_id, label, cut_percent)
     data = {seconds: [], values: []}
     bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult, cut_percent)
-    records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
+    records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp)).order(:timestamp)
+    result = Result.find_by(id: result_id)
     timestamp_min = records.minimum(:timestamp)
-    records.order(:timestamp).each do |record|
-      data[:seconds].push (record.timestamp - timestamp_min) / 1000
-      data[:values].push record.value
-    end
+    data[:seconds] = records.pluck(:timestamp).map { |timestamp| (timestamp - timestamp_min) / 1000 }
+    data[:values] = if result.value_smoothing_interval.present?
+                      Statistics.simple_moving_average(records.pluck(:value), result.value_smoothing_interval)
+                    else
+                      records.pluck(:value)
+                    end
     data
   end
 
@@ -198,70 +137,94 @@ class Result < ActiveRecord::Base
       data[label] = {seconds: [], values: []}
       bottom_timestamp, top_timestamp = border_timestamps(result_id, PerformanceResult, cut_percent)
       records = PerformanceResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
+      result = Result.find_by(id: result_id)
       timestamp_min = records.minimum(:timestamp)
-      records.order(:timestamp).each do |record|
-        data[label][:seconds].push (record.timestamp - timestamp_min) / 1000
-        data[label][:values].push record.value
-      end
+      data[label][:seconds] = records.pluck(:timestamp).map { |timestamp| (timestamp - timestamp_min) / 1000 }
+      data[label][:values] = if result.value_smoothing_interval.present?
+                               Statistics.simple_moving_average(records.pluck(:value), result.value_smoothing_interval)
+                             else
+                               records.pluck(:value)
+                             end
     end
     data
   end
 
   private
 
-  def self.update_requests(result, previous_time_cut_percent)
-    if result.requests_data.present?
+  def self.update_requests(result, requests_data, previous_time_cut_percent, previous_smooth_interval)
+    if requests_data.present?
+      result.requests_data = requests_data
       validate_requests_data(result)
       return if result.errors.any?
+      result.save
       result.requests_results.delete_all
       save_request_data(result)
-      calc_request_data(result, result.time_cutting_percent)
+      calc_request_data(result)
     else
-      if previous_time_cut_percent != result.time_cutting_percent && result.errors.empty?
-        calc_request_data(result, result.time_cutting_percent)
+      if result.errors.empty? &&
+          (previous_time_cut_percent != result.time_cutting_percent ||
+              previous_smooth_interval != result.value_smoothing_interval)
+        calc_request_data(result)
       end
     end
   end
 
-  def self.update_performance(result, previous_time_cut_percent)
-    if result.performance_data.present?
+  def self.update_performance(result, performance_data, previous_time_cut_percent, previous_smooth_interval)
+    if performance_data.present?
+      result.performance_data = performance_data
       validate_performance_data(result)
       return if result.errors.any?
+      result.save
       result.performance_data.delete_all
       save_performance_data(result)
-      calc_performance_data(result, result.time_cutting_percent)
+      calc_performance_data(result)
     else
-      if previous_time_cut_percent != result.time_cutting_percent && result.performance_results.present? && result.errors.empty?
-        calc_performance_data(result, result.time_cutting_percent)
+      if result.errors.empty? &&
+          result.performance_results.present? &&
+          (previous_time_cut_percent != result.time_cutting_percent ||
+              previous_smooth_interval != result.value_smoothing_interval)
+        calc_performance_data(result)
       end
     end
   end
 
-  def self.calc_request_data(result, cut_percent)
-    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, RequestsResult, cut_percent)
+  def self.calc_request_data(result)
+    bottom_timestamp, top_timestamp = border_timestamps(result.id, RequestsResult, result.time_cutting_percent)
     labels = RequestsResult.where(result_id: result.id).pluck(:label).uniq
     labels.each do |label|
-      CalculatedRequestsResult.find_or_create_by(result_id: result.id, label: label).update_attributes!(
-          mean: result.request_mean(label, bottom_timestamp, top_timestamp),
-          median: result.request_median(label, bottom_timestamp, top_timestamp),
-          ninety_percentile: result.request_90percentile(label, bottom_timestamp, top_timestamp),
-          max: result.request_max(label, bottom_timestamp, top_timestamp),
-          min: result.request_min(label, bottom_timestamp, top_timestamp),
-          throughput: result.request_throughput(label, bottom_timestamp, top_timestamp),
-          failed_results: result.failed_requests(label, bottom_timestamp, top_timestamp)
-      )
+      calculated_request_result = CalculatedRequestsResult.find_or_create_by(result_id: result.id, label: label)
+      records = RequestsResult.where(where_conditional(result.id, label, bottom_timestamp, top_timestamp))
+      unless records.empty?
+        data = records.pluck(:value)
+        data = Statistics.simple_moving_average(data, result.value_smoothing_interval) if result.value_smoothing_interval.present?
+        calculated_request_result.update_attributes!(
+            mean: Statistics.average(data).round(2),
+            median: Statistics.median(data).round(2),
+            ninety_percentile: Statistics.percentile(data, 90).round(2),
+            max: data.max,
+            min: data.min,
+            throughput: RequestsUtils.throughput(data, bottom_timestamp, top_timestamp).round(2),
+            failed_results: RequestsUtils.failed_requests(records.pluck(:response_code), bottom_timestamp, top_timestamp).round(2)
+        )
+      end
     end
   end
 
-  def self.calc_performance_data(result, cut_percent)
-    bottom_timestamp, top_timestamp = result.class.border_timestamps(result.id, PerformanceResult, cut_percent)
+  def self.calc_performance_data(result)
+    bottom_timestamp, top_timestamp = border_timestamps(result.id, PerformanceResult, result.time_cutting_percent)
     labels = PerformanceResult.where(result_id: result.id).pluck(:label).uniq
     labels.each do |label|
-      CalculatedPerformanceResult.find_or_create_by(result_id: result.id, label: label).update_attributes!(
-          :mean => result.performance_mean(label, bottom_timestamp, top_timestamp),
-          :max => result.performance_max(label, bottom_timestamp, top_timestamp),
-          :min => result.performance_min(label, bottom_timestamp, top_timestamp)
-      )
+      calculated_performance_result = CalculatedPerformanceResult.find_or_create_by(result_id: result.id, label: label)
+      records = PerformanceResult.where(where_conditional(result.id, label, bottom_timestamp, top_timestamp))
+      if records
+        data = records.pluck(:value)
+        data = Statistics.simple_moving_average(data, result.value_smoothing_interval) if result.value_smoothing_interval.present?
+        calculated_performance_result.update_attributes!(
+            mean: Statistics.average(data).round(2),
+            max: data.max,
+            min: data.min
+        )
+      end
     end
   end
 
@@ -322,16 +285,5 @@ class Result < ActiveRecord::Base
     result
   end
 
-  def median(data)
-    sorted_array = data.sort
-    rank = data.length * 0.5
-    exactly_divide_check = rank - rank.to_i
-    if exactly_divide_check.eql? 0.0
-      first = (sorted_array[rank - 1]).to_f
-      second = (sorted_array[rank]).to_f
-      (first + second) / 2
-    else
-      sorted_array[rank]
-    end
-  end
+
 end

@@ -27,7 +27,7 @@ class TrendController < ApplicationController
     )
     if results_between.size == 2
       message = "There are only 2 results between selected results. Can't create a trend"
-      return redirect_to(results_path, alert: message)
+      return redirect_to results_path, alert: message
     end
 
     flash[:result_ids] = nil # reset choosen results on the result index page

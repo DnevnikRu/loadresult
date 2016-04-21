@@ -81,8 +81,8 @@ ActiveRecord::Schema.define(version: 20160420100914) do
     t.integer  "time_cutting_percent"
     t.string   "requests_data"
     t.string   "performance_data"
-    t.integer  "value_smoothing_interval"
     t.integer  "project_id"
+    t.integer  "value_smoothing_interval"
     t.datetime "release_date"
   end
 

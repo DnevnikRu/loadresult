@@ -79,14 +79,30 @@ describe 'Results API', type: :request do
         duration: '123',
         rps: '123',
         profile: '123',
-        test_run_date: '11.11.2000'
+        test_run_date: '11.11.2000',
+        requests_data: {file: summary_base64, filename: summary_file_name}
     }
     expect { post '/api/results', params }.to_not change { Result.count }
     expect(response.status).to eq(400)
-    expect(json_response_body).to eq(['Project undefined'])
+    expect(json_response_body).to eq(["Project can't be blank"])
   end
 
-  it 'does not create a result if absent parameter' do
+  it 'does not create a result if project is empty' do
+    params = {
+        project: nil,
+        version: 'version3',
+        duration: '123',
+        rps: '123',
+        profile: '123',
+        test_run_date: '11.11.2000',
+        requests_data: {file: summary_base64, filename: summary_file_name}
+    }
+    expect { post '/api/results', params }.to_not change { Result.count }
+    expect(response.status).to eq(400)
+    expect(json_response_body).to eq(["Project can't be blank"])
+  end
+
+  it 'does not create a result if profile is absent' do
     params = {
         project: 'Dnevnik',
         version: 'version3',

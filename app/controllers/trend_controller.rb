@@ -5,11 +5,26 @@ class TrendController < ApplicationController
       return redirect_to results_path, alert: 'You should select 2 results to create a trend'
     end
 
-    results = params[:result].map { |result_id| Result.find_by(id: result_id) }
-    return redirect_to(results_path, alert: "Can't find selected results") if results.include? nil
+    result1 = Result.find_by(id: params[:result][0])
+    result2 = Result.find_by(id: params[:result][1])
 
-    results.sort_by!(&:test_run_date)
-    results_between = Result.where(test_run_date: (results[0].test_run_date..results[1].test_run_date))
+    if result1.nil? || result2.nil?
+      return redirect_to results_path, alert: "Can't find selected results"
+    end
+
+    if result1.project_id != result2.project_id
+      return redirect_to results_path, alert: "Can't create a trend with results in different projects"
+    end
+
+    if result1.release_date.nil? || result2.release_date.nil?
+      return redirect_to results_path, alert: "Can't create a trend with results without release date"
+    end
+
+    results = [result1, result2].sort_by(&:release_date)
+    results_between = Result.where(
+      release_date: (results[0].release_date..results[1].release_date),
+      project_id: result1.project_id
+    )
     if results_between.size == 2
       message = "There are only 2 results between selected results. Can't create a trend"
       return redirect_to(results_path, alert: message)
@@ -17,6 +32,6 @@ class TrendController < ApplicationController
 
     flash[:result_ids] = nil # reset choosen results on the result index page
 
-    @trend_report = TrendReport.new(results_between.sort_by(&:test_run_date))
+    @trend_report = TrendReport.new(results_between.sort_by(&:release_date))
   end
 end

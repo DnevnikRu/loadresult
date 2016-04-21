@@ -108,7 +108,7 @@ class Result < ActiveRecord::Base
     bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult, cut_percent)
     records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
     result = Result.find_by(id: result_id)
-    result.value_smoothing_interval.present? ? Statistics(records.map(&:value), result.value_smoothing_interval) : records.map(&:value)
+    result.value_smoothing_interval.present? ? Statistics.simple_moving_average(records.map(&:value), result.value_smoothing_interval) : records.map(&:value)
   end
 
   def self.percentile_of_values_of_requests(result_id, cut_percent)

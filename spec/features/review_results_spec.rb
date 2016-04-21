@@ -112,9 +112,9 @@ feature 'Review results' do
   end
 
   scenario 'Selecting two results and clicking on Trend opens Trend page and clear checked results' do
-    create(:result, test_run_date: '01.01.1978 00:01')
-    create(:result, test_run_date: '01.01.1978 00:02')
-    create(:result, test_run_date: '01.01.1978 00:03')
+    create(:result, release_date: '01.01.1978 00:01')
+    create(:result, release_date: '01.01.1978 00:02')
+    create(:result, release_date: '01.01.1978 00:03')
 
     visit '/results/'
     page.all('.result-checkbox').first.click

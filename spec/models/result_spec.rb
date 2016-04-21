@@ -875,18 +875,22 @@ describe Result do
     describe 'Update and recalculate only with request and performance data' do
       before(:all) do
         @result = create(:result, time_cutting_percent: 10)
-        create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023029547, value: 2)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 123)
         create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
         create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
         create(:requests_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
         create(:requests_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
-        create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
-        create(:performance_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023060000, value: 12)
+        create(:requests_result, result_id: @result.id, timestamp: 1455023070001, value: 6)
+        create(:performance_result, result_id: @result.id, timestamp: 1455023029547, value: 2)
+        create(:performance_result, result_id: @result.id, timestamp: 1455023039548, value: 123)
         create(:performance_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
         create(:performance_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
         create(:performance_result, result_id: @result.id, timestamp: 1455023050000, value: 1000)
         create(:performance_result, result_id: @result.id, timestamp: 1455023055000, value: 12)
-        create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 6)
+        create(:performance_result, result_id: @result.id, timestamp: 1455023060000, value: 12)
+        create(:performance_result, result_id: @result.id, timestamp: 1455023070001, value: 6)
         Result.calc_request_data(@result)
         Result.calc_performance_data(@result)
       end
@@ -898,7 +902,7 @@ describe Result do
                                                 rps: @result.rps,
                                                 profile: @result.profile,
                                                 time_cutting_percent: '10'})
-        expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 377.67
+        expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 231.83
       end
 
       it 'change time cutting' do
@@ -907,7 +911,18 @@ describe Result do
                                                 duration: @result.duration,
                                                 rps: @result.rps,
                                                 profile: @result.profile,
-                                                time_cutting_percent: '1'})
+                                                time_cutting_percent: '0'})
+        expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 174.88
+      end
+
+      it 'change value smoothing interval' do
+        Result.update_and_recalculate(@result, {project: @result.project_id,
+                                                version: @result.version,
+                                                duration: @result.duration,
+                                                rps: @result.rps,
+                                                profile: @result.profile,
+                                                value_smoothing_interval: 3,
+                                                time_cutting_percent: '10'})
         expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 314.0
       end
 
@@ -996,5 +1011,8 @@ describe Result do
         expect(updated_result.errors.full_messages).to match_array(expected_errors)
       end
     end
+
+
+
   end
 end

@@ -7,12 +7,12 @@
     </h1>
   </div>
 
-  <% if @warnings.present? %>
+  <% if @compare_report.differences.present? %>
     <div class="row">
       <div id="different-warning" class="alert alert-warning" role="alert">
         <strong>Warning!</strong>
         <ul>
-          <% @warnings.each do |warning| %>
+          <% @compare_report.differences.each do |warning| %>
             <li><%= warning %></li>
           <% end %>
         </ul>

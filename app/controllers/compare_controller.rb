@@ -12,7 +12,6 @@ class CompareController < ApplicationController
     flash[:result_ids] = nil # reset choosen results on the result index page
 
     @compare_report = CompareReport.new(result1, result2)
-    @warnings = @compare_report.differences
   end
 
   def requests_histogram_plot

@@ -161,11 +161,13 @@ feature 'Review results' do
     page.all('.result-checkbox')[0].click
     wait_for_ajax
     click_on 'Compare'
+    wait_for_ajax
 
     expect(page.all('.result-checkbox')[0]).to be_checked
     expect(page.all('.result-checkbox')[1]).to_not be_checked
 
     click_on 'Trend'
+    wait_for_ajax
 
     expect(page.all('.result-checkbox')[0]).to be_checked
     expect(page.all('.result-checkbox')[1]).to_not be_checked

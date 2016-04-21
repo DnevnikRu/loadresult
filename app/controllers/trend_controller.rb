@@ -16,5 +16,7 @@ class TrendController < ApplicationController
     end
 
     flash[:result_ids] = nil # reset choosen results on the result index page
+
+    @trend_report = TrendReport.new(results_between)
   end
 end

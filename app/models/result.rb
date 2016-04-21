@@ -15,12 +15,20 @@ class Result < ActiveRecord::Base
   validate :test_run_date_is_datetime
   validates :value_smoothing_interval, numericality: {only_integer: true}, allow_nil: true
   validate :value_smoothing_interval_cannot_be_even
+  validate :release_date_is_date_or_blank
+
 
   mount_uploader :requests_data, ResultUploader
   mount_uploader :performance_data, ResultUploader
 
   def test_run_date_is_datetime
     errors.add(:test_run_date, 'must be in a datetime format') if test_run_date.nil?
+  end
+
+  def release_date_is_date_or_blank
+    if self.read_attribute_before_type_cast('release_date').present?
+      errors.add(:release_date, 'must be a valid datetime') if ((DateTime.parse(release_date.to_s) rescue ArgumentError) == ArgumentError)
+    end
   end
 
   def value_smoothing_interval_cannot_be_even
@@ -40,7 +48,8 @@ class Result < ActiveRecord::Base
         requests_data: params['requests_data'].is_a?(Hash) ? file_from_json(params, 'requests_data') : params['requests_data'],
         performance_data: params['performance_data'].is_a?(Hash) ? file_from_json(params, 'performance_data') : params['performance_data'],
         time_cutting_percent: params['time_cutting_percent'].blank? ? 0 : params['time_cutting_percent'],
-        value_smoothing_interval: params['value_smoothing_interval']
+        value_smoothing_interval: params['value_smoothing_interval'],
+        release_date: params['release_date']
     )
     result.save
 

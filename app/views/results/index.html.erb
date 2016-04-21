@@ -43,12 +43,15 @@
     <tr>
       <th></th>
       <th>ID</th>
+      <th>Project</th>
       <th>Version</th>
       <th>RPS</th>
       <th>Duration</th>
       <th>Profile</th>
       <th>Test run date</th>
       <th>Time cutting percent</th>
+      <th>Value smoothing interval</th>
+      <th>Release date</th>
       <th></th>
     </tr>
     </thead>
@@ -61,12 +64,15 @@
                               class: 'result-checkbox' %>
           </td>
           <td class="id"><%= result.id %></td>
+          <td class="project"><%= result.project.project_name %></td>
           <td class="version"><%= result.version %></td>
           <td class="rps"><%= result.rps %></td>
           <td class="duration"><%= result.duration %></td>
           <td class="profile"><%= result.profile %></td>
           <td class="test_run_date"><%= result.test_run_date %></td>
           <td class="time_cutting_percent"><%= result.time_cutting_percent %></td>
+          <td class="value_smoothing_interval"><%= result.value_smoothing_interval %></td>
+          <td class="release_date"><%= result.release_date %></td>
           <td class="actions nostrech">
             <%= link_to '<i class="glyphicon glyphicon-eye-open"></i>'.html_safe,
                         result_path(result),

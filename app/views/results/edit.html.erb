@@ -13,6 +13,10 @@
 
       <%= form_tag({action: :update}, multipart: true, method: :put) do %>
           <div class="form-group required">
+            <%= label_tag :project, nil, class: "control-label" %>
+            <%= select_tag :project, options_for_select(Project.all.collect {|p| [p.project_name, p.id]}, Project.where(id: @result.project_id).pluck(:id).join(" ")), class: "form-control", include_blank: true %>
+          </div>
+          <div class="form-group required">
             <%= label_tag :version, nil, class: "control-label" %>
             <%= text_field_tag :version, flash[:version], class: "form-control", placeholder: 'edu sharding' %>
           </div>
@@ -31,6 +35,16 @@
           <div class="form-group">
             <%= label_tag :time_cutting_percent, nil, class: "control-label" %>
             <%= text_field_tag :time_cutting_percent, flash[:time_cutting_percent], class: "form-control", placeholder: '0' %>
+          </div>
+
+          <div class="form-group">
+            <%= label_tag :value_smoothing_interval, nil, class: "control-label" %>
+            <%= text_field_tag :value_smoothing_interval, flash[:value_smoothing_interval], class: "form-control", placeholder: '0' %>
+          </div>
+
+          <div class="form-group">
+            <%= label_tag :release_date, nil, class: "control-label" %>
+            <%= text_field_tag :release_date, flash[:release_date], class: "form-control", placeholder: '10.02.2016 18:59' %>
           </div>
 
 

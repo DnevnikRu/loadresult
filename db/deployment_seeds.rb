@@ -7,7 +7,8 @@ CalculatedPerformanceResult.delete_all
 random = Random.new(123)
 results = []
 5.times do |i|
-  results << Result.create(version: "master-#{i+1}",
+  results << Result.create(project_id: Project.find_by(project_name: 'Dnevnik').id,
+                           version: "master-#{i+1}",
                            duration: (i+1)*200,
                            rps: 100*(i+1),
                            profile: 'all_sites',

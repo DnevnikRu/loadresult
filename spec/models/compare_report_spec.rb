@@ -18,13 +18,15 @@ describe CompareReport do
     end
 
     it 'has all keys' do
-      keys = ['Duration', 'Profile', 'Rps', 'Test run date', 'Time cutting percent', 'Version']
+      keys = ['Duration', 'Profile', 'Rps', 'Test run date', 'Time cutting percent', 'Version', 'Value smoothing interval']
       expect(@description.keys).to match_array(keys)
     end
 
-    it 'each keys has two value: result1 and result2' do
-      actual = @description.values.map { |v| v.is_a?(Hash) && !v[:result1].nil? && !v[:result2].nil? }
-      expect(actual.reduce(:&)).to be(true), "Expect that description values is a Hash and contains two keys for result1 and result2b but actual: #{@description.values}"
+    it 'each keys except Value smoothing interval has two value: result1 and result2' do
+      description = @description.dup
+      description.delete('Value smoothing interval')
+      actual = description.values.map { |v| v.is_a?(Hash) && !v[:result1].nil? && !v[:result2].nil? }
+      expect(actual.reduce(:&)).to be(true), "Expect that description values is a Hash and contains two keys for result1 and result2b but actual: #{description.values}"
     end
   end
 

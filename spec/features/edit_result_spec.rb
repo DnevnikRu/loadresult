@@ -99,6 +99,27 @@ describe 'Editing a result' do
 
   end
 
+  context 'When release date is changed to incorrect' do
+    before do
+      @result = create(:result)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
+      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
+      visit '/results/'
+      @row_with_result_xpath = "//td[@class='id' and text()='#{@result.id}']/.."
+      within(:xpath, @row_with_result_xpath) do
+        find('.editResult').click
+      end
+      fill_in 'release_date', with: 'blablabla'
+      click_button 'Update'
+    end
+
+    scenario 'Message about wrong format is displayed' do
+      expect(page).to have_content('Release date must be a valid datetime')
+    end
+
+  end
+
   context 'When fields are changed to empty' do
     before do
       @result = create(:result)

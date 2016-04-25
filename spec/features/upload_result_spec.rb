@@ -18,13 +18,14 @@ feature 'Upload load result' do
       visit '/results/new'
     end
 
-    scenario 'Upload a result with all fields filled' do
+    scenario 'Upload a result with all fields filled corectly' do
       select 'Dnevnik', from: 'project'
       fill_in 'version', with: 'edu sharding'
       fill_in 'rps', with: '600'
       fill_in 'duration', with: '600'
       fill_in 'profile', with: 'all_sites'
       fill_in 'test_run_date', with: '14.02.2016 17:45'
+      fill_in 'release_date', with: '14.02.2016 17:45'
       attach_file 'requests_data', summary_file_path
       attach_file 'performance_data', perfmon_file_path
       click_button 'Upload'
@@ -81,6 +82,21 @@ feature 'Upload load result' do
 
       expect(page).to have_content('Request data is required')
     end
+
+    scenario 'Can not upload a result with invalid release date' do
+      select 'Dnevnik', from: 'project'
+      fill_in 'version', with: 'edu sharding'
+      fill_in 'rps', with: '600'
+      fill_in 'duration', with: '600'
+      fill_in 'profile', with: 'all_sites'
+      fill_in 'test_run_date', with: '14.02.2016 17:45'
+      fill_in 'release_date', with: 'blablabla'
+      attach_file 'performance_data', perfmon_file_path
+      click_button 'Upload'
+
+      expect(page).to have_content('Release date must be a valid datetime')
+    end
+
 
     scenario 'Data in the form is saved if there is an error' do
       select 'Dnevnik', from: 'project'

@@ -79,6 +79,7 @@ describe Result do
             'duration' => 123,
             'profile' => 'asd',
             'test_run_date' => '2016-02-11 11:21',
+            'release_date' => '2016-02-11 11:21',
             'requests_data' => requests_data,
             'performance_data' => performance_data
         }
@@ -150,6 +151,27 @@ describe Result do
         it 'calculated performance results not save without perfmon data' do
           expect(CalculatedPerformanceResult.find_by result_id: @result.id).to be nil
         end
+      end
+
+      it 'release_date is absent' do
+        @summary.open
+        @perfmon.open
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
+        performance_data = ActionDispatch::Http::UploadedFile.new(tempfile: @perfmon, filename: 'perfmon.csv')
+        params = {
+            'project' => 1,
+            'version' => 'edu',
+            'rps' => 150,
+            'duration' => 123,
+            'profile' => 'asd',
+            'test_run_date' => '2016-02-11 11:21',
+            'requests_data' => requests_data,
+            'performance_data' => performance_data
+        }
+        @result = Result.upload_and_create(params)
+        @summary.close
+        @perfmon.close
+        expect(@result.errors).to be_empty
       end
 
       describe 'version is absence, other required fields presence' do
@@ -311,6 +333,24 @@ describe Result do
         }
         result = Result.upload_and_create(params)
         expect(result.errors).to match_array(['Value smoothing interval can`t be even'])
+        @summary.close
+      end
+
+      it 'release_date presence but not date' do
+        @summary.open
+        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
+        params = {
+            'project' => 1,
+            'version' => 'asd',
+            'duration' => 123,
+            'rps' => 150,
+            'profile' => 'asd',
+            'test_run_date' => '2016-02-11 11:21',
+            'release_date' => 'agsdgdfg',
+            'requests_data' => requests_data,
+        }
+        result = Result.upload_and_create(params)
+        expect(result.errors).to match_array(['Release date must be a valid datetime'])
         @summary.close
       end
     end
@@ -972,6 +1012,7 @@ describe Result do
             :duration => 123,
             :profile => 'asd',
             :test_run_date => '2016-02-11 11:21',
+            :release_date => '2016-02-11 11:21',
             :requests_data => requests_data,
             :performance_data => performance_data
         }
@@ -1011,7 +1052,6 @@ describe Result do
         expect(updated_result.errors.full_messages).to match_array(expected_errors)
       end
     end
-
 
 
   end

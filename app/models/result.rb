@@ -26,7 +26,7 @@ class Result < ActiveRecord::Base
   end
 
   def release_date_is_date_or_blank
-    if self.read_attribute_before_type_cast('release_date').present?
+    if read_attribute_before_type_cast('release_date').present?
       errors.add(:release_date, 'must be a valid datetime') if ((DateTime.parse(release_date.to_s) rescue ArgumentError) == ArgumentError)
     end
   end

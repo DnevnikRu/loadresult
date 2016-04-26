@@ -1,0 +1,24 @@
+<table id="description-differences" class="table table-striped table-hover table-condensed">
+  <thead>
+    <tr>
+      <th>IDs</th>
+      <th>Duration</th>
+      <th>RPS</th>
+      <th>Profile</th>
+      <th>Time cutting percent</th>
+      <th>Value smoothing interval</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @trend_report.description_differences.each do |difference| %>
+    <tr>
+      <td class="ids-difference"><%= difference[:ids].join(', ') %></td>
+      <td class="duration-difference"><%= difference[:duration] %></td>
+      <td class="rps-difference"><%= difference[:rps] %></td>
+      <td class="profile-difference"><%= difference[:profile] %></td>
+      <td class="time_cutting_percent-difference"><%= difference[:time_cutting_percent] %></td>
+      <td class="value_smoothing_interval-difference"><%= difference[:value_smoothing_interval] %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -214,4 +214,22 @@ describe TrendReport do
       end
     end
   end
+
+  describe '#request_labels' do
+    it 'does something' do
+      result1 = create(:result)
+      create(:calculated_requests_result, result_id: result1.id, label: 'a')
+      create(:calculated_requests_result, result_id: result1.id, label: 'b')
+      result2 = create(:result)
+      create(:calculated_requests_result, result_id: result2.id, label: 'b')
+      create(:calculated_requests_result, result_id: result2.id, label: 'c')
+      result3 = create(:result)
+      create(:calculated_requests_result, result_id: result3.id, label: 'c')
+      create(:calculated_requests_result, result_id: result3.id, label: 'd')
+
+      trend_report = TrendReport.new([result1, result2, result3])
+
+      expect(trend_report.request_labels).to match(%w(a b c d))
+    end
+  end
 end

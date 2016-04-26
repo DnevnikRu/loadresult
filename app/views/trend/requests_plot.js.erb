@@ -1,0 +1,23 @@
+$('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
+
+var lines = [];
+
+<% @data.each do |attribute, value| %>
+  lines.push({
+      x: <%= @ids %>,
+      y: <%= value %>,
+      name: "<%= attribute.to_s.humanize %>",
+      type: 'scatter'
+  });
+<% end %>
+
+var layout = {
+    xaxis: {
+        title: 'id'
+    },
+    yaxis: {
+        title: 'msec'
+    }
+};
+
+Plotly.newPlot('<%= "#{@plot_id}_div" %>', lines, layout);

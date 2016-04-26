@@ -232,4 +232,16 @@ describe TrendReport do
       expect(trend_report.request_labels).to match(%w(a b c d))
     end
   end
+
+  describe '#ids' do
+    it 'returns ids of results' do
+      result1 = create(:result)
+      result2 = create(:result)
+      result3 = create(:result)
+
+      trend_report = TrendReport.new([result1, result2, result3])
+
+      expect(trend_report.ids).to match([result1.id, result2.id, result3.id])
+    end
+  end
 end

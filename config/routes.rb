@@ -21,4 +21,7 @@ Rails.application.routes.draw do
   end
 
   get 'trend' => 'trend#show'
+  namespace 'trend' do
+    post 'requests_plot'
+  end
 end

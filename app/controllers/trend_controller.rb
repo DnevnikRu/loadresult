@@ -34,4 +34,21 @@ class TrendController < ApplicationController
 
     @trend_report = TrendReport.new(results_between.sort_by(&:release_date))
   end
+
+  def requests_plot
+    @plot_id = params[:plot_id]
+    label = params[:label]
+    ids = params[:ids].map(&:to_i)
+
+    data = {}
+    attributes = [:mean, :median, :ninety_percentile, :throughput]
+    attributes.each { |at| data[at] = [] }
+    ids.each do |id|
+      calc_result = CalculatedRequestsResult.find_by(result_id: id, label: label)
+      attributes.each { |at| data[at].push calc_result.send(at) }
+    end
+
+    @ids = ids
+    @data = data
+  end
 end

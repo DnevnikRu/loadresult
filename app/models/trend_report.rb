@@ -34,4 +34,8 @@ class TrendReport
       result.calculated_requests_results.pluck(:label).uniq | labels
     end.sort
   end
+
+  def ids
+    results.map(&:id)
+  end
 end

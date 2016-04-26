@@ -1,0 +1,17 @@
+<% @trend_report.request_labels.each do |label| %>
+  <% plot_id = Digest::SHA1.hexdigest(label) %>
+  <%= button_to label,
+      trend_requests_plot_path(
+        plot_id: plot_id,
+        label: label,
+        ids: @trend_report.ids
+      ),
+      remote: true,
+      id: "#{plot_id}_button",
+      class: 'btn btn-default show-plot bottom20',
+      data: { disable_with: 'Loading..' },
+      'data-toggle' => 'collapse',
+      'data-target' => "##{plot_id}_div" %>
+
+  <div class="collapse" id="<%= "#{plot_id}_div" %>"></div>
+<% end %>

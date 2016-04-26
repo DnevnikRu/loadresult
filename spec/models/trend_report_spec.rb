@@ -216,16 +216,16 @@ describe TrendReport do
   end
 
   describe '#request_labels' do
-    it 'does something' do
+    it 'returns uniq labels in sorted way' do
       result1 = create(:result)
-      create(:calculated_requests_result, result_id: result1.id, label: 'a')
-      create(:calculated_requests_result, result_id: result1.id, label: 'b')
+      create(:calculated_requests_result, result_id: result1.id, label: 'd')
+      create(:calculated_requests_result, result_id: result1.id, label: 'c')
       result2 = create(:result)
-      create(:calculated_requests_result, result_id: result2.id, label: 'b')
       create(:calculated_requests_result, result_id: result2.id, label: 'c')
+      create(:calculated_requests_result, result_id: result2.id, label: 'b')
       result3 = create(:result)
-      create(:calculated_requests_result, result_id: result3.id, label: 'c')
-      create(:calculated_requests_result, result_id: result3.id, label: 'd')
+      create(:calculated_requests_result, result_id: result3.id, label: 'b')
+      create(:calculated_requests_result, result_id: result3.id, label: 'a')
 
       trend_report = TrendReport.new([result1, result2, result3])
 

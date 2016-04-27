@@ -40,7 +40,7 @@
               </tbody>
             </table>
 
-            <% label_uniq_id = Digest::MD5.hexdigest(group[:name]) %>
+            <% label_uniq_id = Digest::MD5.bubblebabble(group[:name]) %>
             <%= button_to 'Show a plot',
                 compare_performance_plot_path(
                   group: group,

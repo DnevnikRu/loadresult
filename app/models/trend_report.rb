@@ -74,7 +74,7 @@ class TrendReport
     ids.each do |id|
       calc_result = CalculatedRequestsResult.find_by(result_id: id, label: label)
       attributes.each do |at|
-        value = calc_result ? calc_result.send(at) : 0
+        value = calc_result ? calc_result.send(at) : 0 # if a result doesn't have the label just show 0
         data[at].push value
       end
     end

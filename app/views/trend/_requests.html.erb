@@ -1,0 +1,18 @@
+<% @trend_report.request_labels.each do |label| %>
+  <% plot_id = Digest::MD5.bubblebabble(label) %>
+  <%= button_to label,
+      trend_requests_plot_path(
+        plot_id: plot_id,
+        label: label,
+        id_from: @trend_report.result_from.id,
+        id_to: @trend_report.result_to.id
+      ),
+      remote: true,
+      id: "#{plot_id}_button",
+      class: 'btn btn-default show-plot requests-plot bottom20',
+      data: { disable_with: 'Loading..' },
+      'data-toggle' => 'collapse',
+      'data-target' => "##{plot_id}_div" %>
+
+  <div class="collapse bottom20" id="<%= "#{plot_id}_div" %>"></div>
+<% end %>

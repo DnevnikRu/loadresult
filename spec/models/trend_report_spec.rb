@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe TrendReport do
+  before { DatabaseCleaner.clean }
+
   describe '#description_differences' do
     context 'when meta data is similar' do
       before do
@@ -10,7 +12,8 @@ describe TrendReport do
           rps: 150,
           profile: 'all_site',
           time_cutting_percent: 10,
-          value_smoothing_interval: 3
+          value_smoothing_interval: 3,
+          release_date: '01.01.1978 00:01'
         )
         @result2 = create(
           :result,
@@ -18,14 +21,24 @@ describe TrendReport do
           rps: 150,
           profile: 'all_site',
           time_cutting_percent: 10,
-          value_smoothing_interval: 3
+          value_smoothing_interval: 3,
+          release_date: '01.01.1978 00:01'
         )
-        @trend_report = TrendReport.new([@result1, @result2])
+        @result3 = create(
+          :result,
+          duration: 600,
+          rps: 150,
+          profile: 'all_site',
+          time_cutting_percent: 10,
+          value_smoothing_interval: 3,
+          release_date: '01.01.1978 00:02'
+        )
+        @trend_report = TrendReport.new(@result1, @result3)
       end
 
       it 'combines results' do
         expected_diff = [
-          { ids: [@result1.id, @result2.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
+          { ids: [@result1.id, @result2.id, @result3.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -53,12 +66,22 @@ describe TrendReport do
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
-        @trend_report = TrendReport.new([@result1, @result2])
+        @result3 = create(
+          :result,
+          version: 'master3',
+          test_run_date: '03.03.1979 03:03',
+          duration: 600,
+          rps: 150,
+          profile: 'all_site',
+          time_cutting_percent: 10,
+          value_smoothing_interval: 3
+        )
+        @trend_report = TrendReport.new(@result1, @result3)
       end
 
-      it 'combines results' do
+      it 'still combines results' do
         expected_diff = [
-          { ids: [@result1.id, @result2.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
+          { ids: [@result1.id, @result2.id, @result3.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -82,13 +105,22 @@ describe TrendReport do
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
-        @trend_report = TrendReport.new([@result1, @result2])
+        @result3 = create(
+          :result,
+          duration: 602,
+          rps: 150,
+          profile: 'all_site',
+          time_cutting_percent: 10,
+          value_smoothing_interval: 3
+        )
+        @trend_report = TrendReport.new(@result1, @result3)
       end
 
       it 'divides results' do
         expected_diff = [
           { ids: [@result1.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result2.id], duration: 601, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
+          { ids: [@result2.id], duration: 601, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
+          { ids: [@result3.id], duration: 602, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -112,13 +144,22 @@ describe TrendReport do
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
-        @trend_report = TrendReport.new([@result1, @result2])
+        @result3 = create(
+          :result,
+          duration: 600,
+          rps: 152,
+          profile: 'all_site',
+          time_cutting_percent: 10,
+          value_smoothing_interval: 3
+        )
+        @trend_report = TrendReport.new(@result1, @result3)
       end
 
       it 'divides results' do
         expected_diff = [
           { ids: [@result1.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result2.id], duration: 600, rps: 151, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
+          { ids: [@result2.id], duration: 600, rps: 151, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
+          { ids: [@result3.id], duration: 600, rps: 152, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -142,13 +183,22 @@ describe TrendReport do
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
-        @trend_report = TrendReport.new([@result1, @result2])
+        @result3 = create(
+          :result,
+          duration: 600,
+          rps: 150,
+          profile: 'all_site3',
+          time_cutting_percent: 10,
+          value_smoothing_interval: 3
+        )
+        @trend_report = TrendReport.new(@result1, @result3)
       end
 
       it 'divides results' do
         expected_diff = [
           { ids: [@result1.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result2.id], duration: 600, rps: 150, profile: 'all_site2', time_cutting_percent: 10, value_smoothing_interval: 3 }
+          { ids: [@result2.id], duration: 600, rps: 150, profile: 'all_site2', time_cutting_percent: 10, value_smoothing_interval: 3 },
+          { ids: [@result3.id], duration: 600, rps: 150, profile: 'all_site3', time_cutting_percent: 10, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -172,13 +222,22 @@ describe TrendReport do
           time_cutting_percent: 11,
           value_smoothing_interval: 3
         )
-        @trend_report = TrendReport.new([@result1, @result2])
+        @result3 = create(
+          :result,
+          duration: 600,
+          rps: 150,
+          profile: 'all_site',
+          time_cutting_percent: 12,
+          value_smoothing_interval: 3
+        )
+        @trend_report = TrendReport.new(@result1, @result3)
       end
 
       it 'divides results' do
         expected_diff = [
           { ids: [@result1.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result2.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 11, value_smoothing_interval: 3 }
+          { ids: [@result2.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 11, value_smoothing_interval: 3 },
+          { ids: [@result3.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 12, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -202,16 +261,55 @@ describe TrendReport do
           time_cutting_percent: 10,
           value_smoothing_interval: 5
         )
-        @trend_report = TrendReport.new([@result1, @result2])
+        @result3 = create(
+          :result,
+          duration: 600,
+          rps: 150,
+          profile: 'all_site',
+          time_cutting_percent: 10,
+          value_smoothing_interval: 7
+        )
+        @trend_report = TrendReport.new(@result1, @result3)
       end
 
       it 'divides results' do
         expected_diff = [
           { ids: [@result1.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result2.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 5 }
+          { ids: [@result2.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 5 },
+          { ids: [@result3.id], duration: 600, rps: 150, profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 7 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
+    end
+  end
+
+  describe '#request_labels' do
+    it 'returns uniq labels in sorted way' do
+      result1 = create(:result)
+      create(:calculated_requests_result, result_id: result1.id, label: 'd')
+      create(:calculated_requests_result, result_id: result1.id, label: 'c')
+      result2 = create(:result)
+      create(:calculated_requests_result, result_id: result2.id, label: 'c')
+      create(:calculated_requests_result, result_id: result2.id, label: 'b')
+      result3 = create(:result)
+      create(:calculated_requests_result, result_id: result3.id, label: 'b')
+      create(:calculated_requests_result, result_id: result3.id, label: 'a')
+
+      trend_report = TrendReport.new(result1, result3)
+
+      expect(trend_report.request_labels).to match(%w(a b c d))
+    end
+  end
+
+  describe '#ids' do
+    it 'returns ids of results' do
+      result1 = create(:result)
+      result2 = create(:result)
+      result3 = create(:result)
+
+      trend_report = TrendReport.new(result1, result3)
+
+      expect(trend_report.ids).to match([result1.id, result2.id, result3.id])
     end
   end
 end

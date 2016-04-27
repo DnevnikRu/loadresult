@@ -92,8 +92,8 @@
             <td class="hidden-row"></td>
           </tr>
           <% @compare_report.request_labels.each do |label| %>
-              <% requests_histogram_uniq_id = Digest::SHA1.hexdigest(label + '1') %>
-              <% requests_seconds_to_values_uniq_id = Digest::SHA1.hexdigest(label + '2') %>
+              <% requests_histogram_uniq_id = Digest::MD5.bubblebabble(label + '1') %>
+              <% requests_seconds_to_values_uniq_id = Digest::MD5.bubblebabble(label + '2') %>
               <tr>
                 <td class="labelResult">
                   <div class="bottom10"><%= label %></div>

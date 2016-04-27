@@ -48,7 +48,7 @@ class TrendController < ApplicationController
       attributes.each { |at| data[at].push calc_result.send(at) }
     end
 
-    @ids = ids
+    @ids = ids.map { |id| "id:#{id}\n#{Result.find_by(id: id).release_date.to_date}" }
     @data = data
   end
 end

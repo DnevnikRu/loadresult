@@ -2,12 +2,14 @@ $('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
 
 var lines = [];
 
-<% @data.each do |attribute, value| %>
+<% @data.each do |attribute, values| %>
   lines.push({
-      x: <%= @ids %>,
-      y: <%= value %>,
+      x: <%= raw(@ids) %>,
+      y: <%= values %>,
       name: "<%= attribute.to_s.humanize %>",
-      type: 'scatter'
+      mode: 'lines+markers',
+      type: 'scatter',
+      connectgaps: true
   });
 <% end %>
 

@@ -26,10 +26,13 @@ class TrendController < ApplicationController
     attributes.each { |at| data[at] = [] }
     ids.each do |id|
       calc_result = CalculatedRequestsResult.find_by(result_id: id, label: label)
-      attributes.each { |at| data[at].push calc_result.send(at) }
+      attributes.each do |at|
+        value = calc_result ? calc_result.send(at) : 0
+        data[at].push value
+      end
     end
 
-    @ids = ids.map { |id| "id:#{id}\n#{Result.find_by(id: id).release_date.to_date}" }
+    @ids = ids.map { |id| "id:#{id} #{Result.find_by(id: id).release_date.to_date}" }
     @data = data
   end
 end

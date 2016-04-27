@@ -124,22 +124,43 @@ feature 'Review trend report' do
     end
   end
 
-  scenario 'Click on a Show a label of request shows a plot' do
-    DatabaseCleaner.clean
-    label = 'login :GET'
-    result1 = create(:result, release_date: '01.01.1978 00:01')
-    result2 = create(:result, release_date: '01.01.1978 00:02')
-    result3 = create(:result, release_date: '01.01.1978 00:03')
-    [result1, result2, result3].each do |result|
-      create(:calculated_requests_result, result_id: result.id, label: label)
+  context 'Request plot' do
+    scenario 'Click on a label of request shows a plot' do
+      DatabaseCleaner.clean
+      label = 'login :GET'
+      result1 = create(:result, release_date: '01.01.1978 00:01')
+      result2 = create(:result, release_date: '01.01.1978 00:02')
+      result3 = create(:result, release_date: '01.01.1978 00:03')
+      [result1, result2, result3].each do |result|
+        create(:calculated_requests_result, result_id: result.id, label: label)
+      end
+
+      visit trend_path(result: [result1.id, result3.id])
+      show_plot_btn = find('.requests-plot')
+      show_plot_btn.click
+
+      within(show_plot_btn['data-target']) do
+        expect(page).to have_selector('div.svg-container')
+      end
     end
 
-    visit trend_path(result: [result1.id, result3.id])
-    show_plot_btn = find('.requests-plot')
-    show_plot_btn.click
+    scenario 'Click on a label of request shows a plot even if one result does not have the label' do
+      DatabaseCleaner.clean
+      label = 'login :GET'
+      result1 = create(:result, release_date: '01.01.1978 00:01')
+      result2 = create(:result, release_date: '01.01.1978 00:02')
+      result3 = create(:result, release_date: '01.01.1978 00:03')
+      [result1, result3].each do |result|
+        create(:calculated_requests_result, result_id: result.id, label: label)
+      end
 
-    within(show_plot_btn['data-target']) do
-      expect(page).to have_selector('div.svg-container')
+      visit trend_path(result: [result1.id, result3.id])
+      show_plot_btn = find('.requests-plot')
+      show_plot_btn.click
+
+      within(show_plot_btn['data-target']) do
+        expect(page).to have_selector('div.svg-container')
+      end
     end
   end
 end

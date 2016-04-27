@@ -312,4 +312,67 @@ describe TrendReport do
       expect(trend_report.ids).to match([result1.id, result2.id, result3.id])
     end
   end
+
+  describe '#ids_with_date' do
+    it 'returns ids with release dates' do
+      result1 = create(:result, release_date: '01.01.1978 00:01')
+      result2 = create(:result, release_date: '02.02.1979 00:02')
+      result3 = create(:result, release_date: '03.03.1980 00:03')
+
+      trend_report = TrendReport.new(result1, result3)
+
+      expected_array = [
+        "id:#{result1.id} 1978-01-01",
+        "id:#{result2.id} 1979-02-02",
+        "id:#{result3.id} 1980-03-03"
+      ]
+      expect(trend_report.ids_with_date).to match(expected_array)
+    end
+  end
+
+  describe '#request_data' do
+    it 'returns attributes with their values' do
+      label = 'GET TEST'
+      result1 = create(:result)
+      result2 = create(:result)
+      result3 = create(:result)
+      create(
+        :calculated_requests_result,
+        result_id: result1.id,
+        label: label,
+        mean: 10,
+        median: 20,
+        ninety_percentile: 30,
+        throughput: 40
+      )
+      create(
+        :calculated_requests_result,
+        result_id: result2.id,
+        label: label,
+        mean: 100,
+        median: 200,
+        ninety_percentile: 300,
+        throughput: 400
+      )
+      create(
+        :calculated_requests_result,
+        result_id: result3.id,
+        label: label,
+        mean: 1000,
+        median: 2000,
+        ninety_percentile: 3000,
+        throughput: 4000
+      )
+
+      trend_report = TrendReport.new(result1, result3)
+
+      expected_data = {
+        mean: [10, 100, 1000],
+        median: [20, 200, 2000],
+        ninety_percentile: [30, 300, 3000],
+        throughput: [40, 400, 4000]
+      }
+      expect(trend_report.request_data(label)).to match(expected_data)
+    end
+  end
 end

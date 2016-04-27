@@ -19,20 +19,7 @@ class TrendController < ApplicationController
     id_to = params[:id_to]
 
     trend_report = TrendReport.new(id_from, id_to)
-    ids = trend_report.ids
-
-    data = {}
-    attributes = [:mean, :median, :ninety_percentile, :throughput]
-    attributes.each { |at| data[at] = [] }
-    ids.each do |id|
-      calc_result = CalculatedRequestsResult.find_by(result_id: id, label: label)
-      attributes.each do |at|
-        value = calc_result ? calc_result.send(at) : 0
-        data[at].push value
-      end
-    end
-
-    @ids = ids.map { |id| "id:#{id} #{Result.find_by(id: id).release_date.to_date}" }
-    @data = data
+    @ids_with_date = trend_report.ids_with_date
+    @request_data = trend_report.request_data(label)
   end
 end

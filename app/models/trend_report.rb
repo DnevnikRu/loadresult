@@ -63,7 +63,26 @@ class TrendReport
     end.sort
   end
 
+  def ids_with_date
+    ids.map { |id| "id:#{id} #{Result.find_by(id: id).release_date.to_date}" }
+  end
+
+  def request_data(label)
+    data = {}
+    attributes = [:mean, :median, :ninety_percentile, :throughput]
+    attributes.each { |at| data[at] = [] }
+    ids.each do |id|
+      calc_result = CalculatedRequestsResult.find_by(result_id: id, label: label)
+      attributes.each do |at|
+        value = calc_result ? calc_result.send(at) : 0
+        data[at].push value
+      end
+    end
+    data
+  end
+
   def ids
-    results.map(&:id)
+    @ids ||= results.map(&:id)
+    @ids
   end
 end

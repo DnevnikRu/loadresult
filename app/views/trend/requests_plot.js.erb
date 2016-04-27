@@ -2,25 +2,51 @@ $('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
 
 var lines = [];
 
-<% @data.each do |attribute, values| %>
-  lines.push({
-      x: <%= raw(@ids) %>,
-      y: <%= values %>,
-      name: "<%= attribute.to_s.humanize %>",
-      mode: 'lines+markers',
-      type: 'scatter',
-      connectgaps: true
-  });
-<% end %>
+lines.push({
+    x: <%= raw(@ids) %>,
+    y: <%= @data[:mean] %>,
+    name: 'Mean',
+    mode: 'lines+markers',
+    type: 'scatter',
+    yaxis: 'y2'
+});
+lines.push({
+    x: <%= raw(@ids) %>,
+    y: <%= @data[:median] %>,
+    name: 'Median',
+    mode: 'lines+markers',
+    type: 'scatter',
+    yaxis: 'y2'
+});
+lines.push({
+    x: <%= raw(@ids) %>,
+    y: <%= @data[:ninety_percentile] %>,
+    name: '90%',
+    mode: 'lines+markers',
+    type: 'scatter',
+    yaxis: 'y2'
+});
+lines.push({
+    x: <%= raw(@ids) %>,
+    y: <%= @data[:throughput] %>,
+    name: 'Throughput',
+    mode: 'lines+markers',
+    type: 'scatter'
+});
 
 var layout = {
     xaxis: {
         tickangle: 90,
         showticklabels: <%= @ids.count < 20 %>
     },
+    yaxis2: {
+      title: 'ms',
+      domain: [0.2, 1]
+    },
     yaxis: {
-        title: 'msec'
-    }
+      title: 'req/sec',
+      domain: [0, 0.2]
+    },
 };
 
 Plotly.newPlot('<%= "#{@plot_id}_div" %>', lines, layout);

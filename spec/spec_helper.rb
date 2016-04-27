@@ -1,3 +1,7 @@
+if ENV['COVERAGE']
+  require 'simplecov'
+  SimpleCov.start
+end
 require 'factory_girl'
 
 RSpec.configure do |config|

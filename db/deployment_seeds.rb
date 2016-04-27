@@ -36,7 +36,7 @@ results.each do |result|
                                     min: (0 + random.rand(10)),
                                     failed_results: (0 + random.rand(10)),
                                     result_id: result.id,
-                                    throughput: 0.1
+                                    throughput: random.rand(0.1..0.4)
     )
   end
 

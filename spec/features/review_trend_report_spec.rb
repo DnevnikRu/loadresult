@@ -93,7 +93,7 @@ feature 'Review trend report' do
     end
   end
 
-  it 'Creates a trend only for results in choosen project and with release date' do
+  scenario 'Creates a trend only for results in choosen project and with release date' do
     DatabaseCleaner.clean
     result1 = create(:result, project_id: 1, release_date: '01.01.1978 00:00')
     result2 = create(:result, project_id: 1, release_date: nil)
@@ -109,7 +109,7 @@ feature 'Review trend report' do
   end
 
   describe 'Difference table' do
-    it 'Sorts results ids by release date' do
+    scenario 'Sorts results ids by release date' do
       DatabaseCleaner.clean
       result1 = create(:result, release_date: '01.01.1978 00:04')
       result2 = create(:result, release_date: '01.01.1978 00:02')
@@ -121,6 +121,25 @@ feature 'Review trend report' do
       ids_diff = page.all('.ids-difference')
       expect(ids_diff.size).to eq(1)
       expect(ids_diff[0].text).to eq([result5.id, result4.id, result2.id, result3.id, result1.id].join(', '))
+    end
+  end
+
+  scenario 'Click on a Show a label of request shows a plot' do
+    DatabaseCleaner.clean
+    label = 'login :GET'
+    result1 = create(:result, release_date: '01.01.1978 00:01')
+    result2 = create(:result, release_date: '01.01.1978 00:02')
+    result3 = create(:result, release_date: '01.01.1978 00:03')
+    [result1, result2, result3].each do |result|
+      create(:calculated_requests_result, result_id: result.id, label: label)
+    end
+
+    visit trend_path(result: [result1.id, result3.id])
+    show_plot_btn = find('.requests-plot')
+    show_plot_btn.click
+
+    within(show_plot_btn['data-target']) do
+      expect(page).to have_selector('div.svg-container')
     end
   end
 end

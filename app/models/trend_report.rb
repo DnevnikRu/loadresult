@@ -1,5 +1,5 @@
 class TrendReport
-  attr_reader :results, :error
+  attr_reader :results, :result_from, :result_to, :error
 
   def initialize(result1, result2)
     result1 = Result.find_by(id: result1)
@@ -20,9 +20,9 @@ class TrendReport
       return
     end
 
-    results = [result1, result2].sort_by(&:release_date)
+    @result_from, @result_to = [result1, result2].sort_by(&:release_date)
     results_between = Result.where(
-      release_date: (results[0].release_date..results[1].release_date),
+      release_date: (@result_from.release_date..@result_to.release_date),
       project_id: result1.project_id
     )
     if results_between.size == 2

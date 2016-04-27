@@ -15,7 +15,11 @@ class TrendController < ApplicationController
   def requests_plot
     @plot_id = params[:plot_id]
     label = params[:label]
-    ids = params[:ids].map(&:to_i)
+    id_from = params[:id_from]
+    id_to = params[:id_to]
+
+    trend_report = TrendReport.new(id_from, id_to)
+    ids = trend_report.ids
 
     data = {}
     attributes = [:mean, :median, :ninety_percentile, :throughput]

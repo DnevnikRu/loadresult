@@ -4,7 +4,8 @@
       trend_requests_plot_path(
         plot_id: plot_id,
         label: label,
-        ids: @trend_report.ids
+        id_from: @trend_report.result_from.id,
+        id_to: @trend_report.result_to.id
       ),
       remote: true,
       id: "#{plot_id}_button",

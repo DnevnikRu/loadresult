@@ -15,7 +15,8 @@ var lines = [];
 
 var layout = {
     xaxis: {
-        title: 'id'
+        tickangle: 90,
+        showticklabels: <%= @ids.count < 20 %>
     },
     yaxis: {
         title: 'msec'

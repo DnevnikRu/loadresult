@@ -82,7 +82,7 @@ feature 'Review trend report' do
       DatabaseCleaner.clean
       @result1 = create(:result, release_date: '01.01.1978 00:00')
       @result2 = create(:result, release_date: '01.01.1978 00:01')
-      @result3 = create(:result)
+      @result3 = create(:result, release_date: nil)
     end
 
     scenario 'Redirects to the resutls page and error appears' do
@@ -96,7 +96,7 @@ feature 'Review trend report' do
   it 'Creates a trend only for results in choosen project and with release date' do
     DatabaseCleaner.clean
     result1 = create(:result, project_id: 1, release_date: '01.01.1978 00:00')
-    result2 = create(:result, project_id: 1)
+    result2 = create(:result, project_id: 1, release_date: nil)
     result3 = create(:result, project_id: 2, release_date: '01.01.1978 00:02')
     result4 = create(:result, project_id: 1, release_date: '01.01.1978 00:03')
     result5 = create(:result, project_id: 1, release_date: '01.01.1978 00:04')

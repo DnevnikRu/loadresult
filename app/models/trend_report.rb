@@ -1,8 +1,36 @@
 class TrendReport
-  attr_reader :results
+  attr_reader :results, :error
 
-  def initialize(results)
-    @results = results
+  def initialize(result1, result2)
+    result1 = Result.find_by(id: result1)
+    result2 = Result.find_by(id: result2)
+
+    if result1.nil? || result2.nil?
+      @error = "Can't find selected results"
+      return
+    end
+
+    if result1.project_id != result2.project_id
+      @error = "Can't create a trend with results in different projects"
+      return
+    end
+
+    if result1.release_date.nil? || result2.release_date.nil?
+      @error = "Can't create a trend with results without release date"
+      return
+    end
+
+    results = [result1, result2].sort_by(&:release_date)
+    results_between = Result.where(
+      release_date: (results[0].release_date..results[1].release_date),
+      project_id: result1.project_id
+    )
+    if results_between.size == 2
+      @error = "There are only 2 results between selected results. Can't create a trend"
+      return
+    end
+
+    @results = results_between.sort_by(&:release_date)
   end
 
   def description_differences

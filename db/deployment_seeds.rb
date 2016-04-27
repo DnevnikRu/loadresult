@@ -6,16 +6,16 @@ CalculatedPerformanceResult.delete_all
 
 random = Random.new(123)
 results = []
-5.times do |i|
+10.times do |i|
   results << Result.create(project_id: Project.find_by(project_name: 'Dnevnik').id,
                            version: "master-#{i+1}",
-                           duration: (i+1)*200,
-                           rps: 100*(i+1),
+                           duration: 20,
+                           rps: 100,
                            profile: 'all_sites',
-                           time_cutting_percent: 10,
-                           test_run_date: "0#{i+1}.02.2016 10:0#{i}",
-                           release_date: "0#{i+1}.02.2016 10:0#{i}",
-                           created_at: "0#{i+1}.02.2016 10:0#{i}")
+                           time_cutting_percent: random.rand(10..11),
+                           test_run_date: "#{random.rand(1..28)}.#{random.rand(1..12)}.2016 10:00",
+                           release_date: "#{random.rand(1..28)}.#{random.rand(1..12)}.2016 10:00",
+                           created_at: "#{random.rand(1..28)}.#{random.rand(1..12)}.2016 10:00")
 end
 
 results.each do |result|

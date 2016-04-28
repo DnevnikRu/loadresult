@@ -5,7 +5,8 @@ groups = [{
               name: 'Processor',
               units: '%',
               trend_limit: 0,
-              labels: [PerformanceLabel.create(label: 'CPU Processor Time')]
+              labels: [PerformanceLabel.create(label: 'CPU Processor Time'),
+                       PerformanceLabel.create(label: 'CPU')]
           },
           {
               name: 'Requests per second',
@@ -35,7 +36,8 @@ groups = [{
               name: 'Memory',
               units: 'Mb',
               trend_limit: 10,
-              labels: [PerformanceLabel.create(label: 'Memory Memory\Available')]
+              labels: [PerformanceLabel.create(label: 'Memory Memory\Available'),
+                       PerformanceLabel.create(label: 'Memory')]
           },
           {
               name: 'Memory Page Faults',
@@ -54,7 +56,8 @@ groups = [{
               units: 'Mb/sec',
               trend_limit: 100,
               labels: [PerformanceLabel.create(label: 'Network\Bytes Sent/sec'),
-                       PerformanceLabel.create(label: 'Network\Bytes Received/sec')]
+                       PerformanceLabel.create(label: 'Network\Bytes Received/sec'),
+                       PerformanceLabel.create(label: 'Network I/O')]
           },
           {
               name: 'Network queue',
@@ -67,7 +70,8 @@ groups = [{
               units: 'unit',
               trend_limit: 0.5,
               labels: [PerformanceLabel.create(label: 'Disk(inst_1)\Avg. Write Queue'),
-                       PerformanceLabel.create(label: 'Disk(inst_1)\Avg. Read Queue')]
+                       PerformanceLabel.create(label: 'Disk(inst_1)\Avg. Read Queue'),
+                       PerformanceLabel.create(label: 'Disks I/O')]
           },
           {
               name: 'Error per second',

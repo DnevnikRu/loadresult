@@ -166,6 +166,19 @@ class Result < ActiveRecord::Base
     description
   end
 
+  def performance_groups
+    labels = self.calculated_performance_results.pluck(:label)
+    label_groups = []
+    PerformanceGroup.find_each do |group|
+      labels_in_group = labels.select { |label| !group.labels.pluck(:label).select { |l| label.include? l }.empty? }
+      next if labels_in_group.empty?
+      label_groups.push(name: group.name,
+                        labels: labels_in_group,
+                        units: group.units)
+    end
+    label_groups
+  end
+
   private
 
   def self.update_requests(result, requests_data, previous_time_cut_percent, previous_smooth_interval)

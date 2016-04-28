@@ -1,0 +1,44 @@
+<div class="panel-group" id="requests_data">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#requestsData" href="#collapseRequestsData">
+          Requests Data
+        </a>
+      </h4>
+    </div>
+    <div id="collapseRequestsData" class="panel-collapse collapse">
+      <div class="panel-body">
+        <br>
+        <table class="table table-hover table-striped table-condensed table-bordered sticky-header" id="requests-results">
+          <thead>
+          <tr>
+            <th></th>
+            <th>Mean, msec</th>
+            <th>Median, msec</th>
+            <th>90% Line, msec</th>
+            <th>Min, msec</th>
+            <th>Max, msec</th>
+            <th>Throughput, req/sec</th>
+            <th>Failed requests, %</th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @result.calculated_requests_results.order(:label).each do |calculated_result| %>
+              <tr>
+                <td><%= calculated_result.label %></td>
+                <td><%= calculated_result.mean %></td>
+                <td><%= calculated_result.median %></td>
+                <td><%= calculated_result.ninety_percentile %></td>
+                <td><%= calculated_result.min %></td>
+                <td><%= calculated_result.max %></td>
+                <td><%= calculated_result.throughput %></td>
+                <td><%= calculated_result.failed_results %></td>
+              </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

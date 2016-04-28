@@ -1,0 +1,39 @@
+<div class="panel-group" id="perfmon_data">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#perfmon_data" href="#collapsePerfmonData">
+          Performance results
+        </a>
+      </h4>
+    </div>
+    <div id="collapsePerfmonData" class="panel-collapse collapse">
+      <div class="panel-body">
+        <% @result.performance_groups.each do |group| %>
+            <h4 style="color: #2a6496"><%= group[:name] %></h4>
+            <table class="table table-hover table-striped table-condensed table-bordered table-nonfluid">
+              <thead>
+              <tr>
+                <th></th>
+                <th>Mean</th>
+                <th>Min</th>
+                <th>Max</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% group[:labels].each do |label| %>
+                  <tr>
+                    <td><b><%= label %></b></td>
+                    <td><%= @result.calculated_performance_results.find_by(label: label).mean%></td>
+                    <td><%= @result.calculated_performance_results.find_by(label: label).min %></td>
+                    <td><%= @result.calculated_performance_results.find_by(label: label).max %></td>
+                  </tr>
+              <% end %>
+              </tbody>
+            </table>
+
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

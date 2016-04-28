@@ -3,8 +3,11 @@ Rails.application.routes.draw do
 
   resources :results do
     put 'toggle'
-    get 'download_requests_data'
-    get 'download_performance_data'
+    member do
+      get 'download_requests_data'
+      get 'download_performance_data'
+      get 'report'
+    end
   end
 
   namespace :api do

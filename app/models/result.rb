@@ -158,6 +158,14 @@ class Result < ActiveRecord::Base
     data
   end
 
+  def description
+    description = {}
+    %w(version rps duration profile test_run_date time_cutting_percent value_smoothing_interval).each do |key|
+      description[key.humanize] = self.send(key)
+    end
+    description
+  end
+
   private
 
   def self.update_requests(result, requests_data, previous_time_cut_percent, previous_smooth_interval)

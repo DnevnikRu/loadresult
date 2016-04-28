@@ -51,7 +51,7 @@
           <div id="download_requests_data" class="<%= 'hidden' if flash[:requests_data_identifier].nil? %>">
             <%= label_tag 'Requests data', nil, class: "control-label" %>
             <div>
-            <%= link_to(flash[:requests_data_identifier], result_download_requests_data_path(@result))%>
+            <%= link_to(flash[:requests_data_identifier], download_requests_data_result_path(@result))%>
               <i class="fa fa-pencil-square-o" id="edit_requests_data"></i>
             </div>
           </div>
@@ -64,7 +64,7 @@
           <div id="download_performance_data" class="<%= 'hidden' if flash[:performance_data_identifier].nil? %>">
             <%= label_tag 'Performance data', nil, class: "control-label" %>
             <div>
-              <%= link_to(flash[:performance_data_identifier], result_download_performance_data_path(@result))%>
+              <%= link_to(flash[:performance_data_identifier], download_performance_data_result_path(@result))%>
               <i class="fa fa-pencil-square-o" id="edit_performance_data"></i>
             </div>
           </div>

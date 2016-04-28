@@ -30,17 +30,30 @@
         <dt>Release date</dt>
         <dd><%= @result.release_date.nil? ? '-' : @result.release_date %></dd>
         <dt>Requests data</dt>
-        <dd><%= @result.requests_data_identifier.nil? ? 'Requests data file does not exist' : link_to('Download',  result_download_requests_data_path(@result)) %></dd>
-        <dt>Performance data </dt>
-        <dd><%= @result.performance_data_identifier.nil? ? 'Performance data file does not exist' : link_to('Download',  result_download_performance_data_path(@result)) %></dd>
+        <dd><%= @result.requests_data_identifier.nil? ? 'Requests data file does not exist' : link_to('Download', download_requests_data_result_path(@result)) %></dd>
+        <dt>Performance data</dt>
+        <dd><%= @result.performance_data_identifier.nil? ? 'Performance data file does not exist' : link_to('Download', download_performance_data_result_path(@result)) %></dd>
       </dl>
 
-      <%= link_to 'Edit', edit_result_path(@result), class: "btn btn-primary" %>
+    </div>
+  </div>
+  <div class=" center-block row">
+    <div class="col-md-1 col-md-offset-4">
+      <%= link_to 'Edit', edit_result_path(@result), class: 'btn btn-primary btn-block' %>
+    </div>
+
+    <div class="col-md-1">
+      <%= link_to 'Report', report_result_path(@result), class: 'btn btn-success' %>
+    </div>
+
+    <div class="col-md-1">
       <%= link_to 'Remove',
                   @result,
                   method: :delete,
-                  class: "btn btn-danger pull-right",
-                  data: { confirm: 'Are you sure?' } %>
+                  class: 'btn btn-danger',
+                  data: {confirm: 'Are you sure?'} %>
+
     </div>
   </div>
+
 </div>

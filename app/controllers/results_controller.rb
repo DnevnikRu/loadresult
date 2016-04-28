@@ -1,5 +1,5 @@
 class ResultsController < ApplicationController
-  before_action :set_result, only: [:show, :edit, :update, :destroy, :download_requests_data]
+  before_action :set_result, only: [:show, :edit, :update, :destroy, :download_requests_data, :download_performance_data, :report]
 
   def index
     @results = Result.order(test_run_date: :desc).page params[:page]
@@ -82,11 +82,15 @@ class ResultsController < ApplicationController
   end
 
   def download_requests_data
-    send_file Result.find_by(id: params[:result_id]).requests_data.current_path
+    send_file @result.requests_data.current_path
   end
 
   def download_performance_data
-    send_file Result.find_by(id: params[:result_id]).performance_data.current_path
+    send_file @result.performance_data.current_path
+  end
+
+  def report
+
   end
 
   private

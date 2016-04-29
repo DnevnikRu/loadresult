@@ -1,3 +1,7 @@
+require 'simplecov'
+SimpleCov.start do
+  add_filter '/spec/'
+end
 require 'factory_girl'
 
 RSpec.configure do |config|

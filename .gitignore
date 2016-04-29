@@ -22,3 +22,4 @@
 tags
 .byebug_history
 /storage/*
+/coverage/*

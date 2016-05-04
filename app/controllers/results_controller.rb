@@ -93,6 +93,32 @@ class ResultsController < ApplicationController
 
   end
 
+  def performance_plot
+    group = params[:group]
+    @unit = group[:units]
+    @group_name = group[:name]
+    @plot_id = params[:plot_id]
+    @result_data = Result.performance_seconds_to_values(params[:result_id], group[:labels], params[:result_time_cut].to_i)
+  end
+
+  def requests_histogram_plot
+    @plot_id = params[:plot_id]
+    @result_data = Result.values_of_requests(params[:result_id], params[:label], params[:result_time_cut].to_i)
+  end
+
+  def requests_seconds_to_values_plot
+    @plot_id = params[:plot_id]
+    @result_data = Result.requests_seconds_to_values(params[:result_id], params[:label], params[:result_time_cut].to_i)
+  end
+
+  def all_requests_histogram_plot
+    @result_data = Result.values_of_requests(params[:result_id], params[:result_time_cut].to_i)
+  end
+
+  def percentile_requests_plot
+    @result_data = Result.percentile_of_values_of_requests(params[:result_id], params[:result_time_cut].to_i)
+  end
+
   private
 
   def set_result

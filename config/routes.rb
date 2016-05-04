@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   root 'results#index'
 
+
   resources :results do
     put 'toggle'
     member do
@@ -9,6 +10,11 @@ Rails.application.routes.draw do
       get 'report'
     end
   end
+  post 'result/performance_plot' => 'results#performance_plot'
+  post 'result/requests_seconds_to_values_plot' => 'results#requests_seconds_to_values_plot'
+  post 'result/requests_histogram_plot' => 'results#requests_histogram_plot'
+  post 'result/all_requests_histogram_plot' => 'results#all_requests_histogram_plot'
+  post 'result/percentile_requests_plot' => 'results#percentile_requests_plot'
 
   namespace :api do
     resources :results, only: [:create]

@@ -1,0 +1,20 @@
+$('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
+
+var result = {
+    x: <%= @result_data %>,
+    opacity: 0.75,
+    name: 'id:<%= params[:result_id] %>',
+    type: 'histogram'
+};
+
+var layout = {
+    title: 'Histogram of response time',
+    xaxis: {
+        title: 'Response time, ms'
+    },
+    yaxis: {
+        title: 'Number of requests'
+    },
+    barmode: 'overlay'
+};
+Plotly.newPlot('<%= "#{@plot_id}_div" %>', [result], layout);

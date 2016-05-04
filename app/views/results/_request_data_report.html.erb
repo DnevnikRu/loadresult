@@ -25,8 +25,44 @@
           </thead>
           <tbody>
           <% @result.calculated_requests_results.order(:label).each do |calculated_result| %>
+              <% requests_histogram_uniq_id = Digest::MD5.bubblebabble(calculated_result.label + '1') %>
+              <% requests_seconds_to_values_uniq_id = Digest::MD5.bubblebabble(calculated_result.label + '2') %>
               <tr>
-                <td><%= calculated_result.label %></td>
+                <td class="labelResult">
+                  <div class="bottom10"><%= calculated_result.label %></div>
+                  <div class="btn-group" role="group">
+                    <div class="inline-block">
+                      <%= button_to(result_requests_histogram_plot_path(
+                                        label: calculated_result.label,
+                                        result_id: @result.id,
+                                        result_time_cut: @result.time_cutting_percent,
+                                        plot_id: requests_histogram_uniq_id
+                                    ),
+                                    remote: true,
+                                    id: "#{requests_histogram_uniq_id}_button",
+                                    class: 'btn btn-default btn-xs show-plot requests-histogram-plot-button',
+                                    'data-toggle' => 'collapse',
+                                    'data-target' => "##{requests_histogram_uniq_id}_div") do %>
+                          <i class="fa fa-bar-chart"></i>
+                      <% end %>
+                    </div>
+                    <div class="inline-block">
+                      <%= button_to(result_requests_seconds_to_values_plot_path(
+                                        label: calculated_result.label,
+                                        result_id: @result.id,
+                                        result_time_cut: @result.time_cutting_percent,
+                                        plot_id: requests_seconds_to_values_uniq_id
+                                    ),
+                                    remote: true,
+                                    id: "#{requests_seconds_to_values_uniq_id}_button",
+                                    class: 'btn btn-default btn-xs show-plot requests-time-plot-button',
+                                    'data-toggle' => 'collapse',
+                                    'data-target' => "##{requests_seconds_to_values_uniq_id}_div") do %>
+                          <i class="fa fa-area-chart"></i>
+                      <% end %>
+                    </div>
+                  </div>
+                </td>
                 <td><%= calculated_result.mean %></td>
                 <td><%= calculated_result.median %></td>
                 <td><%= calculated_result.ninety_percentile %></td>
@@ -34,6 +70,16 @@
                 <td><%= calculated_result.max %></td>
                 <td><%= calculated_result.throughput %></td>
                 <td><%= calculated_result.failed_results %></td>
+              </tr>
+              <tr>
+                <td colspan="100" class="hidden-row">
+                  <div class="collapse" id="<%= "#{requests_histogram_uniq_id}_div" %>"></div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="100" class="hidden-row">
+                  <div class="collapse" id="<%= "#{requests_seconds_to_values_uniq_id}_div" %>"></div>
+                </td>
               </tr>
           <% end %>
           </tbody>

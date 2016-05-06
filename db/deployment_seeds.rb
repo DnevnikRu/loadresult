@@ -20,7 +20,49 @@ results = []
 end
 
 results.each do |result|
-  ['login :GET', 'root /counters:GET', 'schools /ajax.ashx:POST:a=jme', 'root /user/:GET'].each do |label|
+  labels = [
+      'login :GET',
+      'apps group /run.aspx:GET',
+      'children /homework.aspx:GET',
+      'children /marks.ashx:POST',
+      'children /marks.aspx:GET:tab=period',
+      'children /marks.aspx:GET:tab=week',
+      'children /timetable.aspx:GET',
+      'children :GET',
+      'files /file.aspx:GET',
+      'group /group.aspx:GET',
+      'login /auth:GET',
+      'login /logout:GET',
+      'login :GET',
+      'login :POST',
+      'messenger /archive.aspx:GET',
+      'messenger :GET',
+      'root /counters:GET',
+      'root /invites.aspx:GET',
+      'root /user/:GET',
+      'root /user/ajax.ashx:GET:a=unot',
+      'root /user/ajax.ashx:POST:a=ufeed',
+      'root /user/ajax.ashx:POST:t=friends',
+      'root /user/calendar.aspx:GET',
+      'root /user/user.aspx:GET',
+      'root /user/user.aspx:GET?view=files:GET',
+      'root :GET',
+      'schools /ajax.ashx:POST:a=gsbgid',
+      'schools /ajax.ashx:POST:a=jme',
+      'schools /ajax.ashx?a=cworks:POST',
+      'schools /ajax.ashx?a=jrmap:POST',
+      'schools /ajaxpages/Journals/LessonPlanner.aspx:POST',
+      'schools /class.aspx:GET',
+      'schools /homework.aspx:GET',
+      'schools /homework.aspx:GET:view=new',
+      'schools /homework.aspx?choose=Показать:GET',
+      'schools /journals/createhomework-cmd:POST',
+      'schools /journals/journalclassical.aspx:GET:view=subject',
+      'schools /journals/updatelesson-cmd:POST',
+      'schools /journals:GET',
+      'schools /journals:GET:tab=planning'
+  ]
+  labels.each do |label|
     20.times do |i|
       RequestsResult.create(timestamp: 1453280230000 + (i+1)*1000,
                             label: label,

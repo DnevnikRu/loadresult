@@ -145,7 +145,7 @@ class Result < ActiveRecord::Base
     labels.each do |label|
       data[label] = {seconds: [], values: []}
       bottom_timestamp, top_timestamp = border_timestamps(result_id, PerformanceResult, cut_percent)
-      records = PerformanceResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
+      records = PerformanceResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp)).order(:timestamp)
       result = Result.find_by(id: result_id)
       timestamp_min = records.minimum(:timestamp)
       data[label][:seconds] = records.pluck(:timestamp).map { |timestamp| (timestamp - timestamp_min) / 1000 }

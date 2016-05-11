@@ -13,7 +13,6 @@ class TrendController < ApplicationController
   end
 
   def requests_plot
-    @plot_id = params[:plot_id]
     label = params[:label]
     id_from = params[:id_from]
     id_to = params[:id_to]

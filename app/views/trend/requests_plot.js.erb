@@ -1,5 +1,3 @@
-$('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
-
 var lines = [];
 
 lines.push({
@@ -49,4 +47,4 @@ var layout = {
     },
 };
 
-Plotly.newPlot('<%= "#{@plot_id}_div" %>', lines, layout);
+Plotly.newPlot('trend-requests-plot', lines, layout);

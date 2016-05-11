@@ -136,10 +136,10 @@ feature 'Review trend report' do
       end
 
       visit trend_path(result: [result1.id, result3.id])
-      show_plot_btn = find('.requests-plot')
+      show_plot_btn = find('.trend-request-plot-button')
       show_plot_btn.click
 
-      within(show_plot_btn['data-target']) do
+      within('#trend-requests-plot') do
         expect(page).to have_selector('div.svg-container')
       end
     end
@@ -155,10 +155,10 @@ feature 'Review trend report' do
       end
 
       visit trend_path(result: [result1.id, result3.id])
-      show_plot_btn = find('.requests-plot')
+      show_plot_btn = find('.trend-request-plot-button')
       show_plot_btn.click
 
-      within(show_plot_btn['data-target']) do
+      within('#trend-requests-plot') do
         expect(page).to have_selector('div.svg-container')
       end
     end

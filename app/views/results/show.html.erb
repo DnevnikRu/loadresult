@@ -29,6 +29,8 @@
         <dd><%= @result.value_smoothing_interval %></dd>
         <dt>Release date</dt>
         <dd><%= @result.release_date.nil? ? '-' : @result.release_date %></dd>
+        <dt>Comment</dt>
+        <dd><%= @result.comment %></dd>
         <dt>Requests data</dt>
         <dd><%= @result.requests_data_identifier.nil? ? 'Requests data file does not exist' : link_to('Download', download_requests_data_result_path(@result)) %></dd>
         <dt>Performance data</dt>

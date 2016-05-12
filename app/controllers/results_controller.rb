@@ -21,6 +21,7 @@ class ResultsController < ApplicationController
     flash.now[:time_cutting_percent] = @result[:time_cutting_percent]
     flash.now[:value_smoothing_interval] = @result[:value_smoothing_interval]
     flash.now[:release_date] = @result[:release_date]
+    flash.now[:comment] = @result[:comment]
     flash.now[:requests_data_identifier] = @result.requests_data_identifier
     flash.now[:performance_data_identifier] = @result.performance_data_identifier
   end
@@ -37,6 +38,7 @@ class ResultsController < ApplicationController
       flash.now[:time_cutting_percent] = params[:time_cutting_percent]
       flash.now[:value_smoothing_interval] = params[:value_smoothing_interval]
       flash.now[:release_date] = @result[:release_date]
+      flash.now[:comment] = params[:comment]
       flash.now[:requests_data_identifier] = @result.requests_data_identifier
       flash.now[:performance_data_identifier] = @result.performance_data_identifier
       flash.now[:alert] = result.errors.full_messages

@@ -57,12 +57,6 @@ class TrendReport
     diff
   end
 
-  def request_labels
-    results.inject([]) do |labels, result|
-      result.calculated_requests_results.pluck(:label).uniq | labels
-    end
-  end
-
   def sorted_labels_by_mean_trend
     sort = []
     request_labels.each do |label|
@@ -70,6 +64,12 @@ class TrendReport
       sort.push [label, percent]
     end
     sort.sort_by { |arr| arr[1] }.reverse
+  end
+
+  def request_labels
+    results.inject([]) do |labels, result|
+      result.calculated_requests_results.pluck(:label).uniq | labels
+    end.sort
   end
 
   def ids_with_date

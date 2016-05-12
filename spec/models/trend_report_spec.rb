@@ -375,4 +375,57 @@ describe TrendReport do
       expect(trend_report.request_data(label)).to match(expected_data)
     end
   end
+
+  describe '#all request_data' do
+    it 'returns attributes with their values' do
+      result1 = create(:result)
+      result2 = create(:result)
+      result3 = create(:result)
+      create(
+          :requests_result,
+          result_id: result1.id,
+          label: 'GET TEST',
+          value: 1000
+      )
+      create(
+          :requests_result,
+          result_id: result1.id,
+          label: 'root TEST',
+          value: 30
+      )
+      create(
+          :requests_result,
+          result_id: result2.id,
+          label:  'GET TEST',
+          value: 120
+      )
+      create(
+          :requests_result,
+          result_id: result2.id,
+          label:  'root TEST',
+          value: 2
+      )
+      create(
+          :requests_result,
+          result_id: result3.id,
+          label:  'GET TEST',
+          value: 120
+      )
+      create(
+          :requests_result,
+          result_id: result3.id,
+          label:  'root TEST',
+          value: 2
+      )
+      trend_report = TrendReport.new(result1, result3)
+
+      expected_data = {
+          mean: [515.0, 61.0, 61.0],
+          median: [515.0, 61.0, 61.0],
+          ninety_percentile: [515.0, 61.0, 61.0],
+          throughput: [2.0, 2.0, 2.0]
+      }
+      expect(trend_report.all_requests_data).to match(expected_data)
+    end
+  end
 end

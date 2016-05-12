@@ -428,4 +428,25 @@ describe TrendReport do
       expect(trend_report.all_requests_data).to match(expected_data)
     end
   end
+
+  describe '#sorted_labels_by_mean_trend' do
+    it 'returns labels sorted by mean trend' do
+      result1 = create(:result)
+      create(:calculated_requests_result, result_id: result1.id, label: 'a', mean: 1)
+      create(:calculated_requests_result, result_id: result1.id, label: 'b', mean: 100)
+      create(:calculated_requests_result, result_id: result1.id, label: 'c', mean: 1)
+      result2 = create(:result)
+      create(:calculated_requests_result, result_id: result2.id, label: 'a', mean: 999)
+      create(:calculated_requests_result, result_id: result2.id, label: 'b', mean: 999)
+      create(:calculated_requests_result, result_id: result2.id, label: 'c', mean: 999)
+      result3 = create(:result)
+      create(:calculated_requests_result, result_id: result3.id, label: 'a', mean: 2)
+      create(:calculated_requests_result, result_id: result3.id, label: 'b', mean: 90)
+      create(:calculated_requests_result, result_id: result3.id, label: 'c', mean: 1)
+
+      trend_report = TrendReport.new(result1, result3)
+
+      expect(trend_report.sorted_labels_by_mean_trend).to match([['a', 100.00], ['c', 0.00], ['b', -10.00]])
+    end
+  end
 end

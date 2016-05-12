@@ -28,6 +28,7 @@ describe 'Editing a result' do
       fill_in 'rps', with: '666'
       fill_in 'duration', with: '999'
       fill_in 'profile', with: 'New profile'
+      fill_in 'data_version', with: 'Current data version'
       fill_in 'time_cutting_percent', with: '20'
       fill_in 'value_smoothing_interval', with: '9'
       fill_in 'release_date', with: '2016-12-12 10:00:00'
@@ -42,6 +43,7 @@ describe 'Editing a result' do
         expect(find('.rps')).to have_content('666')
         expect(find('.duration')).to have_content('999')
         expect(find('.profile')).to have_content('New profile')
+        expect(find('.data_version')).to have_content('Current data version')
         expect(find('.time_cutting_percent')).to have_content('20')
         expect(find('.value_smoothing_interval')).to have_content('9')
         expect(find('.release_date')).to have_content('2016-12-12 10:00:00 UTC')
@@ -79,6 +81,7 @@ describe 'Editing a result' do
         expect(find('.rps')).to have_content(@result.rps)
         expect(find('.duration')).to have_content(@result.duration)
         expect(find('.profile')).to have_content(@result.profile)
+        expect(find('.data_version')).to have_content(@result.data_version)
         expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
         expect(find('.value_smoothing_interval')).to have_content(@result.value_smoothing_interval)
         expect(find('.release_date')).to have_content(@result.release_date)
@@ -148,6 +151,7 @@ describe 'Editing a result' do
           rps: '10',
           duration: '100',
           profile: 'main',
+          data_version: 'Current data version',
           time_cutting_percent: '10',
           value_smoothing_interval: '11',
           release_date: '2011-11-11 11:00:01',
@@ -166,6 +170,7 @@ describe 'Editing a result' do
       fill_in 'rps', with: ''
       fill_in 'duration', with: ''
       fill_in 'profile', with: ''
+      fill_in 'data_version', with: ''
       fill_in 'time_cutting_percent', with: ''
       fill_in 'value_smoothing_interval', with: ''
       fill_in 'release_date', with: ''
@@ -190,6 +195,7 @@ describe 'Editing a result' do
           expect(find('.rps')).to have_content(@result.rps)
           expect(find('.duration')).to have_content(@result.duration)
           expect(find('.profile')).to have_content(@result.profile)
+          expect(find('.data_version')).to have_content(@result.data_version)
           expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
           expect(find('.value_smoothing_interval')).to have_content(@result.value_smoothing_interval)
           expect(find('.release_date')).to have_content(@result.release_date)
@@ -208,6 +214,7 @@ describe 'Editing a result' do
           rps: '10',
           duration: '100',
           profile: 'main',
+          data_version: 'Current data version',
           time_cutting_percent: '10',
           value_smoothing_interval: '11',
           release_date: '2011-11-11 11:00:01',

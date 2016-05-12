@@ -81,6 +81,7 @@ class Result < ActiveRecord::Base
         rps: params[:rps],
         duration: params[:duration],
         profile: params[:profile],
+        data_version: params[:data_version],
         time_cutting_percent: params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent],
         value_smoothing_interval: params[:value_smoothing_interval],
         comment: params[:comment],

@@ -1,0 +1,13 @@
+<%= button_to 'All requests trend plot',
+              trend_all_requests_stats_plot_path(
+                  id_from: @trend_report.results.first.id,
+                  id_to: @trend_report.results.last.id
+              ),
+              remote: true,
+              id: 'all_requests_trend_plot_button',
+              class: 'btn btn-default all_requests_stats show-plot bottom20',
+              data: {disable_with: 'Loading..'},
+              'data-toggle' => 'collapse',
+              'data-target' => '#all_requests_stats_plot' %>
+
+<div class="collapse" id="all_requests_stats_plot"></div>

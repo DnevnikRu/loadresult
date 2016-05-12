@@ -69,7 +69,7 @@ class TrendReport
   def request_labels
     results.inject([]) do |labels, result|
       result.calculated_requests_results.pluck(:label).uniq | labels
-    end.sort
+    end
   end
 
   def ids_with_date

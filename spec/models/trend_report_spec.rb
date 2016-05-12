@@ -284,7 +284,7 @@ describe TrendReport do
   end
 
   describe '#request_labels' do
-    it 'returns uniq labels in sorted way' do
+    it 'returns uniq labels' do
       result1 = create(:result)
       create(:calculated_requests_result, result_id: result1.id, label: 'd')
       create(:calculated_requests_result, result_id: result1.id, label: 'c')
@@ -297,7 +297,7 @@ describe TrendReport do
 
       trend_report = TrendReport.new(result1, result3)
 
-      expect(trend_report.request_labels).to match(%w(a b c d))
+      expect(trend_report.request_labels).to match_array(%w(a b c d))
     end
   end
 

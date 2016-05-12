@@ -4,7 +4,7 @@ describe 'Destroying a result' do
   scenario 'Removes result row that was destroyed' do
     result = create(:result)
     visit '/results/'
-    row_with_result_xpath = "//td[@class='id' and text()='#{result.id}']/.."
+    row_with_result_xpath = "//td[contains(@class, 'id') and text()='#{result.id}']/.."
     accept_alert do
       within(:xpath, row_with_result_xpath) do
         find('.destroyResult').click

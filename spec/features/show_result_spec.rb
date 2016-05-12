@@ -7,7 +7,7 @@ describe 'Show Result page' do
 
   scenario 'Show Result page can be open from the results page' do
     visit '/results/'
-    within(:xpath, "//td[@class='id' and text()='#{@result.id}']/..") do
+    within(:xpath, "//td[contains(@class, 'id') and text()='#{@result.id}']/..") do
       find('.showResult').click
     end
 

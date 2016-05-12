@@ -21,4 +21,15 @@ class TrendController < ApplicationController
     @ids_with_date = trend_report.ids_with_date
     @request_data = trend_report.request_data(label)
   end
+
+  def all_requests_stats_plot
+    @plot_id = params[:plot_id]
+    id_from = params[:id_from]
+    id_to = params[:id_to]
+
+    trend_report = TrendReport.new(id_from, id_to)
+    @ids_with_date = trend_report.ids_with_date
+    @request_data = trend_report.all_requests_data
+  end
+
 end

@@ -124,6 +124,87 @@ feature 'Review trend report' do
     end
   end
 
+  context 'Colors of trend percent in labels' do
+    before(:all) do
+      DatabaseCleaner.clean
+      @result1 = create(:result, release_date: '01.01.1978 00:00')
+      @result2 = create(:result, release_date: '01.01.1978 00:01')
+      @result3 = create(:result, release_date: '01.01.1978 00:02')
+      @result4 = create(:result, release_date: '01.01.1978 00:03')
+      @result5 = create(:result, release_date: '01.01.1978 00:04')
+
+      create(
+          :calculated_requests_result,
+          result_id: @result1.id,
+          label: 'GET:TEST',
+          mean: 10,
+          median: 20,
+          ninety_percentile: 30,
+          throughput: 40
+      )
+      create(
+          :calculated_requests_result,
+          result_id: @result1.id,
+          label: 'ROOT:TEST',
+          mean: 100,
+          median: 200,
+          ninety_percentile: 300,
+          throughput: 400
+      )
+      create(
+          :calculated_requests_result,
+          result_id: @result1.id,
+          label: 'POST:TEST',
+          mean: 100,
+          median: 200,
+          ninety_percentile: 300,
+          throughput: 400
+      )
+      create(
+          :calculated_requests_result,
+          result_id: @result5.id,
+          label: 'GET:TEST',
+          mean: 1,
+          median: 2,
+          ninety_percentile: 3,
+          throughput: 4
+      )
+      create(
+          :calculated_requests_result,
+          result_id: @result5.id,
+          label: 'ROOT:TEST',
+          mean: 1000,
+          median: 2000,
+          ninety_percentile: 3000,
+          throughput: 4000
+      )
+      create(
+          :calculated_requests_result,
+          result_id: @result5.id,
+          label: 'POST:TEST',
+          mean: 102,
+          median: 202,
+          ninety_percentile: 302,
+          throughput: 402
+      )
+    end
+
+    scenario 'Red color when trend is bigger than 15' do
+      visit trend_path(result: [@result1.id, @result5.id])
+      expect(find(:xpath, "//span[@class='percent_for_ROOT:TEST']")[:style]).to eql('color: rgb(216, 15, 10);')
+    end
+
+    scenario 'Green color when trend is less than -15' do
+      visit trend_path(result: [@result1.id, @result5.id])
+      expect(find(:xpath, "//span[@class='percent_for_GET:TEST']")[:style]).to eql('color: rgb(21, 169, 24);')
+    end
+
+    scenario 'Black color when trend is between -15 and 15' do
+      visit trend_path(result: [@result1.id, @result5.id])
+      expect(find(:xpath, "//span[@class='percent_for_POST:TEST']")[:style]).to eql('color: rgb(51, 51, 51);')
+    end
+  end
+
   context 'Request plot' do
     scenario 'Click on a label of request shows a plot' do
       DatabaseCleaner.clean
@@ -162,5 +243,23 @@ feature 'Review trend report' do
         expect(page).to have_selector('div.svg-container')
       end
     end
+
+    scenario 'Click on All request' do
+      DatabaseCleaner.clean
+      label = 'login :GET'
+      result1 = create(:result, release_date: '01.01.1978 00:01')
+      result2 = create(:result, release_date: '01.01.1978 00:02')
+      result3 = create(:result, release_date: '01.01.1978 00:03')
+      [result1, result2, result3].each do |result|
+        create(:requests_result, result_id: result.id, label: label)
+      end
+      [result1, result2, result3].each do |result|
+        create(:calculated_requests_result, result_id: result.id, label: label)
+      end
+      visit trend_path(result: [result1.id, result3.id])
+      click_button 'All requests trend plot'
+      expect(page).to have_selector('div.svg-container')
+    end
+
   end
 end

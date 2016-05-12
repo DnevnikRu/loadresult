@@ -198,4 +198,32 @@ describe 'Editing a result' do
       end
     end
   end
+
+  context 'When rps changed to string' do
+    before do
+      result = create(
+          :result,
+          project_id: '1',
+          version: '1.0.0',
+          rps: '10',
+          duration: '100',
+          profile: 'main',
+          time_cutting_percent: '10',
+          value_smoothing_interval: '11',
+          release_date: '2011-11-11 11:00:01',
+          comment: 'It is just a comment'
+      )
+      visit '/results/'
+      @row_with_result_xpath = "//td[contains(@class, 'id') and text()='#{result.id}']/.."
+      within(:xpath, @row_with_result_xpath) do
+        find('.editResult').click
+      end
+      fill_in 'rps', with: '10-150'
+      click_button 'Update'
+    end
+
+    scenario 'Result update successfully' do
+      expect(page).to have_content('Result was successfully updated.')
+    end
+  end
 end

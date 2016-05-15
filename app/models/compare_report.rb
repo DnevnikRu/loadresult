@@ -28,16 +28,7 @@ class CompareReport
 
   def performance_groups
     labels = result1.calculated_performance_results.pluck(:label) & result2.calculated_performance_results.pluck(:label)
-    label_groups = []
-    PerformanceGroup.find_each do |group|
-      labels_in_group = labels.select { |label| !group.labels.pluck(:label).select { |l| label.include? l }.empty? }
-      next if labels_in_group.empty?
-      label_groups.push(name: group.name,
-                        labels: labels_in_group,
-                        trend_limit: group.trend_limit,
-                        units: group.units)
-    end
-    label_groups
+    PerformanceGroup.split_labels_by_group(labels)
   end
 
   def trend(type, metric, label, limit = 0)

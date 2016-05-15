@@ -1,4 +1,4 @@
-<h2>Performance Data</h2>
+<h2>Performance</h2>
 
 
 <%= hidden_field_tag 'id-from', @trend_report.results.first.id, {:id => 'id-from'} %>
@@ -7,7 +7,7 @@
 <div class="btn-group group-with-margin" data-toggle="buttons">
   <% @trend_report.performance_groups.each do |group| %>
       <%= label_tag(nil, nil, class: 'btn btn-default btn-sm trend-performance-plot-button') do %>
-          <%= radio_button_tag('trend-performance-label', group[:name], false) %> <%= group[:name]%>
+          <%= radio_button_tag('trend-performance-label', group, false) %> <%= group[:name]%>
       <% end %>
   <% end %>
 </div>

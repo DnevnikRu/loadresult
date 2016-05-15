@@ -3,12 +3,14 @@ $('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
 var colors = ['blue', 'green', 'red', 'gray', 'orange', 'brown', 'purple', 'olive'];
 var colors_dup = colors.slice();
 
+
+
 var lines = [];
-<% @result_data.each do |label, data| %>
+<% @performance_data.each do |label, values| %>
   var label_plot = {
-    x: <%= data[:seconds] %>,
-    y: <%= data[:values] %>,
-    name: '<%= "#{label} (id:#{params[:result_id]})" %>',
+    x: <%= raw(@ids_with_date) %>,
+    y: <%= values %>,
+    name: '<%= label %>',
     mode: 'lines',
     line: {
       color: colors_dup.shift()
@@ -26,4 +28,4 @@ var layout = {
       title: 'Metrics, <%= @unit %>'
   }
 };
-Plotly.newPlot('<%= "#{@plot_id}_div" %>', lines, layout);
+Plotly.newPlot('trend-performance-plot', lines, layout);

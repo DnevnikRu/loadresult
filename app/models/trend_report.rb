@@ -99,6 +99,18 @@ class TrendReport
     data
   end
 
+  def performance_data(labels)
+    data =  {}
+    labels.each do |label|
+      data[label] = []
+      results.each do |result|
+        performance_result = result.calculated_performance_results.find_by(label: label)
+        data[label].push performance_result ? performance_result.mean : 0
+      end
+    end
+    data
+  end
+
   def all_requests_data
     data = {}
     attributes = [:mean, :median, :ninety_percentile, :throughput]

@@ -57,17 +57,25 @@ class TrendReport
     diff
   end
 
-  def sorted_labels_by_mean_trend
-    request_labels.map do |label|
-      percent = trend_in_trend(:calculated_requests_results, :mean, label)
-      [label, percent]
-    end.sort_by { |arr| arr[1] }.reverse
-  end
-
   def request_labels
     results.inject([]) do |labels, result|
       result.calculated_requests_results.pluck(:label).uniq | labels
     end
+  end
+
+  def sorted_labels_by_mean_trend
+    sort_with_percent = []
+    without_percent = []
+    request_labels.each do |label|
+      if !(results.first.send(:calculated_requests_results).find_by(label: label).nil?) and !(results.last.send(:calculated_requests_results).find_by(label: label).nil?)
+        percent = trend_in_trend(:calculated_requests_results, :mean, label)
+        sort_with_percent.push [label, percent]
+      else
+        without_percent.push [label, nil]
+      end
+    end
+    sort_with_percent = sort_with_percent.sort_by { |arr| arr[1] }.reverse
+    sort_with_percent + without_percent
   end
 
   def ids_with_date
@@ -93,11 +101,11 @@ class TrendReport
     attributes = [:mean, :median, :ninety_percentile, :throughput]
     attributes.each { |at| data[at] = [] }
     ids.each do |id|
-      values = Result.values_of_requests(id, nil, @results.find{|e| e.id = id}.time_cutting_percent)
+      values = Result.values_of_requests(id, nil, @results.find { |e| e.id = id }.time_cutting_percent)
       data[:mean].push Statistics.average(values)
       data[:median].push Statistics.median(values)
       data[:ninety_percentile].push Statistics.percentile(values, 90)
-      start_time, end_time = Result.border_timestamps(id, RequestsResult, @results.find{|e| e.id = id}.time_cutting_percent)
+      start_time, end_time = Result.border_timestamps(id, RequestsResult, @results.find { |e| e.id = id }.time_cutting_percent)
       data[:throughput].push RequestsUtils.throughput(values, start_time, end_time)
     end
     data

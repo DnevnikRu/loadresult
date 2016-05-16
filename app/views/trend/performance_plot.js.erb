@@ -11,7 +11,8 @@ var lines = [];
     x: <%= raw(@ids_with_date) %>,
     y: <%= values %>,
     name: '<%= label %>',
-    mode: 'lines',
+    mode: 'lines+markers',
+    type: 'scatter',
     line: {
       color: colors_dup.shift()
     }
@@ -22,10 +23,11 @@ var lines = [];
 var layout = {
   title: '<%= @group_name %>',
   xaxis: {
-      title: 'Time, seconds'
+    tickangle: 30,
+    showticklabels: <%= @ids_with_date.count < 20 %>
   },
   yaxis: {
       title: 'Metrics, <%= @unit %>'
   }
 };
-Plotly.newPlot('trend-performance-plot', lines, layout);
+Plotly.newPlot('<%= "#{@plot_id}_div" %>', lines, layout);

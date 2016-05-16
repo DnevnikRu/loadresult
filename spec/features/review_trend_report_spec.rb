@@ -266,13 +266,14 @@ feature 'Review trend report' do
   context 'Performance' do
 
     before(:all) do
+      DatabaseCleaner.clean
       @result1 = create(:result, release_date: '01.01.1978 00:00')
       @result2 = create(:result, release_date: '01.01.1978 00:01')
       @result3 = create(:result, release_date: '01.01.1978 00:02')
 
-      create(:calculated_requests_result, result_id: @result1.id)
-      create(:calculated_requests_result, result_id: @result2.id)
-      create(:calculated_requests_result, result_id: @result3.id)
+      create(:calculated_requests_result, result_id: @result1.id, mean: 100)
+      create(:calculated_requests_result, result_id: @result2.id, mean: 100)
+      create(:calculated_requests_result, result_id: @result3.id, mean: 100)
 
       create(:calculated_performance_result, result_id: @result1.id, label: 'web00 CPU Processor Time')
       create(:calculated_performance_result, result_id: @result1.id, label: 'web00 Memory Memory\Available')

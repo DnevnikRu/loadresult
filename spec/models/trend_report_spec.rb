@@ -449,4 +449,18 @@ describe TrendReport do
       expect(trend_report.sorted_labels_by_mean_trend).to match([['a', 100.00], ['c', 0.00], ['b', -10.00]])
     end
   end
+
+  describe '#performance_labels' do
+    it 'return all performance labels' do
+      result1 = create(:result)
+      create(:calculated_performance_result, result_id: result1.id, label: 'web00 CPU Processor Time')
+      result2 = create(:result)
+      create(:calculated_performance_result, result_id: result2.id, label: 'web11 CPU Processor Time')
+      result3 = create(:result)
+      create(:calculated_performance_result, result_id: result3.id, label: 'web22 EXEC NetworkBytes Sent/sec')
+      trend_report = TrendReport.new(result1, result3)
+      expect(trend_report.performance_labels).to match_array(['web00 CPU Processor Time', 'web11 CPU Processor Time', 'web22 EXEC NetworkBytes Sent/sec'])
+    end
+
+  end
 end

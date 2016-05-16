@@ -1,0 +1,27 @@
+<h2>Performance</h2>
+
+
+<%= hidden_field_tag 'id-from', @trend_report.results.first.id, {:id => 'id-from'} %>
+<%= hidden_field_tag 'id-to', @trend_report.results.last.id, {:id => 'id-to'} %>
+
+<div class="row top10">
+  <% @trend_report.performance_groups.each do |group| %>
+      <% label_uniq_id = Digest::MD5.bubblebabble(group[:name]) %>
+      <%= button_to group[:name],
+                    trend_performance_plot_path(
+                        group: group,
+                        id_from: @trend_report.results.first.id,
+                        id_to: @trend_report.results.last.id,
+                        plot_id: label_uniq_id
+                    ),
+                    remote: true,
+                    id: "#{label_uniq_id}_button",
+                    class: 'btn btn-default show-plot bottom20',
+                    data: { disable_with: 'Loading..' },
+                    'data-toggle' => 'collapse',
+                    'data-target' => "##{label_uniq_id}_div" %>
+      <div class="collapse" id="<%= "#{label_uniq_id}_div" %>"></div>
+  <% end %>
+</div>
+
+<div id="trend-performance-plot"></div>

@@ -1,4 +1,5 @@
 class TrendController < ApplicationController
+
   def show
     flash.keep(:result_ids)
     if params[:result].nil? || params[:result].size != 2
@@ -20,6 +21,18 @@ class TrendController < ApplicationController
     trend_report = TrendReport.new(id_from, id_to)
     @ids_with_date = trend_report.ids_with_date
     @request_data = trend_report.request_data(label)
+  end
+
+  def performance_plot
+    group =  params[:group]
+    id_from = params[:id_from]
+    id_to = params[:id_to]
+    trend_report = TrendReport.new(id_from, id_to)
+    @plot_id = params[:plot_id]
+    @ids_with_date = trend_report.ids_with_date
+    @group_name = group[:name]
+    @unit = group[:units]
+    @performance_data = trend_report.performance_data(group[:labels])
   end
 
   def all_requests_stats_plot

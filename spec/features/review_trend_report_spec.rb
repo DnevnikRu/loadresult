@@ -187,6 +187,15 @@ feature 'Review trend report' do
           ninety_percentile: 302,
           throughput: 402
       )
+      create(
+          :calculated_requests_result,
+          result_id: @result5.id,
+          label: 'SEND:TEST',
+          mean: 102,
+          median: 202,
+          ninety_percentile: 302,
+          throughput: 402
+      )
     end
 
     scenario 'Red color when trend is bigger than 15' do
@@ -202,6 +211,11 @@ feature 'Review trend report' do
     scenario 'Black color when trend is between -15 and 15' do
       visit trend_path(result: [@result1.id, @result5.id])
       expect(find(:xpath, "//span[@class='percent_for_POST:TEST']")[:style]).to eql('color: rgb(51, 51, 51);')
+    end
+
+    scenario 'No percent when one result has no label' do
+      visit trend_path(result: [@result1.id, @result5.id])
+      expect(find(:xpath, "//input[@id='trend-request-label_SEND:TEST']").find(:xpath,'..').text).to eql('SEND:TEST')
     end
   end
 

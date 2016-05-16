@@ -65,7 +65,7 @@ class TrendReport
   end
 
   def performance_groups
-    labels = perfromance_labels
+    labels = performance_labels
     PerformanceGroup.split_labels_by_group(labels)
   end
 
@@ -75,7 +75,7 @@ class TrendReport
     end
   end
 
-  def perfromance_labels
+  def performance_labels
     results.inject([]) do |labels, result|
       result.calculated_performance_results.pluck(:label).uniq | labels
     end

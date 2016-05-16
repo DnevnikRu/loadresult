@@ -262,4 +262,53 @@ feature 'Review trend report' do
     end
 
   end
+
+  context 'Performance' do
+
+    before(:all) do
+      @result1 = create(:result, release_date: '01.01.1978 00:00')
+      @result2 = create(:result, release_date: '01.01.1978 00:01')
+      @result3 = create(:result, release_date: '01.01.1978 00:02')
+
+      create(:calculated_requests_result, result_id: @result1.id)
+      create(:calculated_requests_result, result_id: @result2.id)
+      create(:calculated_requests_result, result_id: @result3.id)
+
+      create(:calculated_performance_result, result_id: @result1.id, label: 'web00 CPU Processor Time')
+      create(:calculated_performance_result, result_id: @result1.id, label: 'web00 Memory Memory\Available')
+      create(:calculated_performance_result, result_id: @result1.id, label: 'web00 EXEC Network\Bytes Sent/sec')
+
+      create(:calculated_performance_result, result_id: @result2.id, label: 'web00 CPU Processor Time')
+      create(:calculated_performance_result, result_id: @result2.id, label: 'web00 Memory Memory\Available')
+      create(:calculated_performance_result, result_id: @result2.id, label: 'web00 EXEC Network\Bytes Sent/sec')
+
+      create(:calculated_performance_result, result_id: @result3.id, label: 'web00 CPU Processor Time')
+      create(:calculated_performance_result, result_id: @result3.id, label: 'web00 Memory Memory\Available')
+      create(:calculated_performance_result, result_id: @result3.id, label: 'web00 EXEC Network\Bytes Sent/sec')
+
+    end
+
+    scenario 'Performance section present' do
+      visit trend_path(result: [@result1.id, @result3.id])
+      expect(page).to have_selector('div#performance_trend')
+
+    end
+
+    scenario 'All performance group present in performance section' do
+      visit trend_path(result: [@result1.id, @result3.id])
+      performance_groups = []
+      within('div#performance_trend') do
+        performance_groups = all('input.show-plot').map{|button| button.value}
+      end
+      expect(performance_groups).to match_array(['Processor', 'Memory', 'Network traffic'])
+    end
+
+    scenario 'Click on button with performance group name' do
+      visit trend_path(result: [@result1.id, @result3.id])
+      show_processor_plot = find_button('Processor')
+      plot_id = show_processor_plot.find(:xpath,".//..")[:action].match(/plot_id=(.*)/)[1]
+      show_processor_plot.click
+      expect(find("div##{plot_id}_div")['aria-expanded']).to eql('true')
+    end
+  end
 end

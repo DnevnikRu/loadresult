@@ -49,11 +49,11 @@ ActiveRecord::Schema.define(version: 20160512150350) do
 
   create_table "performance_results", force: :cascade do |t|
     t.integer  "result_id"
-    t.integer  "timestamp",  limit: 8
     t.string   "label"
     t.integer  "value",      limit: 8
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
+    t.integer  "timestamp",  limit: 8
   end
 
   create_table "projects", force: :cascade do |t|
@@ -62,12 +62,12 @@ ActiveRecord::Schema.define(version: 20160512150350) do
 
   create_table "requests_results", force: :cascade do |t|
     t.integer  "result_id"
-    t.integer  "timestamp",     limit: 8
     t.string   "label"
     t.integer  "value",         limit: 8
     t.string   "response_code"
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
+    t.integer  "timestamp",     limit: 8
   end
 
   create_table "results", force: :cascade do |t|

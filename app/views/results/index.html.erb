@@ -67,7 +67,7 @@
           </td>
           <td class="id nostrech"><%= result.id %></td>
           <td class="project nostrech"><%= result.project.project_name %></td>
-          <td class="version nostrech"><%= result.version %></td>
+          <td class="version"><%= result.version %></td>
           <td class="rps nostrech"><%= result.rps %></td>
           <td class="duration nostrech"><%= result.duration %></td>
           <td class="profile nostrech"><%= result.profile %></td>
@@ -76,7 +76,7 @@
           <td class="time_cutting_percent nostrech"><%= result.time_cutting_percent %></td>
           <td class="value_smoothing_interval nostrech"><%= result.value_smoothing_interval %></td>
           <td class="release_date nostrech"><%= result.release_date %></td>
-          <td class="comment"><%= result.comment %></td>
+          <td class="comment text-center nostrech"><%= '<i class="glyphicon glyphicon-envelope"></i>'.html_safe if result.comment.present? %></td>
           <td class="actions nostrech">
             <%= link_to '<i class="glyphicon glyphicon-eye-open"></i>'.html_safe,
                         result_path(result),

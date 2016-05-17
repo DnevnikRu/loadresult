@@ -47,7 +47,7 @@ describe 'Editing a result' do
         expect(find('.time_cutting_percent')).to have_content('20')
         expect(find('.value_smoothing_interval')).to have_content('9')
         expect(find('.release_date')).to have_content('2016-12-12 10:00:00 UTC')
-        expect(find('.comment')).to have_content('New comment')
+        within('.comment') { expect(find('.glyphicon-envelope')).to_not be_nil }
       end
     end
 
@@ -62,7 +62,18 @@ describe 'Editing a result' do
 
   context 'When fields are not edited' do
     before do
-      @result = create(:result)
+      @result = create(
+          :result,
+          project_id: '1',
+          version: '1.0.0',
+          rps: '10',
+          duration: '100',
+          profile: 'main',
+          time_cutting_percent: '10',
+          value_smoothing_interval: '11',
+          release_date: '2011-11-11 11:00:01',
+          comment: 'It is just a comment'
+      )
       create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
       create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
       create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
@@ -85,7 +96,7 @@ describe 'Editing a result' do
         expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
         expect(find('.value_smoothing_interval')).to have_content(@result.value_smoothing_interval)
         expect(find('.release_date')).to have_content(@result.release_date)
-        expect(find('.comment')).to have_content(@result.comment)
+        within('.comment') { expect(find('.glyphicon-envelope')).to_not be_nil }
       end
     end
 
@@ -199,7 +210,7 @@ describe 'Editing a result' do
           expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
           expect(find('.value_smoothing_interval')).to have_content(@result.value_smoothing_interval)
           expect(find('.release_date')).to have_content(@result.release_date)
-          expect(find('.comment')).to have_content(@result.comment)
+          within('.comment') { expect(find('.glyphicon-envelope')).to_not be_nil }
         end
       end
     end

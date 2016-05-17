@@ -183,4 +183,14 @@ feature 'Review results' do
     expect(page.all('.result-checkbox')[1]).to be_checked
     expect(page.all('.result-checkbox')[0]).to_not be_checked
   end
+
+  scenario 'When there is no comment the comment icon is absent' do
+    result = create(:result, comment: nil)
+
+    visit '/results/'
+    row_with_result_xpath = "//td[contains(@class, 'id') and text()='#{result.id}']/../td[contains(@class, 'comment')]"
+    within(:xpath, row_with_result_xpath) do
+      expect { find('.glyphicon-envelope') }.to raise_error(Capybara::ElementNotFound)
+    end
+  end
 end

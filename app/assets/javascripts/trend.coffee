@@ -13,11 +13,11 @@ ready = ->
   $('input[name=trend-performance-label]:radio').change (event) ->
     idFrom = $('#id-from').val();
     idTo = $('#id-to').val();
-    group_name = $(@).val();
+    groupName = $(@).val();
     $.ajax({
       url: '/trend/performance_plot'
       type: 'POST'
-      data: "group_name=#{group_name}&id_from=#{idFrom}&id_to=#{idTo}"
+      data: "group_name=#{groupName}&id_from=#{idFrom}&id_to=#{idTo}"
       dataType: 'script'
     })
 

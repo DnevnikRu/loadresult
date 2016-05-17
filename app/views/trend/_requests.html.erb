@@ -1,14 +1,10 @@
 <h2>Requests</h2>
 
-
-<%= hidden_field_tag 'id-from', @trend_report.results.first.id, {:id => 'id-from'} %>
-<%= hidden_field_tag 'id-to', @trend_report.results.last.id, {:id => 'id-to'} %>
-
-<div class="btn-group group-with-margin" data-toggle="buttons">
+<div class="btn-group group-with-margin" id="requests-group" data-toggle="buttons">
   <% @trend_report.sorted_labels_by_mean_trend.each do |label_and_trend| %>
       <%= label_tag(nil, nil, class: 'btn btn-default btn-sm trend-request-plot-button') do %>
           <%= radio_button_tag('trend-request-label', label_and_trend[0], false) %> <%= label_and_trend[0] %>
-          <% unless label_and_trend[1].nil? %>
+          <% if label_and_trend[1] %>
               <b><%= content_tag(:span, label_and_trend[1].to_s + '%', style: "color: #{request_color_trend(15, label_and_trend[1])}", class: "percent_for_#{label_and_trend[0]}") %></b>
           <% end %>
       <% end %>

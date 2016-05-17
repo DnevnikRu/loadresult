@@ -3,6 +3,9 @@
     <h1>Trend</h1>
   </div>
 
+  <%= hidden_field_tag 'id-from', @trend_report.results.first.id, {:id => 'id-from'} %>
+  <%= hidden_field_tag 'id-to', @trend_report.results.last.id, {:id => 'id-to'} %>
+
   <div class="row">
     <%= render 'trend/desc_diff' %>
   </div>

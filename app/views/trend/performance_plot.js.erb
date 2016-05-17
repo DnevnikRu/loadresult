@@ -1,9 +1,5 @@
-$('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
-
 var colors = ['blue', 'green', 'red', 'gray', 'orange', 'brown', 'purple', 'olive'];
 var colors_dup = colors.slice();
-
-
 
 var lines = [];
 <% @performance_data.each do |label, values| %>
@@ -27,7 +23,7 @@ var layout = {
     showticklabels: <%= @ids_with_date.count < 20 %>
   },
   yaxis: {
-      title: 'Metrics, <%= @unit %>'
+    title: 'Metrics, <%= @unit %>'
   }
 };
-Plotly.newPlot('<%= "#{@plot_id}_div" %>', lines, layout);
+Plotly.newPlot('trend-performance-plot', lines, layout);

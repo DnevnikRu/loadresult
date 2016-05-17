@@ -1,5 +1,4 @@
 class TrendController < ApplicationController
-
   def show
     flash.keep(:result_ids)
     if params[:result].nil? || params[:result].size != 2
@@ -24,11 +23,12 @@ class TrendController < ApplicationController
   end
 
   def performance_plot
-    group =  params[:group]
+    group_name = params[:group_name]
     id_from = params[:id_from]
     id_to = params[:id_to]
+
     trend_report = TrendReport.new(id_from, id_to)
-    @plot_id = params[:plot_id]
+    group = trend_report.performance_groups.find { |group| group[:name] == group_name }
     @ids_with_date = trend_report.ids_with_date
     @group_name = group[:name]
     @unit = group[:units]
@@ -44,5 +44,4 @@ class TrendController < ApplicationController
     @ids_with_date = trend_report.ids_with_date
     @request_data = trend_report.all_requests_data
   end
-
 end

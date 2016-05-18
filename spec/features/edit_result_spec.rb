@@ -46,7 +46,7 @@ describe 'Editing a result' do
         expect(find('.data_version')).to have_content('Current data version')
         expect(find('.time_cutting_percent')).to have_content('20')
         expect(find('.value_smoothing_interval')).to have_content('9')
-        expect(find('.release_date')).to have_content('2016-12-12 10:00:00 UTC')
+        expect(find('.release_date')).to have_content('2016-12-12')
         within('.comment') { expect(find('.glyphicon-envelope')).to_not be_nil }
       end
     end
@@ -95,7 +95,7 @@ describe 'Editing a result' do
         expect(find('.data_version')).to have_content(@result.data_version)
         expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
         expect(find('.value_smoothing_interval')).to have_content(@result.value_smoothing_interval)
-        expect(find('.release_date')).to have_content(@result.release_date)
+        expect(find('.release_date')).to have_content(@result.release_date.to_date)
         within('.comment') { expect(find('.glyphicon-envelope')).to_not be_nil }
       end
     end
@@ -209,7 +209,7 @@ describe 'Editing a result' do
           expect(find('.data_version')).to have_content(@result.data_version)
           expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
           expect(find('.value_smoothing_interval')).to have_content(@result.value_smoothing_interval)
-          expect(find('.release_date')).to have_content(@result.release_date)
+          expect(find('.release_date')).to have_content(@result.release_date.to_date)
           within('.comment') { expect(find('.glyphicon-envelope')).to_not be_nil }
         end
       end

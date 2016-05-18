@@ -24,6 +24,7 @@ feature 'Upload load result' do
       fill_in 'rps', with: '600'
       fill_in 'duration', with: '600'
       fill_in 'profile', with: 'all_sites'
+      fill_in 'data_version', with: 'version of data'
       fill_in 'test_run_date', with: '14.02.2016 17:45'
       fill_in 'release_date', with: '14.02.2016 17:45'
       attach_file 'requests_data', summary_file_path

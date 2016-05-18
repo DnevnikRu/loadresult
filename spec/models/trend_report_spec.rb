@@ -11,6 +11,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3,
           release_date: '01.01.1978 00:01'
@@ -20,6 +21,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3,
           release_date: '01.01.1978 00:01'
@@ -29,6 +31,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3,
           release_date: '01.01.1978 00:02'
@@ -38,7 +41,7 @@ describe TrendReport do
 
       it 'combines results' do
         expected_diff = [
-          { ids: [@result1.id, @result2.id, @result3.id], duration: 600, rps: '150', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
+          { ids: [@result1.id, @result2.id, @result3.id], duration: 600, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -53,6 +56,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -63,6 +67,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -73,6 +78,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -81,7 +87,7 @@ describe TrendReport do
 
       it 'still combines results' do
         expected_diff = [
-          { ids: [@result1.id, @result2.id, @result3.id], duration: 600, rps: '150', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
+          { ids: [@result1.id, @result2.id, @result3.id], duration: 600, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -94,6 +100,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -102,6 +109,7 @@ describe TrendReport do
           duration: 601,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -110,6 +118,7 @@ describe TrendReport do
           duration: 602,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -118,9 +127,9 @@ describe TrendReport do
 
       it 'divides results' do
         expected_diff = [
-          { ids: [@result1.id], duration: 600, rps: '150', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result2.id], duration: 601, rps: '150', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result3.id], duration: 602, rps: '150', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
+          { ids: [@result1.id], duration: 600, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 },
+          { ids: [@result2.id], duration: 601, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 },
+          { ids: [@result3.id], duration: 602, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -133,6 +142,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -141,6 +151,7 @@ describe TrendReport do
           duration: 600,
           rps: '151',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -149,6 +160,7 @@ describe TrendReport do
           duration: 600,
           rps: '152',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -157,9 +169,9 @@ describe TrendReport do
 
       it 'divides results' do
         expected_diff = [
-          { ids: [@result1.id], duration: 600, rps: '150', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result2.id], duration: 600, rps: '151', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result3.id], duration: 600, rps: '152', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 }
+          { ids: [@result1.id], duration: 600, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 },
+          { ids: [@result2.id], duration: 600, rps: '151', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 },
+          { ids: [@result3.id], duration: 600, rps: '152', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -172,6 +184,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -180,6 +193,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site2',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -188,6 +202,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site3',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -196,9 +211,9 @@ describe TrendReport do
 
       it 'divides results' do
         expected_diff = [
-          { ids: [@result1.id], duration: 600, rps: '150', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result2.id], duration: 600, rps: '150', profile: 'all_site2', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result3.id], duration: 600, rps: '150', profile: 'all_site3', time_cutting_percent: 10, value_smoothing_interval: 3 }
+          { ids: [@result1.id], duration: 600, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 },
+          { ids: [@result2.id], duration: 600, rps: '150', profile: 'all_site2', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 },
+          { ids: [@result3.id], duration: 600, rps: '150', profile: 'all_site3', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -211,6 +226,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -219,6 +235,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 11,
           value_smoothing_interval: 3
         )
@@ -227,6 +244,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 12,
           value_smoothing_interval: 3
         )
@@ -235,9 +253,9 @@ describe TrendReport do
 
       it 'divides results' do
         expected_diff = [
-          { ids: [@result1.id], duration: 600, rps: '150', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result2.id], duration: 600, rps: '150', profile: 'all_site', time_cutting_percent: 11, value_smoothing_interval: 3 },
-          { ids: [@result3.id], duration: 600, rps: '150', profile: 'all_site', time_cutting_percent: 12, value_smoothing_interval: 3 }
+          { ids: [@result1.id], duration: 600, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 },
+          { ids: [@result2.id], duration: 600, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 11, value_smoothing_interval: 3 },
+          { ids: [@result3.id], duration: 600, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 12, value_smoothing_interval: 3 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end
@@ -250,6 +268,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 3
         )
@@ -258,6 +277,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 5
         )
@@ -266,6 +286,7 @@ describe TrendReport do
           duration: 600,
           rps: '150',
           profile: 'all_site',
+          data_version: '1',
           time_cutting_percent: 10,
           value_smoothing_interval: 7
         )
@@ -274,9 +295,9 @@ describe TrendReport do
 
       it 'divides results' do
         expected_diff = [
-          { ids: [@result1.id], duration: 600, rps: '150', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 3 },
-          { ids: [@result2.id], duration: 600, rps: '150', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 5 },
-          { ids: [@result3.id], duration: 600, rps: '150', profile: 'all_site', time_cutting_percent: 10, value_smoothing_interval: 7 }
+          { ids: [@result1.id], duration: 600, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 3 },
+          { ids: [@result2.id], duration: 600, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 5 },
+          { ids: [@result3.id], duration: 600, rps: '150', profile: 'all_site', data_version: '1', time_cutting_percent: 10, value_smoothing_interval: 7 }
         ]
         expect(@trend_report.description_differences).to match(expected_diff)
       end

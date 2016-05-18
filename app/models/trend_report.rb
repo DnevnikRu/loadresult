@@ -40,6 +40,7 @@ class TrendReport
         diff.last[:duration] != result.duration ||
         diff.last[:rps] != result.rps ||
         diff.last[:profile] != result.profile ||
+        diff.last[:data_version] != result.data_version ||
         diff.last[:time_cutting_percent] != result.time_cutting_percent ||
         diff.last[:value_smoothing_interval] != result.value_smoothing_interval
         diff.push(
@@ -47,6 +48,7 @@ class TrendReport
           duration: result.duration,
           rps: result.rps,
           profile: result.profile,
+          data_version: result.data_version,
           time_cutting_percent: result.time_cutting_percent,
           value_smoothing_interval: result.value_smoothing_interval
         )

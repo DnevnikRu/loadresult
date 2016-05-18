@@ -3,8 +3,28 @@ require 'rails_helper'
 describe CompareReport do
 
   before(:all) do
-    result1 = create(:result)
-    result2 = create(:result, version: 'master-2', test_run_date: '01.01.2016 00:00')
+    result1 = create(
+        :result,
+        version: 'master',
+        test_run_date: '01.01.1978 00:00',
+        duration: 600,
+        rps: '150',
+        profile: 'all_site',
+        data_version: '1',
+        time_cutting_percent: 10,
+        value_smoothing_interval: 3
+    )
+    result2 = create(
+        :result,
+        version: 'master2',
+        test_run_date: '02.02.1979 02:02',
+        duration: 600,
+        rps: '150',
+        profile: 'all_site',
+        data_version: '1',
+        time_cutting_percent: 10,
+        value_smoothing_interval: 3
+    )
     @compare_report = CompareReport.new(result1, result2)
   end
 
@@ -18,15 +38,13 @@ describe CompareReport do
     end
 
     it 'has all keys' do
-      keys = ['Duration', 'Profile', 'Rps', 'Test run date', 'Time cutting percent', 'Version', 'Value smoothing interval']
+      keys = ['Duration', 'Profile', 'Data version', 'Rps', 'Test run date', 'Time cutting percent', 'Version', 'Value smoothing interval']
       expect(@description.keys).to match_array(keys)
     end
 
-    it 'each keys except Value smoothing interval has two value: result1 and result2' do
-      description = @description.dup
-      description.delete('Value smoothing interval')
-      actual = description.values.map { |v| v.is_a?(Hash) && !v[:result1].nil? && !v[:result2].nil? }
-      expect(actual.reduce(:&)).to be(true), "Expect that description values is a Hash and contains two keys for result1 and result2b but actual: #{description.values}"
+    it 'each keys has two value: result1 and result2' do
+      actual = @description.values.map { |v| v.is_a?(Hash) && !v[:result1].nil? && !v[:result2].nil? }
+      expect(actual.reduce(:&)).to be(true), "Expect that description values is a Hash and contains two keys for result1 and result2b but actual: #{@description}"
     end
   end
 

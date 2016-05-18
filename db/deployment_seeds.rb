@@ -13,7 +13,8 @@ results = []
                            duration: 20,
                            rps: 100,
                            profile: 'all_sites',
-                           time_cutting_percent: random.rand(10..11),
+                           data_version: (1 if random.rand(0..100) < 95),
+                           time_cutting_percent: (random.rand(0..100) < 95 ? 11 : 10),
                            test_run_date: result_date,
                            release_date: result_date,
                            created_at: result_date)

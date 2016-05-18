@@ -9,7 +9,7 @@ class CompareReport
 
   def description
     description = {}
-    %w(version rps duration profile test_run_date time_cutting_percent value_smoothing_interval).each do |key|
+    %w(version rps duration profile data_version test_run_date time_cutting_percent value_smoothing_interval).each do |key|
       values = {}
       values[:result1] = result1.send(key)
       values[:result2] = result2.send(key)
@@ -61,6 +61,7 @@ class CompareReport
       duration: 'Duration',
       rps: 'Rps',
       profile: 'Profile',
+      data_version: 'Data version',
       time_cutting_percent: 'Time cutting percent',
       value_smoothing_interval: 'Value smoothing interval'
     }

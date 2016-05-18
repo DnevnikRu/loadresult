@@ -25,18 +25,19 @@ feature 'Review results' do
     let(:summary_file_path) { File.join(fixture_path, 'summary.csv').normalize_path }
     let(:perfmon_file_path) { File.join(fixture_path, 'perfmon.csv').normalize_path }
 
-    scenario 'The table with results contains the uploaded results' do
+    fscenario 'The table with results contains the uploaded results' do
       visit '/results/new'
       select 'Dnevnik', from: 'project'
       fill_in 'version', with: 'edu sharding'
       fill_in 'rps', with: '600'
       fill_in 'duration', with: '600'
       fill_in 'profile', with: 'all_sites'
+      fill_in 'data_version', with: 'version of data'
       fill_in 'test_run_date', with: '14.02.2016 17:45'
       attach_file 'requests_data', summary_file_path
       attach_file 'performance_data', perfmon_file_path
       click_button 'Upload'
-      expected_row = ['Dnevnik', 'edu sharding', '600', '600', 'all_sites', '14.02.2016 17:45']
+      expected_row = ['Dnevnik', 'edu sharding', '600', '600', 'all_sites', 'version of data', '14.02.2016 17:45']
       results_rows = []
       page.all('table#results-table tr.result_row').each do |row|
         project = row.find('td.project').text
@@ -44,11 +45,12 @@ feature 'Review results' do
         rps = row.find('td.rps').text
         duration = row.find('td.duration').text
         profile = row.find('td.profile').text
+        data_version = row.find('td.data_version').text
         run_date = Time.parse(row.find('td.test_run_date').text)
         run_date = run_date.strftime('%d.%m.%Y %H:%M')
-        results_rows.push [project, version, rps, duration, profile, run_date]
+        results_rows.push [project, version, rps, duration, profile, data_version, run_date]
       end
-      expect(results_rows.include?(expected_row)).to be(true), 'Just uploaded result is not displayed'
+      expect(results_rows).to include(expected_row)
     end
   end
 

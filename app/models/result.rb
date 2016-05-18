@@ -44,6 +44,7 @@ class Result < ActiveRecord::Base
         duration: params['duration'],
         rps: params['rps'],
         profile: params['profile'],
+        data_version: params['data_version'],
         test_run_date: params['test_run_date'],
         requests_data: params['requests_data'].is_a?(Hash) ? file_from_json(params, 'requests_data') : params['requests_data'],
         performance_data: params['performance_data'].is_a?(Hash) ? file_from_json(params, 'performance_data') : params['performance_data'],

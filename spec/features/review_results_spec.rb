@@ -25,7 +25,7 @@ feature 'Review results' do
     let(:summary_file_path) { File.join(fixture_path, 'summary.csv').normalize_path }
     let(:perfmon_file_path) { File.join(fixture_path, 'perfmon.csv').normalize_path }
 
-    fscenario 'The table with results contains the uploaded results' do
+    scenario 'The table with results contains the uploaded results' do
       visit '/results/new'
       select 'Dnevnik', from: 'project'
       fill_in 'version', with: 'edu sharding'

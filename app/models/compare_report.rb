@@ -19,7 +19,7 @@ class CompareReport
   end
 
   def request_labels
-    (result1.calculated_requests_results.pluck(:label).uniq & result2.calculated_requests_results.pluck(:label).uniq).sort
+    (result1.request_labels_uniq & result2.request_labels_uniq).sort
   end
 
   def performance?
@@ -80,8 +80,8 @@ class CompareReport
     template = 'id:%d has extra %s labels: %s'
     result1_perf_labels = result1.calculated_performance_results.pluck(:label).uniq
     result2_perf_labels = result2.calculated_performance_results.pluck(:label).uniq
-    result1_request_labels = result1.calculated_requests_results.pluck(:label).uniq
-    result2_request_labels = result2.calculated_requests_results.pluck(:label).uniq
+    result1_request_labels = result1.request_labels_uniq
+    result2_request_labels = result2.request_labels_uniq
     result1_extra_perf_labels = result1_perf_labels - result2_perf_labels
     result2_extra_perf_labels = result2_perf_labels - result1_perf_labels
     result1_extra_request_labels = result1_request_labels - result2_request_labels

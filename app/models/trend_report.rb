@@ -65,7 +65,7 @@ class TrendReport
 
   def request_labels
     results.inject([]) do |labels, result|
-      result.calculated_requests_results.pluck(:label).uniq | labels
+      result.request_labels_uniq | labels
     end
   end
 

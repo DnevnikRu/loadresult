@@ -42,6 +42,6 @@ class TrendController < ApplicationController
 
     trend_report = TrendReport.new(id_from, id_to)
     @ids_with_date = trend_report.ids_with_date
-    @request_data = trend_report.all_requests_data
+    @request_data = trend_report.request_data('all_requests')
   end
 end

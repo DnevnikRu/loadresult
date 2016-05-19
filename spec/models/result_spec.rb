@@ -963,7 +963,7 @@ describe Result do
                                                 profile: @result.profile,
                                                 value_smoothing_interval: 3,
                                                 time_cutting_percent: '10'})
-        expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 314.0
+        expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 231.83
       end
 
 

@@ -6,6 +6,7 @@ module Statistics
     interval = Integer(interval)
     raise "#{interval} >= #{data.count}! Interval can not be more or equal data size" if interval >= data.count
     raise 'Interval can not be even!' if interval.even?
+    data = add_items(data, interval)
     split_interval(data, interval).map { |data_interval| average(data_interval).round(2) }
   end
 
@@ -53,6 +54,16 @@ module Statistics
       result.push data[i-step..i+step]
     end
     result
+  end
+
+  def self.add_items(data, interval)
+    new_data = data.dup
+    number_of_items = (interval - 1) / 2
+    number_of_items.times do
+      new_data.unshift data.first
+      new_data.push data.last
+    end
+    new_data
   end
 
 

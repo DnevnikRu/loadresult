@@ -1,6 +1,7 @@
 <div class="container-fluid">
   <div class="page-header">
-    <h1>Compare report <small>(id:<%= @compare_report.result1.id %> vs id:<%= @compare_report.result2.id %>)
+    <h1>Compare report <small>(<%= link_to_result(@compare_report.result1.id, 'id:') %> vs
+      <%= link_to_result(@compare_report.result2.id, 'id:') %>)
       <%= link_to compare_path(result: [@compare_report.result2.id, @compare_report.result1.id]), {:id => 'changed_results'} do %>
           <i class="fa fa-exchange"></i>
       <% end %></small>

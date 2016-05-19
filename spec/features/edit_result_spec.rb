@@ -17,6 +17,12 @@ describe 'Editing a result' do
       )
       create(:requests_result, result_id: result.id, timestamp: 1455023039548, value: 2)
       create(:requests_result, result_id: result.id, timestamp: 1455023040000, value: 123)
+      create(:requests_result, result_id: result.id, timestamp: 1455023041000, value: 123)
+      create(:requests_result, result_id: result.id, timestamp: 1455023042000, value: 123)
+      create(:requests_result, result_id: result.id, timestamp: 1455023042100, value: 123)
+      create(:requests_result, result_id: result.id, timestamp: 1455023042200, value: 123)
+      create(:requests_result, result_id: result.id, timestamp: 1455023043000, value: 123)
+      create(:requests_result, result_id: result.id, timestamp: 1455023044000, value: 123)
       create(:requests_result, result_id: result.id, timestamp: 1455023045000, value: 121)
       visit '/results/'
       @row_with_result_xpath = "//td[contains(@class, 'id') and text()='#{result.id}']/.."
@@ -30,7 +36,7 @@ describe 'Editing a result' do
       fill_in 'profile', with: 'New profile'
       fill_in 'data_version', with: 'Current data version'
       fill_in 'time_cutting_percent', with: '20'
-      fill_in 'value_smoothing_interval', with: '9'
+      fill_in 'value_smoothing_interval', with: '3'
       fill_in 'release_date', with: '2016-12-12 10:00:00'
       fill_in 'comment', with: 'New comment'
       click_button 'Update'
@@ -45,7 +51,7 @@ describe 'Editing a result' do
         expect(find('.profile')).to have_content('New profile')
         expect(find('.data_version')).to have_content('Current data version')
         expect(find('.time_cutting_percent')).to have_content('20')
-        expect(find('.value_smoothing_interval')).to have_content('9')
+        expect(find('.value_smoothing_interval')).to have_content('3')
         expect(find('.release_date')).to have_content('2016-12-12')
         within('.comment') { expect(find('.glyphicon-envelope')).to_not be_nil }
       end

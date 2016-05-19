@@ -29,8 +29,8 @@ describe Statistics do
     end
 
     it 'data with emissions after smooth is correct' do
-      actual_data = [1, 4, 15, 2, 3, 20, 3]
-      expect_data = [6.67, 6.67, 7.0, 8.33, 8.67]
+      actual_data = [1, 4, 15, 2, 3, 20, 3] # after added items: [1, 1, 4, 15, 2, 3, 20, 3, 3]
+      expect_data = [2.0, 6.67, 6.67, 7.0, 8.33, 8.67, 8.67]
       expect(Statistics.simple_moving_average(actual_data,3)).to match_array(expect_data)
     end
 
@@ -62,6 +62,33 @@ describe Statistics do
       actual_data = [1, 4, 15, 2, 3, 20, 3]
       expect_data = [[1,4,15],[4,15,2],[15,2,3],[2,3,20],[3,20,3]]
       expect(Statistics.split_interval(actual_data, 3)).to match_array(expect_data)
+    end
+
+  end
+
+  describe '.add_items' do
+    it 'result data length is correct' do
+      actual_data = [1,2,3,4]
+      interval = 3
+      expect(Statistics.add_items(actual_data, interval).count).to eql actual_data.count + (interval - 1)
+    end
+
+    it 'first added items is correct' do
+      actual_data = [1,2,3,4,5,6,7]
+      interval = 5
+      first_actual_element = actual_data.first
+      expected_array = Array.new((interval - 1)/2, first_actual_element)
+      actual_array = Statistics.add_items(actual_data, interval).first((interval - 1)/2)
+      expect(actual_array).to match_array(expected_array)
+    end
+
+    it 'last added items is correct' do
+      actual_data = [1,2,3,4,5,6,7]
+      interval = 5
+      last_actual_element = actual_data.last
+      expected_array = Array.new((interval - 1)/2, last_actual_element)
+      actual_array = Statistics.add_items(actual_data, interval).last((interval - 1)/2)
+      expect(actual_array).to match_array(expected_array)
     end
 
   end

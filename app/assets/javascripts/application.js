@@ -15,4 +15,7 @@
 //= require bootstrap-sprockets
 //= require plotly
 //= require jquery.stickytableheaders.min
+//= require moment
+//= require moment/ru
+//= require bootstrap-datetimepicker
 //= require_tree .

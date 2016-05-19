@@ -11,6 +11,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'font-awesome-sass'
 gem 'kaminari', '~> 0.16.3'
+gem 'momentjs-rails', '~> 2.11'
+gem 'bootstrap3-datetimepicker-rails', '~> 4.17'
 
 gem 'capistrano', '~> 3.1.0'
 gem 'capistrano-rails', '~> 1.1.0'

@@ -37,7 +37,7 @@ describe 'Editing a result' do
       fill_in 'data_version', with: 'Current data version'
       fill_in 'time_cutting_percent', with: '20'
       fill_in 'value_smoothing_interval', with: '3'
-      fill_in 'release_date', with: '2016-12-12 10:00:00'
+      fill_in 'release_date', with: '12.12.2016 10:00'
       fill_in 'comment', with: 'New comment'
       click_button 'Update'
     end
@@ -134,27 +134,6 @@ describe 'Editing a result' do
       within(:xpath, @row_with_result_xpath) do
         expect(find('.time_cutting_percent')).to have_content('0')
       end
-    end
-
-  end
-
-  context 'When release date is changed to incorrect' do
-    before do
-      @result = create(:result)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023039548, value: 2)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023040000, value: 123)
-      create(:requests_result, result_id: @result.id, timestamp: 1455023045000, value: 121)
-      visit '/results/'
-      @row_with_result_xpath = "//td[contains(@class, 'id') and text()='#{@result.id}']/.."
-      within(:xpath, @row_with_result_xpath) do
-        find('.editResult').click
-      end
-      fill_in 'release_date', with: 'blablabla'
-      click_button 'Update'
-    end
-
-    scenario 'Message about wrong format is displayed' do
-      expect(page).to have_content('Release date must be a valid datetime')
     end
 
   end

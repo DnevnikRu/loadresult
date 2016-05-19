@@ -182,6 +182,10 @@ class Result < ActiveRecord::Base
     label_groups
   end
 
+  def request_labels_uniq
+    calculated_requests_results.where.not(label: 'all_requests').pluck(:label).uniq
+  end
+
   private
 
   def self.update_requests(result, requests_data, previous_time_cut_percent, previous_smooth_interval)
@@ -223,6 +227,11 @@ class Result < ActiveRecord::Base
 
   def self.calc_request_data(result)
     bottom_timestamp, top_timestamp = border_timestamps(result.id, RequestsResult, result.time_cutting_percent)
+    calc_request_data_by_label(result, bottom_timestamp, top_timestamp)
+    calc_all_request_data(result, bottom_timestamp, top_timestamp)
+  end
+
+  def self.calc_request_data_by_label(result, bottom_timestamp, top_timestamp)
     labels = RequestsResult.where(result_id: result.id).pluck(:label).uniq
     labels.each do |label|
       calculated_request_result = CalculatedRequestsResult.find_or_create_by(result_id: result.id, label: label)
@@ -241,6 +250,17 @@ class Result < ActiveRecord::Base
         )
       end
     end
+  end
+
+  def self.calc_all_request_data(result, bottom_timestamp, top_timestamp)
+    values = Result.values_of_requests(result.id, nil, result.time_cutting_percent)
+    calculated_request_result = CalculatedRequestsResult.find_or_create_by(result_id: result.id, label: 'all_requests')
+    calculated_request_result.update_attributes!(
+        mean: Statistics.average(values),
+    median: Statistics.median(values),
+    ninety_percentile: Statistics.percentile(values, 90),
+    throughput: RequestsUtils.throughput(values, bottom_timestamp, top_timestamp)
+    )
   end
 
   def self.calc_performance_data(result)

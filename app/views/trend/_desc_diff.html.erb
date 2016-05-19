@@ -13,7 +13,7 @@
   <tbody>
     <% @trend_report.description_differences.each do |difference| %>
     <tr>
-      <td class="ids-difference"><%= difference[:ids].join(', ') %></td>
+      <td class="ids-difference"><%= result_ids_to_links(difference[:ids]).html_safe %></td>
       <td class="duration-difference"><%= difference[:duration] %></td>
       <td class="rps-difference"><%= difference[:rps] %></td>
       <td class="profile-difference"><%= difference[:profile] %></td>

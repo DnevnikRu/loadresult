@@ -1,5 +1,4 @@
 module TrendHelper
-
   def request_color_trend(base, value)
     base = base.to_i
     if value > base
@@ -11,4 +10,7 @@ module TrendHelper
     end
   end
 
+  def result_ids_to_links(result_ids)
+    result_ids.map { |id| link_to(id, result_path(id)) }.join(', ').html_safe
+  end
 end

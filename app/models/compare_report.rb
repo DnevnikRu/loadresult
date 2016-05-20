@@ -68,7 +68,7 @@ class CompareReport
     description_to_check.each do |field, field_name|
       result1_value = result1.send(field)
       result2_value = result2.send(field)
-      if result1_value != result2_value
+      if result1_value.to_s != result2_value.to_s
         diff.push template % [field_name, result1.id, result1_value, result2.id, result2_value]
       end
     end

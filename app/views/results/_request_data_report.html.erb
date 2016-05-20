@@ -24,7 +24,7 @@
           </tr>
           </thead>
           <tbody>
-          <% @result.calculated_requests_results.order(:label).each do |calculated_result| %>
+          <% @result.calculated_requests_results.where.not(label: 'all_requests').order(:label).each do |calculated_result| %>
               <% requests_histogram_uniq_id = Digest::MD5.bubblebabble(calculated_result.label + '1') %>
               <% requests_seconds_to_values_uniq_id = Digest::MD5.bubblebabble(calculated_result.label + '2') %>
               <tr>

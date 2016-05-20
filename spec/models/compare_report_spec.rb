@@ -12,7 +12,7 @@ describe CompareReport do
         profile: 'all_site',
         data_version: '1',
         time_cutting_percent: 10,
-        value_smoothing_interval: 3
+        smoothing_percent: 3
     )
     result2 = create(
         :result,
@@ -23,7 +23,7 @@ describe CompareReport do
         profile: 'all_site',
         data_version: '1',
         time_cutting_percent: 10,
-        value_smoothing_interval: 3
+        smoothing_percent: 3
     )
     @compare_report = CompareReport.new(result1, result2)
   end
@@ -38,7 +38,7 @@ describe CompareReport do
     end
 
     it 'has all keys' do
-      keys = ['Duration', 'Profile', 'Data version', 'Rps', 'Test run date', 'Time cutting percent', 'Version', 'Value smoothing interval']
+      keys = ['Duration', 'Profile', 'Data version', 'Rps', 'Test run date', 'Time cutting percent', 'Version', 'Smoothing percent']
       expect(@description.keys).to match_array(keys)
     end
 

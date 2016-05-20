@@ -51,7 +51,7 @@
       <th class="small">Data version</th>
       <th class="small">Test run date</th>
       <th class="small">Time cutting percent</th>
-      <th class="small">Value smoothing interval</th>
+      <th class="small">Smoothing percent</th>
       <th class="small">Release date</th>
       <th class="small">Comment</th>
       <th class="small"></th>
@@ -74,7 +74,7 @@
           <td class="data_version nostrech"><%= result.data_version %></td>
           <td class="test_run_date nostrech"><%= result.test_run_date %></td>
           <td class="time_cutting_percent nostrech"><%= result.time_cutting_percent %></td>
-          <td class="value_smoothing_interval nostrech"><%= result.value_smoothing_interval %></td>
+          <td class="smoothing_percent nostrech"><%= result.smoothing_percent %></td>
           <td class="release_date nostrech"><%= result.release_date.try(:to_date) %></td>
           <td class="comment text-center nostrech"> <%= comment_icon(result.comment) if result.comment.present? %></td>
           <td class="actions nostrech">

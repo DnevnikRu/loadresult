@@ -13,8 +13,6 @@ class Result < ActiveRecord::Base
   validates :rps, presence: true
   validates :profile, presence: true
   validate :test_run_date_is_datetime
-  validates :value_smoothing_interval, numericality: {only_integer: true}, allow_nil: true
-  validate :value_smoothing_interval_cannot_be_even
   validate :release_date_is_date_or_blank
 
 
@@ -31,12 +29,6 @@ class Result < ActiveRecord::Base
     end
   end
 
-  def value_smoothing_interval_cannot_be_even
-    if !value_smoothing_interval.nil? && value_smoothing_interval.even?
-      errors.add(:value_smoothing_interval, 'can`t be even')
-    end
-  end
-
   def self.upload_and_create(params)
     result = Result.new(
         project_id: params['project'],
@@ -49,7 +41,7 @@ class Result < ActiveRecord::Base
         requests_data: params['requests_data'].is_a?(Hash) ? file_from_json(params, 'requests_data') : params['requests_data'],
         performance_data: params['performance_data'].is_a?(Hash) ? file_from_json(params, 'performance_data') : params['performance_data'],
         time_cutting_percent: params['time_cutting_percent'].blank? ? 0 : params['time_cutting_percent'],
-        value_smoothing_interval: params['value_smoothing_interval'],
+        smoothing_percent: params['smoothing_percent'].blank? ? 0 : params['smoothing_percent'],
         release_date: params['release_date']
     )
     result.save
@@ -75,7 +67,7 @@ class Result < ActiveRecord::Base
 
   def self.update_and_recalculate(result, params)
     previous_time_cut_percent = result.time_cutting_percent
-    previous_smooth_interval = result.value_smoothing_interval
+    previous_smooth_percent = result.smoothing_percent
     result.update(
         project_id: params[:project],
         version: params[:version],
@@ -84,15 +76,15 @@ class Result < ActiveRecord::Base
         profile: params[:profile],
         data_version: params[:data_version],
         time_cutting_percent: params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent],
-        value_smoothing_interval: params[:value_smoothing_interval],
+        smoothing_percent: params[:smoothing_percent].blank? ? 0 : params[:smoothing_percent],
         comment: params[:comment],
         requests_data: params[:requests_data],
         performance_data: params[:performance_data],
         release_date: params[:release_date]
     )
 
-    update_requests(result, params[:requests_data], previous_time_cut_percent, previous_smooth_interval)
-    update_performance(result, params[:performance_data], previous_time_cut_percent, previous_smooth_interval)
+    update_requests(result, params[:requests_data], previous_time_cut_percent, previous_smooth_percent)
+    update_performance(result, params[:performance_data], previous_time_cut_percent, previous_smooth_percent)
 
     result
   end
@@ -120,7 +112,12 @@ class Result < ActiveRecord::Base
     bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult, cut_percent)
     records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
     result = Result.find_by(id: result_id)
-    result.value_smoothing_interval.present? ? Statistics.simple_moving_average(records.map(&:value), result.value_smoothing_interval) : records.map(&:value)
+    if  result.smoothing_percent.to_i != 0
+      interval = Statistics.sma_interval(records.pluck(:value), result.smoothing_percent)
+      Statistics.simple_moving_average(records.pluck(:value), interval)
+    else
+      records.pluck(:value)
+    end
   end
 
   def self.percentile_of_values_of_requests(result_id, cut_percent)
@@ -135,8 +132,9 @@ class Result < ActiveRecord::Base
     result = Result.find_by(id: result_id)
     timestamp_min = records.minimum(:timestamp)
     data[:seconds] = records.pluck(:timestamp).map { |timestamp| (timestamp - timestamp_min) / 1000 }
-    data[:values] = if result.value_smoothing_interval.present?
-                      Statistics.simple_moving_average(records.pluck(:value), result.value_smoothing_interval)
+    data[:values] = if result.smoothing_percent.to_i != 0
+                      interval = Statistics.sma_interval(records.pluck(:value), result.smoothing_percent)
+                      Statistics.simple_moving_average(records.pluck(:value), interval)
                     else
                       records.pluck(:value)
                     end
@@ -152,8 +150,9 @@ class Result < ActiveRecord::Base
       result = Result.find_by(id: result_id)
       timestamp_min = records.minimum(:timestamp)
       data[label][:seconds] = records.pluck(:timestamp).map { |timestamp| (timestamp - timestamp_min) / 1000 }
-      data[label][:values] = if result.value_smoothing_interval.present?
-                               Statistics.simple_moving_average(records.pluck(:value), result.value_smoothing_interval)
+      data[label][:values] = if result.smoothing_percent.to_i != 0
+                               interval = Statistics.sma_interval(records.pluck(:value), result.smoothing_percent)
+                               Statistics.simple_moving_average(records.pluck(:value), interval)
                              else
                                records.pluck(:value)
                              end
@@ -163,7 +162,7 @@ class Result < ActiveRecord::Base
 
   def description
     description = {}
-    %w(version rps duration profile test_run_date time_cutting_percent value_smoothing_interval).each do |key|
+    %w(version rps duration profile test_run_date time_cutting_percent smoothing_percent).each do |key|
       description[key.humanize] = self.send(key)
     end
     description
@@ -188,7 +187,7 @@ class Result < ActiveRecord::Base
 
   private
 
-  def self.update_requests(result, requests_data, previous_time_cut_percent, previous_smooth_interval)
+  def self.update_requests(result, requests_data, previous_time_cut_percent, previous_smooth_percent)
     if requests_data.present?
       result.requests_data = requests_data
       validate_requests_data(result)
@@ -200,13 +199,13 @@ class Result < ActiveRecord::Base
     else
       if result.errors.empty? &&
           (previous_time_cut_percent != result.time_cutting_percent ||
-              previous_smooth_interval != result.value_smoothing_interval)
+              previous_smooth_percent != result.smoothing_percent)
         calc_request_data(result)
       end
     end
   end
 
-  def self.update_performance(result, performance_data, previous_time_cut_percent, previous_smooth_interval)
+  def self.update_performance(result, performance_data, previous_time_cut_percent, previous_smooth_percent)
     if performance_data.present?
       result.performance_data = performance_data
       validate_performance_data(result)
@@ -219,7 +218,7 @@ class Result < ActiveRecord::Base
       if result.errors.empty? &&
           result.performance_results.present? &&
           (previous_time_cut_percent != result.time_cutting_percent ||
-              previous_smooth_interval != result.value_smoothing_interval)
+              previous_smooth_percent != result.smoothing_percent)
         calc_performance_data(result)
       end
     end
@@ -238,7 +237,7 @@ class Result < ActiveRecord::Base
       records = RequestsResult.where(where_conditional(result.id, label, bottom_timestamp, top_timestamp))
       unless records.empty?
         data = records.pluck(:value)
-        data = Statistics.simple_moving_average(data, result.value_smoothing_interval) if result.value_smoothing_interval.present?
+        data = Statistics.simple_moving_average(data, Statistics.sma_interval(data, result.smoothing_percent)) if result.smoothing_percent.to_i != 0
         calculated_request_result.update_attributes!(
             mean: Statistics.average(data).round(2),
             median: Statistics.median(data).round(2),
@@ -271,7 +270,7 @@ class Result < ActiveRecord::Base
       records = PerformanceResult.where(where_conditional(result.id, label, bottom_timestamp, top_timestamp))
       if records
         data = records.pluck(:value)
-        data = Statistics.simple_moving_average(data, result.value_smoothing_interval) if result.value_smoothing_interval.present?
+        data = Statistics.simple_moving_average(data, Statistics.sma_interval(data, result.smoothing_percent)) if result.smoothing_percent != 0
         calculated_performance_result.update_attributes!(
             mean: Statistics.average(data).round(2),
             max: data.max,

@@ -43,6 +43,13 @@ module Statistics
     data.inject(:+) / data.count.to_f
   end
 
+  def self.sma_interval(data, percent)
+    interval = (data.count * (percent / 100.0)).to_i
+    interval -= 1 if interval.even?
+    interval = 1 if interval < 1
+    interval
+  end
+
   private
 
   def self.split_interval(data, interval)

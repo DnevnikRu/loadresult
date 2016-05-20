@@ -33,18 +33,6 @@ describe Result do
     expect { create(:result, :test_run_date => 'das') }.to raise_error(ActiveRecord::RecordInvalid)
   end
 
-  it 'invalid with string value_smoothing_interval' do
-    expect(build(:result, :value_smoothing_interval => 'das')).not_to be_valid
-  end
-
-  it 'invalid with even value_smoothing_interval' do
-    expect(build(:result, :value_smoothing_interval => 4)).not_to be_valid
-  end
-
-  it 'valid without value_smoothing_interval' do
-    expect(build(:result, :value_smoothing_interval => nil)).to be_valid
-  end
-
   it 'has many requests_result' do
     result = create(:result)
     create(:requests_result, result_id: result.id)
@@ -315,24 +303,6 @@ describe Result do
         }
         result = Result.upload_and_create(params)
         expect(result.errors).to match_array(['Request data is required'])
-        @summary.close
-      end
-
-      it 'value_smoothing_interval presence but even' do
-        @summary.open
-        requests_data = ActionDispatch::Http::UploadedFile.new(tempfile: @summary, filename: 'summary.csv')
-        params = {
-            'project' => 1,
-            'version' => 'asd',
-            'duration' => 123,
-            'rps' => 150,
-            'profile' => 'asd',
-            'test_run_date' => '2016-02-11 11:21',
-            'requests_data' => requests_data,
-            'value_smoothing_interval' => 4
-        }
-        result = Result.upload_and_create(params)
-        expect(result.errors).to match_array(['Value smoothing interval can`t be even'])
         @summary.close
       end
 
@@ -961,7 +931,7 @@ describe Result do
                                                 duration: @result.duration,
                                                 rps: @result.rps,
                                                 profile: @result.profile,
-                                                value_smoothing_interval: 3,
+                                                smoothing_percent: 3,
                                                 time_cutting_percent: '10'})
         expect(CalculatedPerformanceResult.where(result_id: @result.id).pluck(:mean)[0]).to eql 231.83
       end

@@ -11,7 +11,7 @@ describe 'Editing a result' do
           duration: '100',
           profile: 'main',
           time_cutting_percent: '10',
-          value_smoothing_interval: '11',
+          smoothing_percent: '11',
           release_date: '2011-11-11 11:00:01',
           comment: 'It is just a comment'
       )
@@ -36,7 +36,7 @@ describe 'Editing a result' do
       fill_in 'profile', with: 'New profile'
       fill_in 'data_version', with: 'Current data version'
       fill_in 'time_cutting_percent', with: '20'
-      fill_in 'value_smoothing_interval', with: '3'
+      fill_in 'smoothing_percent', with: '3'
       fill_in 'release_date', with: '12.12.2016 10:00'
       fill_in 'comment', with: 'New comment'
       click_button 'Update'
@@ -51,7 +51,7 @@ describe 'Editing a result' do
         expect(find('.profile')).to have_content('New profile')
         expect(find('.data_version')).to have_content('Current data version')
         expect(find('.time_cutting_percent')).to have_content('20')
-        expect(find('.value_smoothing_interval')).to have_content('3')
+        expect(find('.smoothing_percent')).to have_content('3')
         expect(find('.release_date')).to have_content('2016-12-12')
         within('.comment') { expect(find('.glyphicon-envelope')).to_not be_nil }
       end
@@ -76,7 +76,7 @@ describe 'Editing a result' do
           duration: '100',
           profile: 'main',
           time_cutting_percent: '10',
-          value_smoothing_interval: '11',
+          smoothing_percent: '11',
           release_date: '2011-11-11 11:00:01',
           comment: 'It is just a comment'
       )
@@ -100,7 +100,7 @@ describe 'Editing a result' do
         expect(find('.profile')).to have_content(@result.profile)
         expect(find('.data_version')).to have_content(@result.data_version)
         expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
-        expect(find('.value_smoothing_interval')).to have_content(@result.value_smoothing_interval)
+        expect(find('.smoothing_percent')).to have_content(@result.smoothing_percent)
         expect(find('.release_date')).to have_content(@result.release_date.to_date)
         within('.comment') { expect(find('.glyphicon-envelope')).to_not be_nil }
       end
@@ -149,7 +149,7 @@ describe 'Editing a result' do
           profile: 'main',
           data_version: 'Current data version',
           time_cutting_percent: '10',
-          value_smoothing_interval: '11',
+          smoothing_percent: '11',
           release_date: '2011-11-11 11:00:01',
           comment: 'It is just a comment'
       )
@@ -168,7 +168,7 @@ describe 'Editing a result' do
       fill_in 'profile', with: ''
       fill_in 'data_version', with: ''
       fill_in 'time_cutting_percent', with: ''
-      fill_in 'value_smoothing_interval', with: ''
+      fill_in 'smoothing_percent', with: ''
       fill_in 'release_date', with: ''
       fill_in 'comment', with: ''
       click_button 'Update'
@@ -193,7 +193,7 @@ describe 'Editing a result' do
           expect(find('.profile')).to have_content(@result.profile)
           expect(find('.data_version')).to have_content(@result.data_version)
           expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
-          expect(find('.value_smoothing_interval')).to have_content(@result.value_smoothing_interval)
+          expect(find('.smoothing_percent')).to have_content(@result.smoothing_percent)
           expect(find('.release_date')).to have_content(@result.release_date.to_date)
           within('.comment') { expect(find('.glyphicon-envelope')).to_not be_nil }
         end
@@ -212,7 +212,7 @@ describe 'Editing a result' do
           profile: 'main',
           data_version: 'Current data version',
           time_cutting_percent: '10',
-          value_smoothing_interval: '11',
+          smoothing_percent: '11',
           release_date: '2011-11-11 11:00:01',
           comment: 'It is just a comment'
       )

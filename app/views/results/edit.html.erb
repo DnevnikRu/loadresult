@@ -50,9 +50,7 @@
             <%= label_tag :release_date, nil, class: "control-label" %>
             <div class="input-group date datetimepicker2">
               <%= text_field_tag :release_date, flash[:release_date], class: 'form-control', placeholder: '10.02.2016 18:59' %>
-              <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-              </span>
+              <%= calendar_button.html_safe %>
             </div>
           </div>
 

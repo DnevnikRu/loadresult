@@ -112,5 +112,10 @@ feature 'Upload load result' do
 
       expect(page).to have_current_path(results_path)
     end
+
+    scenario 'It is possible to choose datetime with the datetime picker' do
+      all('.calendar-button').first.click
+      expect(find_field('test_run_date').value).to_not be_empty
+    end
   end
 end

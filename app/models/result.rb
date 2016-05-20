@@ -112,7 +112,7 @@ class Result < ActiveRecord::Base
     bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult, cut_percent)
     records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
     result = Result.find_by(id: result_id)
-    if  result.smoothing_percent != 0
+    if  result.smoothing_percent.to_i != 0
       interval = Statistics.sma_interval(records.pluck(:value), result.smoothing_percent)
       Statistics.simple_moving_average(records.pluck(:value), interval)
     else
@@ -132,7 +132,7 @@ class Result < ActiveRecord::Base
     result = Result.find_by(id: result_id)
     timestamp_min = records.minimum(:timestamp)
     data[:seconds] = records.pluck(:timestamp).map { |timestamp| (timestamp - timestamp_min) / 1000 }
-    data[:values] = if result.smoothing_percent != 0
+    data[:values] = if result.smoothing_percent.to_i != 0
                       interval = Statistics.sma_interval(records.pluck(:value), result.smoothing_percent)
                       Statistics.simple_moving_average(records.pluck(:value), interval)
                     else
@@ -150,7 +150,7 @@ class Result < ActiveRecord::Base
       result = Result.find_by(id: result_id)
       timestamp_min = records.minimum(:timestamp)
       data[label][:seconds] = records.pluck(:timestamp).map { |timestamp| (timestamp - timestamp_min) / 1000 }
-      data[label][:values] = if result.smoothing_percent != 0
+      data[label][:values] = if result.smoothing_percent.to_i != 0
                                interval = Statistics.sma_interval(records.pluck(:value), result.smoothing_percent)
                                Statistics.simple_moving_average(records.pluck(:value), interval)
                              else
@@ -237,7 +237,7 @@ class Result < ActiveRecord::Base
       records = RequestsResult.where(where_conditional(result.id, label, bottom_timestamp, top_timestamp))
       unless records.empty?
         data = records.pluck(:value)
-        data = Statistics.simple_moving_average(data, Statistics.sma_interval(data, result.smoothing_percent)) if result.smoothing_percent != 0
+        data = Statistics.simple_moving_average(data, Statistics.sma_interval(data, result.smoothing_percent)) if result.smoothing_percent.to_i != 0
         calculated_request_result.update_attributes!(
             mean: Statistics.average(data).round(2),
             median: Statistics.median(data).round(2),

@@ -34,6 +34,12 @@ describe Statistics do
       expect(Statistics.simple_moving_average(actual_data,3)).to match_array(expect_data)
     end
 
+    it 'interval equal 1' do
+      data = [1,2,3]
+      interval = 1
+      expect(Statistics.simple_moving_average(data, interval)).to match_array data
+    end
+
   end
 
   describe '.percentile' do
@@ -91,5 +97,27 @@ describe Statistics do
       expect(actual_array).to match_array(expected_array)
     end
 
+  end
+
+  describe '.sma_interval' do
+    it '10 percent of data' do
+      data = (0...100).to_a
+      expect(Statistics.sma_interval(data, 10)).to eql 9
+    end
+
+    it 'small data and big percent' do
+      data = (0...5).to_a
+      expect(Statistics.sma_interval(data, 60)).to eql 3
+    end
+
+    it 'small data and small percent' do
+      data = (0...5).to_a
+      expect(Statistics.sma_interval(data, 10)).to eql 1
+    end
+
+    it '0 percent of data' do
+      data = (0...100).to_a
+      expect(Statistics.sma_interval(data, 0)).to eql 1
+    end
   end
 end

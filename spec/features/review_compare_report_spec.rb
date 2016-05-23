@@ -65,7 +65,6 @@ feature 'Review compare report' do
 
   scenario 'Click on a Show historgram of response time plot button shows a plot' do
     visit compare_path(result: [@result1.id, @result2.id])
-    click_on 'Requests Data'
     show_plot_btn = find('.requests-histogram-plot-button')
     show_plot_btn.click
 
@@ -76,7 +75,6 @@ feature 'Review compare report' do
 
   scenario 'Click on a Show requests values to seconds button shows a plot' do
     visit compare_path(result: [@result1.id, @result2.id])
-    click_on 'Requests Data'
     show_plot_btn = find('.requests-time-plot-button')
     show_plot_btn.click
 
@@ -87,7 +85,6 @@ feature 'Review compare report' do
 
   scenario 'Show a plot button opens a performance plot' do
     visit compare_path(result: [@result1.id, @result2.id])
-    click_on 'Performance results'
     show_plot_btn = find_button 'Show a plot'
     show_plot_btn.click
 

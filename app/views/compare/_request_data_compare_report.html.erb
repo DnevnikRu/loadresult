@@ -92,16 +92,14 @@
             <td class="hidden-row"></td>
           </tr>
           <% @compare_report.request_labels.each do |label| %>
-              <% anchor_id = Digest::MD5.bubblebabble(label) %>
               <% requests_histogram_uniq_id = Digest::MD5.bubblebabble(label + '1') %>
               <% requests_seconds_to_values_uniq_id = Digest::MD5.bubblebabble(label + '2') %>
               <tr>
                 <td class="labelResult">
-                  <%= content_tag 'span', nil, {id: anchor_id, class: 'request-bookmark'} %>
+                  <% anchor_id = Digest::MD5.bubblebabble(label) %>
+                  <%= anchor(anchor_id) %>
                   <div class="bottom10"><%= label %>
-                    <%= link_to compare_path(result: [@compare_report.result1.id, @compare_report.result2.id], anchor: anchor_id), {class: 'small link-unstyled'} do %>
-                        <i class="glyphicon glyphicon-link"></i>
-                    <% end %>
+                    <%= link_to_anchor(@compare_report, anchor_id) %>
                   </div>
                   <div class="btn-group" role="group">
                     <div class="inline-block">

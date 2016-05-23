@@ -99,7 +99,7 @@
                   <% anchor_id = Digest::MD5.bubblebabble(label) %>
                   <%= anchor(anchor_id) %>
                   <div class="bottom10"><%= label %>
-                    <%= link_to_anchor(@compare_report, anchor_id) %>
+                    <%= link_to_anchor_on_compare(anchor_id, [@compare_report.result1.id, @compare_report.result2.id]) %>
                   </div>
                   <div class="btn-group" role="group">
                     <div class="inline-block">

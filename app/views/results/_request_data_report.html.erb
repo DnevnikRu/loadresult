@@ -29,7 +29,11 @@
               <% requests_seconds_to_values_uniq_id = Digest::MD5.bubblebabble(calculated_result.label + '2') %>
               <tr>
                 <td class="labelResult">
-                  <div class="bottom10"><%= calculated_result.label %></div>
+                  <% anchor_id = Digest::MD5.bubblebabble(calculated_result.label) %>
+                  <%= anchor(anchor_id) %>
+                  <div class="bottom10"><%= calculated_result.label %>
+                    <%= link_to_anchor_on_report(anchor_id, @result.id) %>
+                  </div>
                   <div class="btn-group" role="group">
                     <div class="inline-block">
                       <%= button_to(result_requests_histogram_plot_path(

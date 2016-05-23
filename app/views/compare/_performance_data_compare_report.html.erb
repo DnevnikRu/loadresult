@@ -31,7 +31,7 @@
                       <% anchor_id = Digest::MD5.bubblebabble(label) %>
                       <%= anchor(anchor_id) %>
                       <b><%= label %></b>
-                      <%= link_to_anchor(@compare_report, anchor_id) %>
+                      <%= link_to_anchor_on_compare(anchor_id, [@compare_report.result1.id, @compare_report.result2.id]) %>
                     </td>
                     <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).mean%></td>
                     <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).mean%></td>

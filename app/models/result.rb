@@ -75,6 +75,7 @@ class Result < ActiveRecord::Base
         duration: params[:duration],
         profile: params[:profile],
         data_version: params[:data_version],
+        test_run_date: params[:test_run_date],
         time_cutting_percent: params[:time_cutting_percent].blank? ? 0 : params[:time_cutting_percent],
         smoothing_percent: params[:smoothing_percent].blank? ? 0 : params[:smoothing_percent],
         comment: params[:comment],

@@ -36,16 +36,21 @@
             <%= label_tag :data_version, nil, class: "control-label" %>
             <%= text_field_tag :data_version, flash[:data_version], class: "form-control", placeholder: 'data_version' %>
           </div>
+          <div class="form-group required">
+            <%= label_tag :test_run_date, nil, class: "control-label" %>
+            <div class="input-group date datetimepicker2">
+              <%= text_field_tag :test_run_date, flash[:test_run_date], class: 'form-control', placeholder: '10.02.2016 18:59' %>
+              <%= calendar_button.html_safe %>
+            </div>
+          </div>
           <div class="form-group">
             <%= label_tag :time_cutting_percent, nil, class: "control-label" %>
             <%= text_field_tag :time_cutting_percent, flash[:time_cutting_percent], class: "form-control", placeholder: '0' %>
           </div>
-
           <div class="form-group">
             <%= label_tag :smoothing_percent, nil, class: "control-label" %>
             <%= text_field_tag :smoothing_percent, flash[:smoothing_percent], class: "form-control", placeholder: '0' %>
           </div>
-
           <div class="form-group">
             <%= label_tag :release_date, nil, class: "control-label" %>
             <div class="input-group date datetimepicker2">
@@ -53,12 +58,10 @@
               <%= calendar_button.html_safe %>
             </div>
           </div>
-
           <div class="form-group">
             <%= label_tag :comment, nil, class: "control-label" %>
             <%= text_area_tag :comment, flash[:comment], class: "form-control" %>
           </div>
-
           <div id="download_requests_data" class="<%= 'hidden' if flash[:requests_data_identifier].nil? %>">
             <%= label_tag 'Requests data', nil, class: "control-label" %>
             <div>
@@ -66,12 +69,10 @@
               <i class="fa fa-pencil-square-o" id="edit_requests_data"></i>
             </div>
           </div>
-
           <div class="form-group required <%= 'hidden' unless flash[:requests_data_identifier].nil? %>" id="upload_requests_data">
             <%= label_tag :requests_data, nil, class: "control-label" %>
             <%= file_field_tag :requests_data %>
           </div>
-
           <div id="download_performance_data" class="<%= 'hidden' if flash[:performance_data_identifier].nil? %>">
             <%= label_tag 'Performance data', nil, class: "control-label" %>
             <div>
@@ -79,12 +80,10 @@
               <i class="fa fa-pencil-square-o" id="edit_performance_data"></i>
             </div>
           </div>
-
-          <div class="form-group required <%= 'hidden' unless flash[:performance_data_identifier].nil? %>" id="upload_performance_data">
+          <div class="form-group <%= 'hidden' unless flash[:performance_data_identifier].nil? %>" id="upload_performance_data">
             <%= label_tag :performance_data, nil, class: "control-label" %>
             <%= file_field_tag :performance_data %>
           </div>
-
           <%= button_tag "Update", class: "btn btn-primary top10", 'data-disable-with' => 'Loading..' %>
       <% end %>
 

@@ -865,6 +865,7 @@ describe Result do
         Result.update_and_recalculate(@result, {project: @result.project_id,
                                                 version: @result.version,
                                                 duration: @result.duration,
+                                                test_run_date: @result.test_run_date,
                                                 rps: @result.rps,
                                                 profile: @result.profile,
                                                 time_cutting_percent: '10'})
@@ -875,6 +876,7 @@ describe Result do
         Result.update_and_recalculate(@result, {project: @result.project_id,
                                                 version: @result.version,
                                                 duration: @result.duration,
+                                                test_run_date: @result.test_run_date,
                                                 rps: @result.rps,
                                                 profile: @result.profile,
                                                 time_cutting_percent: '1'})
@@ -909,6 +911,7 @@ describe Result do
         Result.update_and_recalculate(@result, {project: @result.project_id,
                                                 version: @result.version,
                                                 duration: @result.duration,
+                                                test_run_date: @result.test_run_date,
                                                 rps: @result.rps,
                                                 profile: @result.profile,
                                                 time_cutting_percent: '10'})
@@ -919,6 +922,7 @@ describe Result do
         Result.update_and_recalculate(@result, {project: @result.project_id,
                                                 version: @result.version,
                                                 duration: @result.duration,
+                                                test_run_date: @result.test_run_date,
                                                 rps: @result.rps,
                                                 profile: @result.profile,
                                                 time_cutting_percent: '0'})
@@ -929,6 +933,7 @@ describe Result do
         Result.update_and_recalculate(@result, {project: @result.project_id,
                                                 version: @result.version,
                                                 duration: @result.duration,
+                                                test_run_date: @result.test_run_date,
                                                 rps: @result.rps,
                                                 profile: @result.profile,
                                                 smoothing_percent: 3,

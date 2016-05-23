@@ -19,6 +19,7 @@ class ResultsController < ApplicationController
     flash.now[:duration] = @result[:duration]
     flash.now[:profile] = @result[:profile]
     flash.now[:data_version] = @result[:data_version]
+    flash.now[:test_run_date] = @result[:test_run_date].try(:strftime, '%d.%m.%Y %H:%M')
     flash.now[:time_cutting_percent] = @result[:time_cutting_percent]
     flash.now[:smoothing_percent] = @result[:smoothing_percent]
     flash.now[:release_date] = @result[:release_date].try(:strftime, '%d.%m.%Y %H:%M')
@@ -37,6 +38,7 @@ class ResultsController < ApplicationController
       flash.now[:duration] = params[:duration]
       flash.now[:profile] = params[:profile]
       flash.now[:data_version] = params[:data_version]
+      flash.now[:test_run_date] = params[:test_run_date]
       flash.now[:time_cutting_percent] = params[:time_cutting_percent]
       flash.now[:smoothing_percent] = params[:smoothing_percent]
       flash.now[:release_date] = params[:release_date]

@@ -10,6 +10,7 @@ describe 'Editing a result' do
           rps: '10',
           duration: '100',
           profile: 'main',
+          test_run_date: '2013-09-09 13:00:03',
           time_cutting_percent: '10',
           smoothing_percent: '11',
           release_date: '2011-11-11 11:00:01',
@@ -35,6 +36,7 @@ describe 'Editing a result' do
       fill_in 'duration', with: '999'
       fill_in 'profile', with: 'New profile'
       fill_in 'data_version', with: 'Current data version'
+      fill_in 'test_run_date', with: '10.10.2014 14:14'
       fill_in 'time_cutting_percent', with: '20'
       fill_in 'smoothing_percent', with: '3'
       fill_in 'release_date', with: '12.12.2016 10:00'
@@ -50,6 +52,7 @@ describe 'Editing a result' do
         expect(find('.duration')).to have_content('999')
         expect(find('.profile')).to have_content('New profile')
         expect(find('.data_version')).to have_content('Current data version')
+        expect(find('.test_run_date')).to have_content('2014-10-10 14:14:00 UTC')
         expect(find('.time_cutting_percent')).to have_content('20')
         expect(find('.smoothing_percent')).to have_content('3')
         expect(find('.release_date')).to have_content('2016-12-12')
@@ -75,6 +78,7 @@ describe 'Editing a result' do
           rps: '10',
           duration: '100',
           profile: 'main',
+          test_run_date: '2013-09-09 13:00:03',
           time_cutting_percent: '10',
           smoothing_percent: '11',
           release_date: '2011-11-11 11:00:01',
@@ -99,6 +103,7 @@ describe 'Editing a result' do
         expect(find('.duration')).to have_content(@result.duration)
         expect(find('.profile')).to have_content(@result.profile)
         expect(find('.data_version')).to have_content(@result.data_version)
+        expect(find('.test_run_date')).to have_content(@result.data_version)
         expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
         expect(find('.smoothing_percent')).to have_content(@result.smoothing_percent)
         expect(find('.release_date')).to have_content(@result.release_date.to_date)
@@ -148,6 +153,7 @@ describe 'Editing a result' do
           duration: '100',
           profile: 'main',
           data_version: 'Current data version',
+          test_run_date: '2013-10-10 13:00:03',
           time_cutting_percent: '10',
           smoothing_percent: '11',
           release_date: '2011-11-11 11:00:01',
@@ -167,6 +173,7 @@ describe 'Editing a result' do
       fill_in 'duration', with: ''
       fill_in 'profile', with: ''
       fill_in 'data_version', with: ''
+      fill_in 'test_run_date', with: ''
       fill_in 'time_cutting_percent', with: ''
       fill_in 'smoothing_percent', with: ''
       fill_in 'release_date', with: ''
@@ -179,7 +186,8 @@ describe 'Editing a result' do
             Version can't be blank
             Duration can't be blank
             Rps can't be blank
-            Profile can't be blank))
+            Profile can't be blank
+            Test run date must be in a datetime))
     end
 
     context 'On the results page' do
@@ -190,6 +198,7 @@ describe 'Editing a result' do
           expect(find('.version')).to have_content(@result.version)
           expect(find('.rps')).to have_content(@result.rps)
           expect(find('.duration')).to have_content(@result.duration)
+          expect(find('.test_run_date')).to have_content(@result.time_cutting_percent)
           expect(find('.profile')).to have_content(@result.profile)
           expect(find('.data_version')).to have_content(@result.data_version)
           expect(find('.time_cutting_percent')).to have_content(@result.time_cutting_percent)
@@ -211,6 +220,7 @@ describe 'Editing a result' do
           duration: '100',
           profile: 'main',
           data_version: 'Current data version',
+          test_run_date: '2013-10-10 13:00:03',
           time_cutting_percent: '10',
           smoothing_percent: '11',
           release_date: '2011-11-11 11:00:01',

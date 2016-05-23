@@ -163,7 +163,7 @@ class Result < ActiveRecord::Base
 
   def description
     description = {}
-    %w(version rps duration profile test_run_date time_cutting_percent smoothing_percent).each do |key|
+    %w(version rps duration profile data_version test_run_date time_cutting_percent smoothing_percent).each do |key|
       description[key.humanize] = self.send(key)
     end
     description

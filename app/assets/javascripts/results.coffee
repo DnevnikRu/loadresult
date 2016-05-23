@@ -1,3 +1,8 @@
+focusAnchor = () ->
+  $('.focused-request').removeClass('focused-request')
+  anchorId = $(location).attr('hash')
+  $(anchorId).parent().parent().addClass('focused-request')
+
 ready = ->
   $('#results-table tbody tr').click (event) ->
     return if event.target.className.match(/glyphicon/)
@@ -25,5 +30,9 @@ ready = ->
     $('#upload_performance_data').toggleClass('hidden')
     $('#download_performance_data').addClass('hidden')
 
+  focusAnchor()
+
 $(document).ready(ready)
 $(document).on('page:load', ready)
+
+$(window).on('hashchange', focusAnchor)

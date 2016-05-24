@@ -1,25 +1,30 @@
 $('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
 
 var result1 = {
-    x: <%= @result1_data %>,
-    opacity: 0.75,
-    name: 'id:<%= params[:result1_id] %>',
-    type: 'histogram'
+  x: <%= @result1_data %>,
+  opacity: 0.75,
+  name: '<%= params[:version1]%> (<%= params[:test_run_date1]%>)',
+  type: 'histogram'
 };
 var result2 = {
-    x: <%= @result2_data %>,
-    opacity: 0.75,
-    name: 'id:<%= params[:result2_id] %>',
-    type: 'histogram'
+  x: <%= @result2_data %>,
+  opacity: 0.75,
+  name: '<%= params[:version2]%> (<%= params[:test_run_date2]%>)',
+  type: 'histogram'
 };
 var layout = {
-    title: 'Histogram of response time',
-    xaxis: {
-        title: 'Response time, ms'
-    },
-    yaxis: {
-        title: 'Number of requests'
-    },
-    barmode: 'overlay'
+  title: 'Histogram of response time',
+  xaxis: {
+    title: 'Response time, ms'
+  },
+  yaxis: {
+    title: 'Number of requests'
+  },
+  legend: {
+    orientation: 'h',
+    x: 0.3,
+    y: -0.3
+  },
+  barmode: 'overlay'
 };
 Plotly.newPlot('<%= "#{@plot_id}_div" %>', [result1, result2], layout);

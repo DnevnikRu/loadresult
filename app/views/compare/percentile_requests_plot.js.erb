@@ -8,7 +8,7 @@ for (var i = 1; i <= 100; i++) {
 var result1 = {
   x: one_to_100,
   y: <%= @result1_data %>,
-  name: 'id:<%= params[:result1_id] %>',
+  name: '<%= params[:version1]%> (<%= params[:test_run_date1]%>)',
   mode: 'lines',
   line: {shape: 'spline'},
   type: 'scatter'
@@ -17,7 +17,7 @@ var result1 = {
 var result2 = {
   x: one_to_100,
   y: <%= @result2_data %>,
-  name: 'id:<%= params[:result2_id] %>',
+  name: '<%= params[:version2]%> (<%= params[:test_run_date2]%>)',
   mode: 'lines',
   line: {shape: 'spline'},
   type: 'scatter'
@@ -29,6 +29,11 @@ var layout = {
   },
   yaxis: {
     title: 'Response time, ms'
+  },
+  legend: {
+    orientation: 'h',
+    x: 0.3,
+    y: -0.3
   }
 };
 Plotly.newPlot('percentile_requests_plot', [result1, result2], layout);

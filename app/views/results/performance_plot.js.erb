@@ -8,7 +8,7 @@ var lines = [];
   var label_plot = {
     x: <%= data[:seconds] %>,
     y: <%= data[:values] %>,
-    name: '<%= "#{label} (id:#{params[:result_id]})" %>',
+    name: '<%= label %>',
     mode: 'lines',
     line: {
       color: colors_dup.shift()

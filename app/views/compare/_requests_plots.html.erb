@@ -2,6 +2,10 @@
     compare_all_requests_histogram_plot_path(
       result1_id: @compare_report.result1.id,
       result2_id: @compare_report.result2.id,
+      version1: @compare_report.result1.version,
+      version2: @compare_report.result2.version,
+      test_run_date1: @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M'),
+      test_run_date2: @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M'),
       result1_time_cut: @compare_report.result1.time_cutting_percent,
       result2_time_cut: @compare_report.result2.time_cutting_percent
     ),
@@ -18,6 +22,10 @@
     compare_percentile_requests_plot_path(
       result1_id: @compare_report.result1.id,
       result2_id: @compare_report.result2.id,
+      version1: @compare_report.result1.version,
+      version2: @compare_report.result2.version,
+      test_run_date1: @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M'),
+      test_run_date2: @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M'),
       result1_time_cut: @compare_report.result1.time_cutting_percent,
       result2_time_cut: @compare_report.result2.time_cutting_percent
     ),

@@ -1,7 +1,7 @@
 focusAnchor = () ->
-  $('.focused-request').removeClass('focused-request')
+  $('.focused-result').removeClass('focused-result')
   anchorId = $(location).attr('hash')
-  $(anchorId).parent().parent().addClass('focused-request')
+  $(anchorId).parent().parent().addClass('focused-result')
 
 ready = ->
   $('#results-table tbody tr').click (event) ->

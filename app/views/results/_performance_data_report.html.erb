@@ -26,7 +26,7 @@
                     <td>
                       <% anchor_id = Digest::MD5.bubblebabble(label) %>
                       <%= anchor(anchor_id) %>
-                      <b><%= label %></b>
+                      <%= label %>
                       <%= link_to_anchor_on_report(anchor_id, @result.id) %>
                     </td>
                     <td><%= @result.calculated_performance_results.find_by(label: label).mean%></td>

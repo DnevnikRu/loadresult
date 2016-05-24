@@ -37,12 +37,12 @@ class TrendReport
     diff = []
     results.each do |result|
       if diff.empty? ||
-        diff.last[:duration] != result.duration ||
-        diff.last[:rps] != result.rps ||
-        diff.last[:profile] != result.profile ||
-        diff.last[:data_version] != result.data_version ||
-        diff.last[:time_cutting_percent] != result.time_cutting_percent ||
-        diff.last[:smoothing_percent] != result.smoothing_percent
+        diff.last[:duration].to_s != result.duration.to_s ||
+        diff.last[:rps].to_s != result.rps.to_s ||
+        diff.last[:profile].to_s != result.profile.to_s ||
+        diff.last[:data_version].to_s != result.data_version.to_s ||
+        diff.last[:time_cutting_percent].to_s != result.time_cutting_percent.to_s ||
+        diff.last[:smoothing_percent].to_s != result.smoothing_percent.to_s
         diff.push(
           ids: [result.id],
           duration: result.duration,

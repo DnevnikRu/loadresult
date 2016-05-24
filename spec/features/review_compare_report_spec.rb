@@ -183,4 +183,17 @@ feature 'Review compare report' do
       end
     end
   end
+
+  scenario 'Clicking on an anchor focus the result and modify URL' do
+    page_url = compare_path(result: [@result1.id, @result2.id])
+    visit page_url
+
+    first_anchor = first('.anchor')
+    first_anchor.click
+    tr_class = first_anchor.first(:xpath, './/..//..')[:class]
+    expect(tr_class).to include('focused-result')
+
+    url_addition = current_url.split(page_url)[1]
+    expect(url_addition).to match(/^#\w{5}-\w{5}-\w{5}-\w{5}-\w{5}-\w{5}-\w{5}-\w{5}-\w{5}$/)
+  end
 end

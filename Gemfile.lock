@@ -261,7 +261,7 @@ DEPENDENCIES
   coffee-rails (~> 4.1.0)
   database_cleaner (~> 1.5.1)
   factory_girl_rails (~> 4.6)
-  filterrific
+  filterrific (~> 2.0)
   font-awesome-sass
   jbuilder (~> 2.0)
   jquery-rails (~> 4.1)

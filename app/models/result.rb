@@ -1,20 +1,6 @@
 require 'csv'
 
 class Result < ActiveRecord::Base
-
-  filterrific(
-      default_filter_params: {sorted_by: 'test_run_date_desc'},
-      available_filters: [
-          :sorted_by,
-          :version_search_query,
-          :with_project_id,
-          :release_date_gte,
-          :release_date_lt,
-          :test_run_date_gte,
-          :test_run_date_lt
-      ]
-  )
-
   has_many :performance_results, dependent: :delete_all
   has_many :requests_results, dependent: :delete_all
   has_many :calculated_requests_results, dependent: :delete_all
@@ -29,13 +15,24 @@ class Result < ActiveRecord::Base
   validate :test_run_date_is_datetime
   validate :release_date_is_date_or_blank
 
-
   mount_uploader :requests_data, ResultUploader
   mount_uploader :performance_data, ResultUploader
 
+  filterrific(
+      default_filter_params: {sorted_by: 'test_run_date_desc'},
+      available_filters: [
+          :sorted_by,
+          :version_search_query,
+          :with_project_id,
+          :release_date_gte,
+          :release_date_lt,
+          :test_run_date_gte,
+          :test_run_date_lt
+      ]
+  )
 
   scope :version_search_query, lambda { |query|
-    return nil if query.blank?
+    return if query.blank?
     terms = query.to_s.downcase.split(/\s+/)
     terms = terms.map { |e|
       ('%' + e.gsub('*', '%') + '%').gsub(/%+/, '%')
@@ -97,21 +94,19 @@ class Result < ActiveRecord::Base
   }
 
   scope :release_date_gte, lambda { |reference_time|
-    where('results.release_date >= ?', reference_time)
+    where('results.release_date >= ?', DateTime.parse(reference_time))
   }
 
   scope :release_date_lt, lambda { |reference_time|
-    where('results.release_date < ?', reference_time)
-
+    where('results.release_date < ?', DateTime.parse(reference_time))
   }
 
   scope :test_run_date_gte, lambda { |reference_time|
-    where('results.test_run_date >= ?', reference_time)
+    where('results.test_run_date >= ?', DateTime.parse(reference_time))
   }
 
   scope :test_run_date_lt, lambda { |reference_time|
-    where('results.test_run_date < ?', reference_time)
-
+    where('results.test_run_date < ?', DateTime.parse(reference_time))
   }
 
   def test_run_date_is_datetime

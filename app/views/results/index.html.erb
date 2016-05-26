@@ -16,71 +16,71 @@
     <h1>Load tests results</h1>
   </div>
 
-<div class="row bottom20 well">
-  <%= form_for_filterrific @filterrific do |f| %>
-      <div class="col-md-2">
-        Project
-        <%= f.select(
-                :with_project_id,
-                @filterrific.select_options[:with_project_id],
-                {include_blank: '- Any -'},
-                {:class => 'form-control filterrific-periodically-observed'}
-            ) %>
-      </div>
-
-      <div class="col-md-2">
-        Version
-        <%= f.text_field(
-                :version_search_query,
-                class: 'form-control filterrific-periodically-observed'
-            ) %>
-      </div>
-
-      <div class="col-md-2">
-        Release date from
-        <div class="input-group datetimepicker2">
-        <%= f.text_field(
-                :release_date_gte,
-                class: 'form-control filterrific-periodically-observed'
-            ) %>
-      <%= calendar_button.html_safe %>
+  <div class="row bottom20 well">
+    <%= form_for_filterrific @filterrific do |f| %>
+        <div class="col-md-2">
+          Project
+          <%= f.select(
+                  :with_project_id,
+                  @filterrific.select_options[:with_project_id],
+                  {include_blank: '- Any -'},
+                  {:class => 'form-control filterrific-periodically-observed'}
+              ) %>
         </div>
-      </div>
 
-      <div class="col-md-2">
-        Release date to
-        <div class="input-group datetimepicker2">
+        <div class="col-md-2">
+          Version
           <%= f.text_field(
-                  :release_date_lt,
+                  :version_search_query,
                   class: 'form-control filterrific-periodically-observed'
               ) %>
-          <%= calendar_button.html_safe %>
         </div>
-      </div>
 
-      <div class="col-md-2">
-        Test run date from
-        <div class="input-group datetimepicker2">
-          <%= f.text_field(
-                  :test_run_date_gte,
-                  class: 'form-control filterrific-periodically-observed'
-              ) %>
-          <%= calendar_button.html_safe %>
+        <div class="col-md-2">
+          Release date from
+          <div class="input-group datetimepicker2">
+            <%= f.text_field(
+                    :release_date_gte,
+                    class: 'form-control filterrific-periodically-observed'
+                ) %>
+            <%= calendar_button.html_safe %>
+          </div>
         </div>
-      </div>
 
-      <div class="col-md-2">
-        Test run date to
-        <div class="input-group datetimepicker2">
-          <%= f.text_field(
-                  :test_run_date_lt,
-                  class: 'form-control filterrific-periodically-observed'
-              ) %>
-          <%= calendar_button.html_safe %>
+        <div class="col-md-2">
+          Release date to
+          <div class="input-group datetimepicker2">
+            <%= f.text_field(
+                    :release_date_lt,
+                    class: 'form-control filterrific-periodically-observed'
+                ) %>
+            <%= calendar_button.html_safe %>
+          </div>
         </div>
-      </div>
-  <% end %>
-</div>
+
+        <div class="col-md-2">
+          Test run date from
+          <div class="input-group datetimepicker2">
+            <%= f.text_field(
+                    :test_run_date_gte,
+                    class: 'form-control filterrific-periodically-observed'
+                ) %>
+            <%= calendar_button.html_safe %>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          Test run date to
+          <div class="input-group datetimepicker2">
+            <%= f.text_field(
+                    :test_run_date_lt,
+                    class: 'form-control filterrific-periodically-observed'
+                ) %>
+            <%= calendar_button.html_safe %>
+          </div>
+        </div>
+    <% end %>
+  </div>
 
   <div class="row bottom20">
     <div class="pull-right">

@@ -2,9 +2,21 @@ class ResultsController < ApplicationController
   before_action :set_result, only: [:show, :edit, :update, :destroy, :download_requests_data, :download_performance_data, :report]
 
   def index
-    @results = Result.order(test_run_date: :desc).page params[:page]
+    @filterrific = initialize_filterrific(
+        Result,
+        params[:filterrific],
+        select_options: {
+            with_project_id: Project.options_for_select
+        }
+    ) or return
+    @results = @filterrific.find.page(params[:page])
     flash.keep(:result_ids)
     @checked_results = flash[:result_ids]
+
+  rescue ActiveRecord::RecordNotFound => e
+    puts "Had to reset filterrific params: #{ e.message }"
+    redirect_to(reset_filterrific_url(format: :html)) and return
+
   end
 
   def show

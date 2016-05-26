@@ -19,3 +19,4 @@
 //= require moment/ru
 //= require bootstrap-datetimepicker
 //= require_tree .
+//= require filterrific/filterrific-jquery

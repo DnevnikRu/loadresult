@@ -1,0 +1,74 @@
+<div id="filterrific_results">
+
+  <div>
+    <%= render_filterrific_spinner %>
+  </div>
+
+
+  <div class="form-group">
+    <%= link_to(
+            'Reset filters',
+            reset_filterrific_url,
+        ) %>
+  </div>
+
+  <table id="results-table" class="table table-striped table-bordered">
+    <thead>
+    <tr>
+      <th class="small"></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :id) %></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :project) %></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :version) %></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :rps) %></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :duration) %></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :profile) %></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :data_version) %></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :test_run_date) %></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :time_cutting_percent) %></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :smoothing_percent) %></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :release_date) %></th>
+      <th class="small"><%= filterrific_sorting_link(@filterrific, :comment) %></th>
+      <th class="small"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @results.each do |result| %>
+        <tr class="result_row">
+          <td class="check-result text-center">
+            <%= check_box_tag 'result-checkbox', result.id, @checked_results.try(:include?, result.id.to_s),
+                              class: 'result-checkbox' %>
+          </td>
+          <td class="id nostrech"><%= result.id %></td>
+          <td class="project nostrech"><%= result.project.project_name %></td>
+          <td class="version"><%= result.version %></td>
+          <td class="rps nostrech"><%= result.rps %></td>
+          <td class="duration nostrech"><%= result.duration %></td>
+          <td class="profile nostrech"><%= result.profile %></td>
+          <td class="data_version nostrech"><%= result.data_version %></td>
+          <td class="test_run_date nostrech"><%= result.test_run_date %></td>
+          <td class="time_cutting_percent nostrech"><%= result.time_cutting_percent %></td>
+          <td class="smoothing_percent nostrech"><%= result.smoothing_percent %></td>
+          <td class="release_date nostrech"><%= result.release_date.try(:to_date) %></td>
+          <td class="comment text-center nostrech"> <%= comment_icon(result.comment) if result.comment.present? %></td>
+          <td class="actions nostrech">
+            <%= link_to '<i class="glyphicon glyphicon-eye-open"></i>'.html_safe,
+                        result_path(result),
+                        class: 'showResult' %>
+            <%= link_to '<i class="glyphicon glyphicon-pencil"></i>'.html_safe,
+                        edit_result_path(result),
+                        class: 'editResult' %>
+            <%= link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe,
+                        result,
+                        class: 'destroyResult',
+                        method: :delete,
+                        data: {confirm: 'Are you sure?'} %>
+          </td>
+        </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <div id="paginator">
+    <%= paginate @results %>
+  </div>
+</div>

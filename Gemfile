@@ -21,6 +21,8 @@ gem 'capistrano-rvm', '~> 0.1.2'
 
 gem 'carrierwave', '~> 0.11.0'
 
+gem 'filterrific', '~> 2.0'
+
 group :development do
   gem 'web-console', '~> 2.0'
   gem 'spring'

@@ -15,9 +15,99 @@ class Result < ActiveRecord::Base
   validate :test_run_date_is_datetime
   validate :release_date_is_date_or_blank
 
-
   mount_uploader :requests_data, ResultUploader
   mount_uploader :performance_data, ResultUploader
+
+  filterrific(
+      default_filter_params: {sorted_by: 'test_run_date_desc'},
+      available_filters: [
+          :sorted_by,
+          :version_search_query,
+          :with_project_id,
+          :release_date_gte,
+          :release_date_lt,
+          :test_run_date_gte,
+          :test_run_date_lt
+      ]
+  )
+
+  scope :version_search_query, lambda { |query|
+    return if query.blank?
+    terms = query.to_s.downcase.split(/\s+/)
+    terms = terms.map { |e|
+      ('%' + e.gsub('*', '%') + '%').gsub(/%+/, '%')
+    }
+    where(
+        terms.map { |term|
+          "(LOWER(results.version) LIKE ? )"
+        }.join(' AND '),
+        *terms.map { |e| [e] }.flatten
+    )
+  }
+
+  scope :sorted_by, lambda { |sort_option|
+    if sort_option =~ /desc$/
+      direction = 'desc'
+      nulls_pos = 'LAST'
+    else
+      direction = 'asc'
+      nulls_pos = 'FIRST'
+    end
+    case sort_option.to_s
+      when /^test_run_date_/
+        order("results.test_run_date #{ direction }")
+      when /^version_/
+        order("LOWER(results.version) #{ direction }")
+      when /^release_date_/
+        order("results.release_date #{ direction } NULLS #{nulls_pos}")
+      when /^id_/
+        order("results.id #{ direction }")
+      when /^project_/
+        order("results.project_id #{ direction }")
+      when /^rps_/
+        order("results.rps #{ direction }")
+      when /^duration_/
+        order("results.duration #{ direction }")
+      when /^profile_/
+        order("LOWER(results.profile) #{ direction }")
+      when /^data_version_/
+        order("case when results.data_version IS NULL THEN 1
+                    when results.data_version = '' THEN 2
+                    ELSE 3
+                    end #{ direction }, results.data_version #{ direction } ")
+      when /^time_cutting_percent_/
+        order("results.time_cutting_percent #{ direction }")
+      when /^smoothing_percent_/
+        order("results.smoothing_percent #{ direction }")
+      when /^comment_/
+        order("case when results.comment IS NULL THEN 1
+                    when results.comment = '' THEN 2
+                    ELSE 3
+                    end #{ direction }, results.comment #{ direction } ")
+      else
+        raise(ArgumentError, "Invalid sort option: #{ sort_option.inspect }")
+    end
+  }
+
+  scope :with_project_id, lambda { |project_id|
+    where(projects: {id: project_id}).joins(:project)
+  }
+
+  scope :release_date_gte, lambda { |reference_time|
+    where('results.release_date >= ?', DateTime.parse(reference_time))
+  }
+
+  scope :release_date_lt, lambda { |reference_time|
+    where('results.release_date < ?', DateTime.parse(reference_time))
+  }
+
+  scope :test_run_date_gte, lambda { |reference_time|
+    where('results.test_run_date >= ?', DateTime.parse(reference_time))
+  }
+
+  scope :test_run_date_lt, lambda { |reference_time|
+    where('results.test_run_date < ?', DateTime.parse(reference_time))
+  }
 
   def test_run_date_is_datetime
     errors.add(:test_run_date, 'must be in a datetime format') if test_run_date.nil?
@@ -113,7 +203,7 @@ class Result < ActiveRecord::Base
     bottom_timestamp, top_timestamp = border_timestamps(result_id, RequestsResult, cut_percent)
     records = RequestsResult.where(where_conditional(result_id, label, bottom_timestamp, top_timestamp))
     result = Result.find_by(id: result_id)
-    if  result.smoothing_percent.to_i != 0
+    if result.smoothing_percent.to_i != 0
       interval = Statistics.sma_interval(records.pluck(:value), result.smoothing_percent)
       Statistics.simple_moving_average(records.pluck(:value), interval)
     else
@@ -257,9 +347,9 @@ class Result < ActiveRecord::Base
     calculated_request_result = CalculatedRequestsResult.find_or_create_by(result_id: result.id, label: 'all_requests')
     calculated_request_result.update_attributes!(
         mean: Statistics.average(values),
-    median: Statistics.median(values),
-    ninety_percentile: Statistics.percentile(values, 90),
-    throughput: RequestsUtils.throughput(values, bottom_timestamp, top_timestamp)
+        median: Statistics.median(values),
+        ninety_percentile: Statistics.percentile(values, 90),
+        throughput: RequestsUtils.throughput(values, bottom_timestamp, top_timestamp)
     )
   end
 

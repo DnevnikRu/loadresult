@@ -1,9 +1,4 @@
-focusAnchor = () ->
-  $('.focused-result').removeClass('focused-result')
-  anchorId = $(location).attr('hash')
-  $(anchorId).parent().parent().addClass('focused-result')
-
-ready = ->
+checkResults = ->
   $('#results-table tbody tr').click (event) ->
     return if event.target.className.match(/glyphicon/)
     checkbox = $(':checkbox', this)
@@ -30,9 +25,8 @@ ready = ->
     $('#upload_performance_data').toggleClass('hidden')
     $('#download_performance_data').addClass('hidden')
 
-  focusAnchor()
+ready = ->
+  checkResults()
 
 $(document).ready(ready)
 $(document).on('page:load', ready)
-
-$(window).on('hashchange', focusAnchor)

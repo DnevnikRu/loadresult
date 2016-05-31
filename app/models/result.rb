@@ -63,7 +63,7 @@ class Result < ActiveRecord::Base
       when /^id_/
         order("results.id #{ direction }")
       when /^project_/
-        order("results.project_id #{ direction }")
+        joins(:project).order("projects.project_name #{ direction }, results.project_id #{ direction }" )
       when /^rps_/
         order("results.rps #{ direction }")
       when /^duration_/
@@ -71,18 +71,16 @@ class Result < ActiveRecord::Base
       when /^profile_/
         order("LOWER(results.profile) #{ direction }")
       when /^data_version_/
-        order("case when results.data_version IS NULL THEN 1
-                    when results.data_version = '' THEN 2
-                    ELSE 3
+        order("case when results.data_version IS NULL or results.data_version = '' THEN 1
+                    ELSE 2
                     end #{ direction }, results.data_version #{ direction } ")
       when /^time_cutting_percent_/
         order("results.time_cutting_percent #{ direction }")
       when /^smoothing_percent_/
         order("results.smoothing_percent #{ direction }")
       when /^comment_/
-        order("case when results.comment IS NULL THEN 1
-                    when results.comment = '' THEN 2
-                    ELSE 3
+        order("case when results.comment IS NULL or results.comment = '' THEN 1
+                    ELSE 2
                     end #{ direction }, results.comment #{ direction } ")
       else
         raise(ArgumentError, "Invalid sort option: #{ sort_option.inspect }")

@@ -33,11 +33,10 @@ groups = [{
               labels: [PerformanceLabel.create(label: 'EXEC SQLServer User connections')]
           },
           {
-              name: 'Memory',
+              name: 'Memory Available',
               units: 'Mb',
               trend_limit: 10,
-              labels: [PerformanceLabel.create(label: 'Memory Memory\Available'),
-                       PerformanceLabel.create(label: 'Memory')]
+              labels: [PerformanceLabel.create(label: 'Memory Memory\Available')]
           },
           {
               name: 'Memory Page Faults',

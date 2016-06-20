@@ -308,7 +308,7 @@ feature 'Review trend report' do
     scenario 'All performance group present in performance section' do
       visit trend_path(result: [@result1.id, @result3.id])
 
-      expect(find('#performance-group').text).to eq('Processor Memory Network traffic')
+      expect(find('#performance-group').text).to eq('Processor Memory Available Network traffic')
     end
 
     scenario 'Click on button with performance group name' do

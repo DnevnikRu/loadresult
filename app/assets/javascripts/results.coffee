@@ -1,4 +1,4 @@
-checkResults = ->
+@checkResults = ->
   $('#results-table tbody tr').click (event) ->
     return if event.target.className.match(/glyphicon/)
     checkbox = $(':checkbox', this)
@@ -17,6 +17,7 @@ checkResults = ->
       })
     toggleRequest() unless checkbox.is(":disabled")
 
+saveFiles = ->
   $('#edit_requests_data').click ->
     $('#upload_requests_data').toggleClass('hidden')
     $('#download_requests_data').addClass('hidden')
@@ -27,6 +28,7 @@ checkResults = ->
 
 ready = ->
   checkResults()
+  saveFiles()
 
 $(document).ready(ready)
 $(document).on('page:load', ready)

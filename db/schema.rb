@@ -84,7 +84,6 @@ ActiveRecord::Schema.define(version: 20160520105912) do
     t.integer  "project_id"
     t.integer  "smoothing_percent"
     t.datetime "release_date"
-    t.integer  "smoothing_percent"
     t.string   "comment"
     t.string   "data_version"
   end

@@ -195,4 +195,15 @@ feature 'Review results' do
       expect { find('.glyphicon-envelope') }.to raise_error(Capybara::ElementNotFound)
     end
   end
+
+  scenario 'Clear results button clear selected results' do
+    2.times { create(:result) }
+
+    visit '/results/'
+    page.all('.result_row').each(&:click)
+    wait_for_ajax
+    find('#clear-results').click
+
+    expect(page).to_not have_content("Selected results")
+  end
 end

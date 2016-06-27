@@ -139,6 +139,13 @@ class ResultsController < ApplicationController
     @result_data = Result.percentile_of_values_of_requests(params[:result_id], params[:result_time_cut].to_i)
   end
 
+  def clear
+    flash[:result_ids] = []
+    respond_to do |format|
+      format.js { render inline: "location.reload();" }
+    end
+  end
+
   private
 
   def set_result

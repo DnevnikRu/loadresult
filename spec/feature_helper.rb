@@ -17,7 +17,7 @@ end
 
 RSpec.configure do |config|
   config.before(:all) do
-    Capybara.page.driver.browser.manage.window.resize_to('1024', '600')
+    Capybara.page.driver.browser.manage.window.resize_to('1600', '900')
   end
 
   config.after do |example|

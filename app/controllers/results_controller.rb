@@ -10,8 +10,6 @@ class ResultsController < ApplicationController
         }
     ) or return
     @results = @filterrific.find.page(params[:page])
-    flash.keep(:result_ids)
-    @checked_results = flash[:result_ids]
 
   rescue ActiveRecord::RecordNotFound => e
     puts "Had to reset filterrific params: #{ e.message }"
@@ -86,21 +84,6 @@ class ResultsController < ApplicationController
     redirect_to results_url, notice: 'Result was successfully destroyed.'
   end
 
-  def toggle
-    flash[:result_ids] ||= []
-    if flash[:result_ids].include? params[:result_id]
-      flash[:result_ids].delete params[:result_id]
-    else
-      flash[:result_ids].push params[:result_id]
-    end
-    flash.keep(:result_ids)
-    @checked_results = flash[:result_ids]
-
-    respond_to do |format|
-      format.js
-    end
-  end
-
   def download_requests_data
     send_file @result.requests_data.current_path
   end
@@ -110,7 +93,6 @@ class ResultsController < ApplicationController
   end
 
   def report
-
   end
 
   def performance_plot
@@ -137,13 +119,6 @@ class ResultsController < ApplicationController
 
   def percentile_requests_plot
     @result_data = Result.percentile_of_values_of_requests(params[:result_id], params[:result_time_cut].to_i)
-  end
-
-  def clear
-    flash[:result_ids] = []
-    respond_to do |format|
-      format.js { render inline: "location.reload();" }
-    end
   end
 
   private

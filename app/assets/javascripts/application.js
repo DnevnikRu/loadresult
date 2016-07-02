@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require bootstrap-sprockets
 //= require plotly
+//= require js.cookie
 //= require jquery.stickytableheaders.min
 //= require moment
 //= require moment/ru

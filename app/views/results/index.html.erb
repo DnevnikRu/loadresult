@@ -19,9 +19,8 @@
 
   <div class="row bottom20">
     <div class="pull-right">
-      <span id="result-to-compare-list" class="right10">
-        <%= render 'results/result_to_compare_list' %>
-      </span>
+      <button id="clear-results" class="btn btn-link" style="display: none;">x</button>
+      <span id="result-to-compare-list" class="right10"></span>
       <%= link_to(
               'Compare',
               compare_path(result: @checked_results),

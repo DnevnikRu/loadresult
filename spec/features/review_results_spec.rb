@@ -85,10 +85,8 @@ feature 'Review results' do
 
       visit '/results/'
       page.all('.result-checkbox').first.click
-      wait_for_ajax
       click_on 'Next ›'
       find('.result-checkbox').click
-      wait_for_ajax
       click_on 'Compare'
 
       expect(find('h1')).to have_content('Compare report')
@@ -101,10 +99,8 @@ feature 'Review results' do
     visit '/results/'
     page.all('.result-checkbox').each do |row|
       row.click
-      wait_for_ajax
     end
     click_on 'Compare'
-    wait_for_ajax
     expect(find('h1')).to have_content('Compare report')
     visit '/results/'
 
@@ -120,9 +116,7 @@ feature 'Review results' do
 
     visit '/results/'
     page.all('.result-checkbox').first.click
-    wait_for_ajax
     page.all('.result-checkbox').last.click
-    wait_for_ajax
     click_on 'Trend'
 
     expect(find('h1')).to have_content('Trend')
@@ -150,7 +144,6 @@ feature 'Review results' do
     visit '/results/'
     page.all('.result-checkbox').each do |row|
       row.click
-      wait_for_ajax
     end
 
     expect(page).to have_content("Selected results: #{result1.id}, #{result2.id}")
@@ -161,15 +154,12 @@ feature 'Review results' do
 
     visit '/results/'
     page.all('.result-checkbox')[0].click
-    wait_for_ajax
     click_on 'Compare'
-    wait_for_ajax
 
     expect(page.all('.result-checkbox')[0]).to be_checked
     expect(page.all('.result-checkbox')[1]).to_not be_checked
 
     click_on 'Trend'
-    wait_for_ajax
 
     expect(page.all('.result-checkbox')[0]).to be_checked
     expect(page.all('.result-checkbox')[1]).to_not be_checked
@@ -180,7 +170,6 @@ feature 'Review results' do
 
     visit '/results/'
     page.all('.result_row')[1].click
-    wait_for_ajax
 
     expect(page.all('.result-checkbox')[1]).to be_checked
     expect(page.all('.result-checkbox')[0]).to_not be_checked
@@ -201,9 +190,22 @@ feature 'Review results' do
 
     visit '/results/'
     page.all('.result_row').each(&:click)
-    wait_for_ajax
     find('#clear-results').click
 
     expect(page).to_not have_content("Selected results")
+  end
+
+  xscenario 'Only 2 results can be chosen' do
+    result1 = create(:result)
+    result2 = create(:result)
+    result3 = create(:result)
+
+    visit '/results/'
+    page.all('.result_row').each(&:click)
+
+    expect(page.all('.result-checkbox')[0][:disabled]).to_not eq('disabled')
+    expect(page.all('.result-checkbox')[1][:disabled]).to_not eq('disabled')
+    expect(page.all('.result-checkbox')[2][:disabled]).to eq('disabled')
+    expect(page.find('#selected-results').text).to eq("Selected results: #{result1.id}, #{result2.id}")
   end
 end

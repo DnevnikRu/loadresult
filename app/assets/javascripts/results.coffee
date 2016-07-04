@@ -37,8 +37,7 @@
     Cookies.remove('results')
 
   toggleCheckbox = (checkbox) ->
-    shouldCheck = if checkbox.is(':checked') then false else true
-    checkbox.prop('checked', shouldCheck)
+    checkbox.prop('checked', not checkbox.is(':checked'))
 
   $('#results-table > tbody > tr').click (event) ->
     return if event.target.className.match(/glyphicon/)
@@ -93,6 +92,7 @@
     showClearBtn()
     checkCheckboxes(results)
     setSelectedResultsText(results)
+    setLinks(results)
 
   initialize()
 

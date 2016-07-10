@@ -85,105 +85,36 @@ feature 'Review results' do
 
       visit '/results/'
       page.all('.result-checkbox').first.click
-      wait_for_ajax
       click_on 'Next ›'
       find('.result-checkbox').click
-      wait_for_ajax
       click_on 'Compare'
 
       expect(find('h1')).to have_content('Compare report')
     end
   end
 
-  scenario 'Selecting two results and clicking on Compare opens Compare page and clear checked results' do
+  scenario 'Selecting two results and clicking on Compare opens Compare page' do
     2.times { create(:result) }
 
     visit '/results/'
     page.all('.result-checkbox').each do |row|
       row.click
-      wait_for_ajax
     end
     click_on 'Compare'
-    wait_for_ajax
     expect(find('h1')).to have_content('Compare report')
-    visit '/results/'
-
-    page.all('.result-checkbox').each do |checkbox|
-      expect(checkbox).to_not be_checked
-    end
   end
 
-  scenario 'Selecting two results and clicking on Trend opens Trend page and clear checked results' do
+  scenario 'Selecting two results and clicking on Trend opens Trend page' do
     create(:result, release_date: '01.01.1978 00:01')
     create(:result, release_date: '01.01.1978 00:02')
     create(:result, release_date: '01.01.1978 00:03')
 
     visit '/results/'
     page.all('.result-checkbox').first.click
-    wait_for_ajax
     page.all('.result-checkbox').last.click
-    wait_for_ajax
     click_on 'Trend'
 
     expect(find('h1')).to have_content('Trend')
-    visit '/results/'
-
-    page.all('.result-checkbox').each do |checkbox|
-      expect(checkbox).to_not be_checked
-    end
-  end
-
-  scenario 'Results are not checked by default' do
-    10.times { create(:result) }
-
-    visit '/results/'
-
-    page.all('.result-checkbox').each do |checkbox|
-      expect(checkbox).to_not be_checked
-    end
-  end
-
-  scenario 'Text with selected ids appears' do
-    result1 = create(:result)
-    result2 = create(:result)
-
-    visit '/results/'
-    page.all('.result-checkbox').each do |row|
-      row.click
-      wait_for_ajax
-    end
-
-    expect(page).to have_content("Selected results: #{result1.id}, #{result2.id}")
-  end
-
-  scenario 'Selected results are still selected after an error on Compare or Trend page' do
-    2.times { create(:result) }
-
-    visit '/results/'
-    page.all('.result-checkbox')[0].click
-    wait_for_ajax
-    click_on 'Compare'
-    wait_for_ajax
-
-    expect(page.all('.result-checkbox')[0]).to be_checked
-    expect(page.all('.result-checkbox')[1]).to_not be_checked
-
-    click_on 'Trend'
-    wait_for_ajax
-
-    expect(page.all('.result-checkbox')[0]).to be_checked
-    expect(page.all('.result-checkbox')[1]).to_not be_checked
-  end
-
-  scenario 'Clicking on a row checks a checkbox in this row' do
-    2.times { create(:result) }
-
-    visit '/results/'
-    page.all('.result_row')[1].click
-    wait_for_ajax
-
-    expect(page.all('.result-checkbox')[1]).to be_checked
-    expect(page.all('.result-checkbox')[0]).to_not be_checked
   end
 
   scenario 'When there is no comment the comment icon is absent' do
@@ -196,14 +127,135 @@ feature 'Review results' do
     end
   end
 
-  scenario 'Clear results button clear selected results' do
-    2.times { create(:result) }
+  context 'Selecting results' do
+    scenario 'When 2 results are chosen others are disabled' do
+      result1 = create(:result)
+      result2 = create(:result)
+      result3 = create(:result)
 
-    visit '/results/'
-    page.all('.result_row').each(&:click)
-    wait_for_ajax
-    find('#clear-results').click
+      visit '/results/'
+      page.all('.result-checkbox').each(&:click)
 
-    expect(page).to_not have_content("Selected results")
+      expect(page.all('.result-checkbox')[0][:disabled]).to_not eq('true')
+      expect(page.all('.result-checkbox')[1][:disabled]).to_not eq('true')
+      expect(page.all('.result-checkbox')[2][:disabled]).to eq('true')
+      expect(page.find('#result-to-compare-list').text).to eq("Selected results: #{result1.id}, #{result2.id}")
+      expect(find('#compare-button')[:href]).to include("/compare?result[]=#{result1.id}&result[]=#{result2.id}")
+
+      page.all('.result-checkbox')[1].click
+
+      page.all('.result-checkbox').each do |result|
+        expect(result[:disabled]).to_not eq('true')
+      end
+      expect(page.find('#result-to-compare-list').text).to eq("Selected results: #{result1.id}")
+      expect(find('#compare-button')[:href]).to include("/compare")
+    end
+
+    scenario 'Refreshing browser does not clear selected results' do
+      result1 = create(:result)
+      result2 = create(:result)
+
+      visit '/results/'
+      page.all('.result-checkbox').each(&:click)
+      page.driver.browser.navigate.refresh
+
+      expect(page.find('#result-to-compare-list').text).to eq("Selected results: #{result1.id}, #{result2.id}")
+      expect(find('#compare-button')[:href]).to include("/compare?result[]=#{result1.id}&result[]=#{result2.id}")
+      page.all('.result-checkbox').each do |result|
+        expect(result).to be_checked
+      end
+    end
+
+    scenario 'Clear results button clear selected results' do
+      2.times { create(:result) }
+
+      visit '/results/'
+      page.all('.result-checkbox').each(&:click)
+      find('#clear-results').click
+
+      expect(page).to_not have_content("Selected results")
+      expect(find('#compare-button')[:href]).to include("/compare")
+      page.all('.result-checkbox').each do |result|
+        expect(result).to_not be_checked
+      end
+    end
+
+    scenario 'Clicking on a row toggles a checkbox in this row' do
+      2.times { create(:result) }
+
+      visit '/results/'
+      page.all('.result_row')[0].click
+
+      expect(page.all('.result-checkbox')[0]).to be_checked
+      expect(page.all('.result-checkbox')[1]).to_not be_checked
+
+      page.all('.result_row')[0].click
+
+      expect(page.all('.result-checkbox')[0]).to_not be_checked
+      expect(page.all('.result-checkbox')[1]).to_not be_checked
+    end
+
+    scenario 'Selected results are still selected after an error on Compare or Trend page' do
+      result1 = create(:result)
+      result2 = create(:result)
+
+      visit '/results/'
+      page.all('.result-checkbox')[0].click
+
+      %w(Compare Trend).each do |btn_text|
+        click_on btn_text
+
+        expect(page.all('.result-checkbox')[0]).to be_checked
+        expect(page.all('.result-checkbox')[1]).to_not be_checked
+        expect(page.find('#result-to-compare-list').text).to eq("Selected results: #{result1.id}")
+      end
+    end
+
+    scenario 'Clicking on Compare or Trend button clears selected results' do
+      create(:result, release_date: '01.01.1978 00:01')
+      create(:result, release_date: '01.01.1978 00:02')
+      create(:result, release_date: '01.01.1978 00:03')
+
+      %w(Compare Trend).each do |btn_text|
+        visit '/results/'
+        page.all('.result-checkbox').first.click
+        page.all('.result-checkbox').last.click
+        click_on btn_text
+        visit '/results/'
+
+        expect(page).to_not have_content("Selected results")
+        expect(find('#compare-button')[:href]).to include("/compare")
+        page.all('.result-checkbox').each do |result|
+          expect(result).to_not be_checked
+        end
+      end
+    end
+
+    scenario 'Results are not checked by default' do
+      10.times { create(:result) }
+
+      visit '/results/'
+
+      page.all('.result-checkbox').each do |checkbox|
+        expect(checkbox).to_not be_checked
+      end
+    end
+
+    scenario 'Filter does not clear results' do
+      result1 = create(:result)
+      result2 = create(:result)
+
+      visit '/results/'
+      page.all('.result-checkbox').each(&:click)
+      select 'Dnevnik', from: 'filterrific_with_project_id'
+      wait_for_ajax
+
+      expect(page.find('#result-to-compare-list').text).to eq("Selected results: #{result1.id}, #{result2.id}")
+      expect(find('#compare-button')[:href]).to include("/compare?result[]=#{result1.id}&result[]=#{result2.id}")
+      page.all('.result-checkbox').each do |result|
+        expect(result).to be_checked
+      end
+    end
   end
 end
+

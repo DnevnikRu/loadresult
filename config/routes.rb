@@ -2,7 +2,6 @@ Rails.application.routes.draw do
   root 'results#index'
 
   resources :results do
-    put 'toggle'
     member do
       get 'download_requests_data'
       get 'download_performance_data'
@@ -14,7 +13,6 @@ Rails.application.routes.draw do
   post 'result/requests_histogram_plot' => 'results#requests_histogram_plot'
   post 'result/all_requests_histogram_plot' => 'results#all_requests_histogram_plot'
   post 'result/percentile_requests_plot' => 'results#percentile_requests_plot'
-  post 'results/clear' => 'results#clear'
 
   namespace :api do
     resources :results, only: [:create]

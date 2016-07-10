@@ -14,6 +14,14 @@
     $('#compare-button').attr('href', '/compare')
     $('#trend-button').attr('href', '/trend')
 
+  disableOtherResults = (selectedResults) ->
+    for result in $(".result-checkbox")
+      unless result.value in selectedResults
+        $("input[type=checkbox][value=#{result.value}]").attr('disabled', true)
+
+  enableResults = ->
+    $(".result-checkbox").attr('disabled', false)
+
   checkCheckboxes = (results) ->
     for result in results
       $("input[type=checkbox][value=#{result}]").prop('checked', true)
@@ -27,10 +35,10 @@
   hideClearBtn = ->
     $('#clear-results').hide()
 
-  getResults = ->
+  getSavedResuls = ->
     Cookies.getJSON('results')
 
-  setResults = (results) ->
+  saveResults = (results) ->
     Cookies.set('results', results)
 
   clearResults = ->
@@ -43,30 +51,34 @@
     return if event.target.className.match(/glyphicon/)
 
     checkbox = $(':checkbox', this)
-    if event.target.type isnt 'checkbox'
-      toggleCheckbox(checkbox)
-    clickedResult = checkbox.attr("value")
+    clickedResult = checkbox.attr('value')
 
-    results = getResults()
+    results = getSavedResuls()
     results ?= []
     if clickedResult in results
+      # remove the clicked result from the saved results
       results = (e for e in results when e isnt clickedResult)
     else
+      return if results.length is 2
       results.push clickedResult
-    setResults(results)
 
+    if event.target.type isnt 'checkbox'
+      toggleCheckbox(checkbox)
     if results.length
-      showClearBtn()
       setSelectedResultsText(results)
-      if results.length > 1 then setLinks(results) else clearLinks()
+      showClearBtn()
+      if results.length < 2
+        clearLinks()
+        enableResults()
+      else if results.length is 2
+        setLinks(results)
+        disableOtherResults(results)
     else
       hideClearBtn()
       clearSelectedResultsText()
       clearLinks()
 
-  #
-  # $(".result-checkbox").attr("disabled", true)
-  # toggleRequest() unless checkbox.is(":disabled")
+    saveResults(results)
 
   $('#clear-results').click ->
     hideClearBtn()
@@ -74,17 +86,16 @@
     clearSelectedResultsText()
     clearLinks()
     uncheckCheckboxes()
+    enableResults()
 
   $('#compare-button').click ->
-    if getResults().length > 1
-      clearResults()
+    clearResults() if getSavedResuls().length > 1
 
   $('#trend-button').click ->
-    if getResults().length > 1
-      clearResults()
+    clearResults() if getSavedResuls().length > 1
 
   initialize = ->
-    results = getResults()
+    results = getSavedResuls()
     unless results?
       uncheckCheckboxes()
       return
@@ -93,6 +104,7 @@
     checkCheckboxes(results)
     setSelectedResultsText(results)
     setLinks(results)
+    disableOtherResults(results) if results.length == 2
 
   initialize()
 
@@ -111,3 +123,4 @@ ready = ->
 
 $(document).ready(ready)
 $(document).on('page:load', ready)
+

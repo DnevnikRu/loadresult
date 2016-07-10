@@ -195,7 +195,22 @@ feature 'Review results' do
     expect(page).to_not have_content("Selected results")
   end
 
-  xscenario 'Only 2 results can be chosen' do
+
+  scenario 'Refreshing browser does not clear selected results' do
+    result1 = create(:result)
+    result2 = create(:result)
+
+    visit '/results/'
+    page.all('.result_row').each(&:click)
+
+    expect(page.find('#result-to-compare-list').text).to eq("Selected results: #{result1.id}, #{result2.id}")
+    expect(find('#compare-button')[:href]).to include("/compare?result[]=#{result1.id}&result[]=#{result2.id}")
+    page.driver.browser.navigate.refresh
+    expect(page.find('#result-to-compare-list').text).to eq("Selected results: #{result1.id}, #{result2.id}")
+    expect(find('#compare-button')[:href]).to include("/compare?result[]=#{result1.id}&result[]=#{result2.id}")
+  end
+
+  scenario 'Only 2 results can be chosen' do
     result1 = create(:result)
     result2 = create(:result)
     result3 = create(:result)
@@ -206,6 +221,6 @@ feature 'Review results' do
     expect(page.all('.result-checkbox')[0][:disabled]).to_not eq('disabled')
     expect(page.all('.result-checkbox')[1][:disabled]).to_not eq('disabled')
     expect(page.all('.result-checkbox')[2][:disabled]).to eq('disabled')
-    expect(page.find('#selected-results').text).to eq("Selected results: #{result1.id}, #{result2.id}")
+    expect(page.find('#result-to-compare-list').text).to eq("Selected results: #{result1.id}, #{result2.id}")
   end
 end

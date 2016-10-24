@@ -116,4 +116,4 @@ groups.each { |group| PerformanceGroup.create(group) }
 Project.create(id: 1, project_name: 'Dnevnik')
 Project.create(id: 2, project_name: 'Contingent')
 
-load(Rails.root.join('db', 'deployment_seeds.rb')) if Rails.env == 'development'
+load(Rails.root.join('db', 'development_seeds.rb')) if Rails.env == 'development'

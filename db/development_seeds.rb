@@ -6,7 +6,7 @@ CalculatedPerformanceResult.delete_all
 
 random = Random.new(123)
 results = []
-25.times do |i|
+20.times do |i|
   result_date = "#{random.rand(1..28)}.#{random.rand(1..12)}.2016 10:00"
   results << Result.create(project_id: Project.find_by(project_name: 'Dnevnik').id,
                            version: "master-#{i+1}",

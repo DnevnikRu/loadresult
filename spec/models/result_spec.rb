@@ -721,7 +721,7 @@ describe Result do
     end
 
     it 'returns values for result id and label' do
-      expect(Result.values_of_requests(@result.id, 'first label', 10)).to eq([3, 4, 5, 6, 7, 8, 9, 10])
+      expect(Result.values_of_requests(@result.id, 'first label', 10)).to eq([2, 3, 4, 5, 6, 7, 8, 9])
     end
   end
 

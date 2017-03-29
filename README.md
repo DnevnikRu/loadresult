@@ -2,7 +2,7 @@
 
 ### Install a development environment
 
-1. Clone the repo https://stash.dnevnik.ru/projects/TF/repos/loadresult/browse
+1. Clone the repo https://github.com/DnevnikRu/loadresult.git
 2. `bundle install` to install all necessary dependencies
 3. `bundle exec rake db:setup` to create the database, load the schema and initialize it with the seed data
 5. `rails server` to run the application

@@ -418,6 +418,7 @@ class Result < ActiveRecord::Base
     return if result.errors.any?
     request_data = CSV.new(File.read(result.requests_data.current_path))
     header = request_data.first
+    # TODO: if file too big, split it and insert values in parallel threads
     requests_results = request_data.map do |line|
       "(#{result.id}, #{line[header.index('timeStamp')]},
        '#{line[header.index('label')]}', '#{line[header.index('responseCode')]}',

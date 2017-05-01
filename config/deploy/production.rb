@@ -1,9 +1,4 @@
-role :app, %w{deployer@loadresult}
-role :web, %w{deployer@loadresult}
-role :db,  %w{deployer@loadresult}
-
-
-server 'loadresult', user: 'deployer', roles: %w{web app}
+server 'loadresult', user: 'deployer', roles: %w{web app db}
 
 set :deploy_to, '/var/www/loadresult'
 set :rails_env, 'production'

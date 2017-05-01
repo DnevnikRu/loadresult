@@ -2,7 +2,7 @@
 lock '3.1.0'
 
 set :application, 'loadresult'
-set :repo_url, "https://teamsvn:#{ENV['TEAMSVN_PASSWORD']}@stash.dnevnik.ru/scm/tf/loadresult.git"
+set :repo_url, 'https://github.com/DnevnikRu/loadresult.git'
 
 set :ssh_options, {
     forward_agent: true ,

@@ -2,14 +2,14 @@
 
 #### Инструмент для генерации отчетов о нагрузочном тестировании
 
-1. [Основные фунции](##user-content-functions)
-* [Загрузка результатов](###upload_results)
-* [Отчет по одному результату](###result_report)
-* [Сравнение двух результатов](###compare_report)
-* [Тренды](###trends)
+1. [Основные фунции](#user-content-functions)
+* [Загрузка результатов](#user-content-upload_results)
+* [Отчет по одному результату](#user-content-result_report)
+* [Сравнение двух результатов](#user-content-compare_report)
+* [Тренды](#user-content-trends)
 
-2. [API](##api)
-3. [Установка](##install)
+2. [API](#user-content-api)
+3. [Установка](#user-content-install)
 
 <a name="functions"/>
 

@@ -61,6 +61,12 @@
 
 ##### Страница загрузки результатов
 
+Кроме файлов со статистикой, при добавление в приложение нового результата, необходимо указать следующие метаданные: 
+
+1. Project - проект, выбирается из списка. Позволяет в дальнейшем фильтровать результаты. На данный момент список контролируется при помощи seed.
+В дальнейшем планируется добавить возможность редактирования на отдельной странице (см. [TODO лист](#user-content-todo))
+2. 
+
 <a name="result_report"/>
 
 ### Отчет по одному результату
@@ -84,13 +90,13 @@
 
 ### Локальная
 
-1. Clone the repo https://github.com/DnevnikRu/loadresult.git
-2. `bundle install` to install all necessary dependencies
-3. `bundle exec rake db:setup` to create the database, load the schema and initialize it with the seed data
-5. `rails server` to run the application
-6. Go to `http://localhost:3000` in a browser
+1. Склонировать репозиторий https://github.com/DnevnikRu/loadresult.git
+2. Установить необходимые зависимости: `bundle install` 
+3. Создать базу данных, загрузить схему и заполнить данными: `bundle exec rake db:setup` 
+5. Запустить приложение: `rails server`
+6. Перейти на страницу `http://localhost:3000` в браузере
 
-#### Install a database
+#### Установка сервера БД
 
 ##### OS X
 
@@ -98,3 +104,12 @@
 2. `pg_ctl -D /usr/local/var/postgres start`
 3. `psql`
 4. `CREATE USER postgres SUPERUSER;`
+
+<a name="todo"/>
+
+## TODO лист: 
+ 
+ 1. Переделать загрузку файлов через API (посылать файлы отдельными запросами в multipart/form-data)
+ 2. Оптимизировать построение графиков
+ 3. Написать процедуры для бекапа (или очистки?) старых файлов с результатами
+ 4. Добавить в приложение возможность редактирования проектов и performance групп и лейблов

@@ -1,0 +1,68 @@
+<div class="container">
+  <div class="center-block" id="upload-results-container">
+    <% if alert %>
+        <div class="alert alert-danger" role="alert">
+          <% alert.each do |message| %>
+              <div><%= message %></div>
+          <% end %>
+        </div>
+    <% end %>
+    <% if notice %>
+        <div class="alert alert-success" role="alert">
+          <%= notice %>
+        </div>
+    <% end %>
+
+    <h2>Performance groups</h2>
+
+    <div class="row bottom20">
+      <div class="pull-right">
+        <%= link_to(
+                'Create new performance group',
+                new_performance_group_path,
+                class: 'btn btn-success',
+                id: 'create-button'
+            )
+        %>
+      </div>
+    </div>
+
+    <table id="pg-table" class="table table-striped table-bordered">
+      <thead>
+      <tr>
+        <th class="small"><%= :id %></th>
+        <th class="small"><%= :name %></th>
+        <th class="small"><%= :units %></th>
+        <th class="small"><%= :trend_limit %></th>
+        <th class="small"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @performance_groups.each do |group| %>
+          <tr class="group_row">
+            <td class="id"><%= group.id %></td>
+            <td class="name"><%= group.name %></td>
+            <td class="units"><%= group.units %></td>
+            <td class="trend_limit"><%= group.trend_limit %></td>
+            <td class="actions nostrech">
+              <%= link_to '<i class="glyphicon glyphicon-eye-open"></i>'.html_safe,
+                          performance_group_path(group),
+                          class: 'showResult' %>
+              <%= link_to '<i class="glyphicon glyphicon-pencil"></i>'.html_safe,
+                          edit_performance_group_path(group),
+                          class: 'editGroup' %>
+              <%= link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe,
+                          group,
+                          class: 'destroyGroup',
+                          method: :delete,
+                          data: {confirm: 'Deleting group will cause deleting all labels of this group. Are you sure?'}
+              %>
+            </td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>

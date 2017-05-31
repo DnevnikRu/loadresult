@@ -20,6 +20,11 @@
           <%= link_to 'Projects', project_index_path %>
         </li>
       </ul>
+      <ul class="nav navbar-nav navbar-left">
+        <li class="<%= 'active' if params[:controller] == 'project' && action_name == "index" %>">
+          <%= link_to 'Performance groups and labels', performance_groups_path %>
+        </li>
+      </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="<%= 'active' if action_name == "new"%>">
           <%= link_to 'Upload results', new_result_path %>

@@ -9,10 +9,15 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :project do
+  resources :project
+
+  resources :performance_groups do
     member do
+      resources :performance_labels
     end
   end
+
+  resources :performance_labels
 
   post 'result/performance_plot' => 'results#performance_plot'
   post 'result/requests_seconds_to_values_plot' => 'results#requests_seconds_to_values_plot'

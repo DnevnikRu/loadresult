@@ -27,7 +27,7 @@ class PerformanceLabelsController < ApplicationController
   def update
     label = PerformanceLabel.edit_label(@label, params)
     if label.errors.empty?
-      redirect_to(performance_group_performance_labels_path, notice: 'Label was successfully updated.')
+      redirect_to(:back, notice: 'Label was successfully updated.')
     else
       flash.now[:label] = params[:label]
       flash.now[:alert] = group.errors.full_messages

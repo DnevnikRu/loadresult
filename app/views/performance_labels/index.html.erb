@@ -1,0 +1,68 @@
+<div class="container">
+  <div class="center-block" id="upload-results-container">
+
+    <% if alert %>
+        <div class="alert alert-danger" role="alert">
+          <% alert.each do |message| %>
+              <div><%= message %></div>
+          <% end %>
+        </div>
+    <% end %>
+    <% if notice %>
+        <div class="alert alert-success" role="alert">
+          <%= notice %>
+        </div>
+    <% end %>
+
+    <h3>Performance group</h3>
+    <table id="pg-table-one" class="table table-striped table-bordered">
+      <thead>
+      <tr>
+        <th class="small">Name</th>
+        <th class="small">Units</th>
+        <th class="small">Trend limit</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="group_row">
+        <td class="name"><%= @group.name %></td>
+        <td class="units"><%= @group.units %></td>
+        <td class="trend_limit"><%= @group.trend_limit %></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <h4>Performance labels</h4>
+    <table id="label-table" class="table table-striped table-bordered">
+      <thead>
+      <tr>
+        <th class="small">Label</th>
+        <th class="small"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @labels.each do |label| %>
+          <tr class="label_row">
+            <td class="label_not"><%= label.label %></td>
+            <td class="actions nostrech">
+              <%= link_to '<i class="glyphicon glyphicon-pencil"></i>'.html_safe,
+                          edit_performance_group_performance_label_path(label.performance_group_id, label.id),
+                          class: 'editLabel' %>
+              <%= link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe,
+                          performance_group_performance_label_path(label.performance_group_id, label.id),
+                          :method  => :delete,
+                          data: {confirm: 'Are you sure?'}
+              %>
+              </td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= render(
+            partial: 'performance_labels/new_label',
+        ) %>
+
+  </div>
+</div>

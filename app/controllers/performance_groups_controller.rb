@@ -3,10 +3,7 @@ class PerformanceGroupsController < ApplicationController
   before_action :get_labels, only: [:show]
 
   def index
-    @performance_groups = PerformanceGroup.all
-  end
-
-  def new
+    @performance_groups = PerformanceGroup.all.order('id ASC')
   end
 
   def show
@@ -49,12 +46,10 @@ class PerformanceGroupsController < ApplicationController
     end
   end
 
+  private
+
   def set_group
     @group = PerformanceGroup.find_by(id: params[:id])
-  end
-
-  def get_labels
-    @labels = PerformanceLabel.where(performance_group_id: @group.id)
   end
 
 end

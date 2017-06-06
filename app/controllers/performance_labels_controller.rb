@@ -1,18 +1,15 @@
 class PerformanceLabelsController < ApplicationController
   before_action :set_label, only: [:edit, :update, :destroy]
+  before_action :set_group, only: [:index]
 
-  def new
-  end
-
-  def destroy
-    @label.destroy
-    redirect_to(:back, notice: 'Label was successfully destroyed.')
+  def index
+    @labels = PerformanceLabel.where(performance_group_id: params['performance_group_id']).order('id ASC')
   end
 
   def create
     label = PerformanceLabel.create_new_label(params)
     if label.errors.empty?
-      redirect_to(performance_group_url, notice: 'Label was successfully created.')
+      redirect_to(performance_group_performance_labels_url, notice: 'Performance label was successfully created.')
     else
       flash.now[:label] = params[:label]
       flash[:alert] = label.errors.full_messages
@@ -20,23 +17,35 @@ class PerformanceLabelsController < ApplicationController
     end
   end
 
-  def edit
-    flash.now[:label] = @label[:label]
-  end
-
   def update
     label = PerformanceLabel.edit_label(@label, params)
     if label.errors.empty?
-      redirect_to(:back, notice: 'Label was successfully updated.')
+      redirect_to(performance_group_performance_labels_url, notice: 'Performance label was successfully updated.')
     else
       flash.now[:label] = params[:label]
-      flash.now[:alert] = group.errors.full_messages
+      flash.now[:alert] = label.errors.full_messages
       render action: :edit
     end
   end
 
+  def edit
+    flash.now[:label] = @label[:label]
+  end
+
+  def destroy
+    @label.destroy
+    redirect_to(performance_group_performance_labels_url, notice: 'Performance label was successfully deleted.')
+  end
+
+  def set_group
+    @group = PerformanceGroup.find_by(id: params[:performance_group_id])
+  end
+
+  private
+
   def set_label
     @label = PerformanceLabel.find_by(id: params[:id])
   end
+
 
 end

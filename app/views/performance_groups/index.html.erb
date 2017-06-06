@@ -1,5 +1,6 @@
 <div class="container">
   <div class="center-block" id="upload-results-container">
+
     <% if alert %>
         <div class="alert alert-danger" role="alert">
           <% alert.each do |message| %>
@@ -47,8 +48,8 @@
             <td class="trend_limit"><%= group.trend_limit %></td>
             <td class="actions nostrech">
               <%= link_to '<i class="glyphicon glyphicon-eye-open"></i>'.html_safe,
-                          performance_group_path(group),
-                          class: 'showResult' %>
+                          performance_group_performance_labels_path(group),
+                          class: 'showGroup' %>
               <%= link_to '<i class="glyphicon glyphicon-pencil"></i>'.html_safe,
                           edit_performance_group_path(group),
                           class: 'editGroup' %>

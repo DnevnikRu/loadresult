@@ -21,7 +21,7 @@
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-left">
-        <li class="<%= 'active' if params[:controller] == 'project' && action_name == "index" %>">
+        <li class="<%= 'active' if (params[:controller] == 'performance_groups'||params[:controller] == 'performance_labels') && action_name == "index" %>">
           <%= link_to 'Performance groups and labels', performance_groups_path %>
         </li>
       </ul>

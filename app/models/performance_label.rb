@@ -5,7 +5,7 @@ class PerformanceLabel < ActiveRecord::Base
 
    def self.create_new_label(params)
       label = PerformanceLabel.new(
-          performance_group_id: params['id'],
+          performance_group_id: params['performance_group_id'],
           label: params['label'],
       )
       label.save

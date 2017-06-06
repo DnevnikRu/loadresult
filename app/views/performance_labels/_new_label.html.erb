@@ -1,5 +1,5 @@
 <h4>New label</h4>
-<%= form_tag({controller: "performance_labels", action: "create"}, multipart: true) do %>
+<%= form_tag({action: "create"}, multipart: true) do %>
     <div class="form-group required">
       <%= label_tag :label, nil, class: "control-label" %>
       <%= text_field_tag :label, flash[:label], class: "form-control", placeholder: 'CPU' %>

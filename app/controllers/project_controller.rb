@@ -2,13 +2,7 @@ class ProjectController < ApplicationController
   before_action :set_project, only: [:edit, :update, :destroy]
 
   def index
-    @projects = Project.all
-  end
-
-  def new
-  end
-
-  def show
+    @projects = Project.all.order('id ASC')
   end
 
   def create
@@ -43,6 +37,8 @@ class ProjectController < ApplicationController
       render action: :edit
     end
   end
+
+  private
 
   def set_project
     @project = Project.find_by(id: params[:id])

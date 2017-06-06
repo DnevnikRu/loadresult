@@ -15,11 +15,13 @@
       <ul class="nav navbar-nav">
         <li class="<%= 'active' if params[:controller] == 'results' && action_name == "index"%>"><a href="/results">Results</a></li>
       </ul>
+      <!-- only direct link
       <ul class="nav navbar-nav navbar-left">
         <li class="<%= 'active' if params[:controller] == 'project' && action_name == "index" %>">
           <%= link_to 'Projects', project_index_path %>
         </li>
       </ul>
+      -->
       <ul class="nav navbar-nav navbar-left">
         <li class="<%= 'active' if (params[:controller] == 'performance_groups'||params[:controller] == 'performance_labels') && action_name == "index" %>">
           <%= link_to 'Performance groups and labels', performance_groups_path %>

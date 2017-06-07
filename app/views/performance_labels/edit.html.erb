@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="row">
+    <div class="center-block" id="upload-results-container">
+      <% if alert %>
+          <div class="alert alert-danger" role="alert">
+            <% alert.each do |message| %>
+                <div><%= message %></div>
+            <% end %>
+          </div>
+      <% end %>
+      <h3>Editing Label</h3>
+      <%= form_tag({action: :update}, multipart: true, method: :put) do %>
+          <div class="form-group required">
+            <%= label_tag :label, nil, class: "control-label" %>
+            <%= text_field_tag :label, flash[:label], class: "form-control", placeholder: 'CPU' %>
+          </div>
+          <%= button_tag "Update", class: "btn btn-primary top10", 'data-disable-with' => 'Loading..' %>
+      <% end %>
+    </div>
+  </div>
+</div>

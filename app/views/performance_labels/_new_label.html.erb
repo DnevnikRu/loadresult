@@ -1,0 +1,8 @@
+<h4>New label</h4>
+<%= form_tag({action: "create"}, multipart: true) do %>
+    <div class="form-group required">
+      <%= label_tag :label, nil, class: "control-label" %>
+      <%= text_field_tag :label, flash[:label], class: "form-control", placeholder: 'CPU' %>
+    </div>
+    <%= button_tag "Save", class: "btn btn-primary", 'data-disable-with' => 'Loading..' %>
+<% end %>

@@ -8,6 +8,13 @@ Rails.application.routes.draw do
       get 'report'
     end
   end
+
+  resources :project
+
+  resources :performance_groups do
+    resources :performance_labels
+  end
+
   post 'result/performance_plot' => 'results#performance_plot'
   post 'result/requests_seconds_to_values_plot' => 'results#requests_seconds_to_values_plot'
   post 'result/requests_histogram_plot' => 'results#requests_histogram_plot'

@@ -253,9 +253,9 @@ class Result < ActiveRecord::Base
         timestamp_min, timestamp_max = cut_timestamp(records.first.timestamp, records.last.timestamp, cut_percent)
       end
       records = records.select { |record| record.timestamp >= timestamp_min && record.timestamp <= timestamp_max }
-      data[label][:seconds] = records.map { |record| (record.timestamp - timestamp_min) / 1000 }
+      data[label][:seconds] = records.pluck(:timestamp, :value).map { |record| ((record[0] - timestamp_min) / 1000) - record[1] }.sort
 
-      values = records.map { |record| record.value }
+      values = records.pluck(:value)
       data[label][:values] = if result.smoothing_percent.to_i != 0
                                interval = Statistics.sma_interval(values, result.smoothing_percent)
                                Statistics.simple_moving_average(values, interval)

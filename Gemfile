@@ -14,11 +14,6 @@ gem 'kaminari', '~> 0.16.3'
 gem 'momentjs-rails', '~> 2.11'
 gem 'bootstrap3-datetimepicker-rails', '~> 4.17'
 
-gem 'capistrano', '~> 3.1.0'
-gem 'capistrano-rails', '~> 1.1.0'
-gem 'capistrano-bundler', '~> 1.1.4'
-gem 'capistrano-rvm', '~> 0.1.2'
-
 gem 'carrierwave', '~> 0.11.0'
 
 gem 'filterrific', '~> 2.0'

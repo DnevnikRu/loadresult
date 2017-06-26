@@ -241,26 +241,20 @@ class Result < ActiveRecord::Base
   end
 
   def self.performance_seconds_to_values(result_id, labels, cut_percent)
-    result = Result.find_by(id: result_id)
-    timestamp_min, timestamp_max = nil
     data = {}
-
     labels.each do |label|
       data[label] = {seconds: [], values: []}
-
-      records = PerformanceResult.where(where_conditional(result_id, label)).order(:timestamp).to_a
-      if timestamp_min.nil? || timestamp_max.nil?
-        timestamp_min, timestamp_max = cut_timestamp(records.first.timestamp, records.last.timestamp, cut_percent)
-      end
-      records = records.select { |record| record.timestamp >= timestamp_min && record.timestamp <= timestamp_max }
+      bottom_timestamp, top_timestamp = border_timestamps(result_id, PerformanceResult, cut_percent)
+      records = PerformanceResult.where(where_conditional(result_id, nil, bottom_timestamp, top_timestamp))
+      timestamp_min = records.minimum(:timestamp)
+      records = records.where(label: label).order(:timestamp)
+      result = Result.find_by(id: result_id)
       data[label][:seconds] = records.pluck(:timestamp, :value).map { |record| ((record[0] - timestamp_min) / 1000) - record[1] }.sort
-
-      values = records.pluck(:value)
       data[label][:values] = if result.smoothing_percent.to_i != 0
-                               interval = Statistics.sma_interval(values, result.smoothing_percent)
-                               Statistics.simple_moving_average(values, interval)
+                               interval = Statistics.sma_interval(records.pluck(:value), result.smoothing_percent)
+                               Statistics.simple_moving_average(records.pluck(:value), interval)
                              else
-                               values
+                               records.pluck(:value)
                              end
     end
     data

@@ -6,8 +6,7 @@ class ResultUploader < CarrierWave::Uploader::Base
   storage :file
 
   def store_dir
-    base_part = if Rails.configuration.x.storage_path.empty?
-
+    base_part = if Rails.configuration.x.storage_path.to_s.empty?
                   "#{Rails.root}/storage"
                 else
                   Rails.configuration.x.storage_path

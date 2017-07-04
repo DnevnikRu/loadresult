@@ -40,4 +40,11 @@ Rails.application.routes.draw do
     post 'performance_plot'
     post 'all_requests_stats_plot'
   end
+
+  #resource :request_file, only: [:create, :show]
+
+
+  get '/request_file/:id', to: 'request_file#show'
+  post '/request_file', to: 'request_file#create'
+
 end

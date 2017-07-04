@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170703124223) do
+ActiveRecord::Schema.define(version: 20170704123615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,10 @@ ActiveRecord::Schema.define(version: 20170703124223) do
     t.float   "min"
     t.float   "throughput"
     t.float   "failed_results"
+  end
+
+  create_table "performance_files", force: :cascade do |t|
+    t.string "file", null: false
   end
 
   create_table "performance_groups", force: :cascade do |t|

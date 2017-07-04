@@ -1,12 +1,14 @@
 class PerformanceFileController < ApplicationController
 
+  protect_from_forgery with: :null_session
+
   def create
     performance_file = PerformanceFile.new(
         file: params[:file]
     )
     performance_file.save!
     if performance_file.errors.empty?
-      render json: {id: performance_file.id, url: performance_file_path(performance_file.id)}
+      render json: {id: performance_file.id, url: "/performance_file/#{performance_file.id}"}
     else
       render json: result.errors.full_messages, :status => :bad_request
     end

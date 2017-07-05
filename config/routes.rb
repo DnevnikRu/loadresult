@@ -23,6 +23,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :results, only: [:create]
+    resources :results_with_data_id, only: [:create]
   end
 
   get 'compare' => 'compare#show'

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160520105912) do
+ActiveRecord::Schema.define(version: 20170704123615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,6 +36,10 @@ ActiveRecord::Schema.define(version: 20160520105912) do
     t.float   "failed_results"
   end
 
+  create_table "performance_files", force: :cascade do |t|
+    t.string "file", null: false
+  end
+
   create_table "performance_groups", force: :cascade do |t|
     t.string "name"
     t.string "units"
@@ -58,6 +62,10 @@ ActiveRecord::Schema.define(version: 20160520105912) do
 
   create_table "projects", force: :cascade do |t|
     t.string "project_name", null: false
+  end
+
+  create_table "request_files", force: :cascade do |t|
+    t.string "file", null: false
   end
 
   create_table "requests_results", force: :cascade do |t|

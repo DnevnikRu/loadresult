@@ -23,6 +23,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :results, only: [:create]
+    resources :results_with_data_id, only: [:create]
   end
 
   get 'compare' => 'compare#show'
@@ -40,4 +41,11 @@ Rails.application.routes.draw do
     post 'performance_plot'
     post 'all_requests_stats_plot'
   end
+
+  get '/request_file/:id', to: 'request_file#show'
+  post '/request_file', to: 'request_file#create'
+
+  get '/performance_file/:id', to: 'performance_file#show'
+  post '/performance_file', to: 'performance_file#create'
+
 end

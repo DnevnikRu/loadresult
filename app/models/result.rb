@@ -207,11 +207,11 @@ class Result < ActiveRecord::Base
       timestamp_min, timestamp_max = cut_timestamp(max_min_timestamps[:min], max_min_timestamps[:max], cut_percent)
       where_conditional = "#{where_conditional} and timestamp >= #{timestamp_min} and timestamp <= #{timestamp_max}"
     end
-    RequestsResult.where(where_conditional).order(:timestamp).pluck(:value)
+    RequestsResult.where(where_conditional).pluck(:value)
   end
 
-  def self.percentile_of_values_of_requests(result_id, cut_percent)
-    values = values_of_requests(result_id, cut_percent)
+  def self.percentile_of_values_of_requests(result_id, cut_percent, label = nil)
+    values = values_of_requests(result_id, label, cut_percent)
     result = {}
     result[:percentiles] = (0...100).step(10).to_a.push(95).push(99).sort
     result[:values] = result[:percentiles].map { |i| Statistics.percentile(values, i) }

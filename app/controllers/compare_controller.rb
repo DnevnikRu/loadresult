@@ -32,8 +32,9 @@ class CompareController < ApplicationController
   end
 
   def percentile_requests_plot
-    @result1_data = Result.percentile_of_values_of_requests(params[:result1_id], params[:result1_time_cut].to_i)
-    @result2_data = Result.percentile_of_values_of_requests(params[:result2_id], params[:result2_time_cut].to_i)
+    @plot_id = params[:plot_id]
+    @result1_data = Result.percentile_of_values_of_requests(params[:result1_id], params[:result1_time_cut].to_i, params[:label])
+    @result2_data = Result.percentile_of_values_of_requests(params[:result2_id], params[:result2_time_cut].to_i, params[:label])
   end
 
   def performance_plot

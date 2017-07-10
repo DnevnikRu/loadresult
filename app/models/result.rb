@@ -201,24 +201,21 @@ class Result < ActiveRecord::Base
   end
 
   def self.values_of_requests(result_id, label = nil, cut_percent)
-    result = Result.find_by(id: result_id)
-
-    records = RequestsResult.where(where_conditional(result_id, label)).order(:timestamp).to_a
-    timestamp_min, timestamp_max = cut_timestamp(records.first.timestamp, records.last.timestamp, cut_percent)
-    records = records.select { |record| record.timestamp >= timestamp_min && record.timestamp <= timestamp_max }
-    values = records.map { |record| record.value }
-
-    if result.smoothing_percent.to_i != 0
-      interval = Statistics.sma_interval(values, result.smoothing_percent)
-      Statistics.simple_moving_average(values, interval)
-    else
-      values
+    where_conditional = where_conditional(result_id, label)
+    max_min_timestamps = RequestsResult.max_min_timestamps(where_conditional)
+    if cut_percent != 0
+      timestamp_min, timestamp_max = cut_timestamp(max_min_timestamps[:min], max_min_timestamps[:max], cut_percent)
+      where_conditional = "#{where_conditional} and timestamp >= #{timestamp_min} and timestamp <= #{timestamp_max}"
     end
+    RequestsResult.where(where_conditional).order(:timestamp).pluck(:value)
   end
 
   def self.percentile_of_values_of_requests(result_id, cut_percent)
     values = values_of_requests(result_id, cut_percent)
-    (1..100).map { |i| Statistics.percentile(values, i) }
+    result = {}
+    result[:percentiles] = (0...100).step(10).to_a.push(95).push(99).sort
+    result[:values] = result[:percentiles].map { |i| Statistics.percentile(values, i) }
+    result
   end
 
   def self.requests_seconds_to_values(result_id, label, cut_percent)

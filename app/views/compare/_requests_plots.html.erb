@@ -1,6 +1,6 @@
 <% all_requests_percentile_of_values_uniq_id = Digest::MD5.bubblebabble('all' + '2') %>
 
-<%= button_to 'All requests historgram',
+<%= button_to 'Response time distribution',
     compare_all_requests_histogram_plot_path(
       result1_id: @compare_report.result1.id,
       result2_id: @compare_report.result2.id,

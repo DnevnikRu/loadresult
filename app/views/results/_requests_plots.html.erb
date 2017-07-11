@@ -1,4 +1,7 @@
-<%= button_to 'All requests historgram',
+
+<% all_requests_percentile_of_values_uniq_id = Digest::MD5.bubblebabble('all' + '2') %>
+
+<%= button_to 'Request time distribution',
     result_all_requests_histogram_plot_path(
       result_id: @result.id,
       result_time_cut: @result.time_cutting_percent,
@@ -16,12 +19,13 @@
     result_percentile_requests_plot_path(
       result_id: @result.id,
       result_time_cut: @result.time_cutting_percent,
+      plot_id: all_requests_percentile_of_values_uniq_id
     ),
     remote: true,
-    id: 'percentile_requests_button',
+    id: "#{all_requests_percentile_of_values_uniq_id}_button",
     class: 'btn btn-default show-plot bottom20',
     data: { disable_with: 'Loading..' },
     'data-toggle' => 'collapse',
-    'data-target' => '#percentile_requests_plot' %>
+    'data-target' => "##{all_requests_percentile_of_values_uniq_id}_div" %>
 
-<div class="collapse" id="percentile_requests_plot"></div>
+<div class="collapse" id="<%= "#{all_requests_percentile_of_values_uniq_id}_div" %>"></div>

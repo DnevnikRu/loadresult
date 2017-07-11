@@ -118,7 +118,8 @@ class ResultsController < ApplicationController
   end
 
   def percentile_requests_plot
-    @result_data = Result.percentile_of_values_of_requests(params[:result_id], params[:result_time_cut].to_i)
+    @plot_id = params[:plot_id]
+    @result_data = Result.percentile_of_values_of_requests(params[:result_id], params[:result_time_cut].to_i, params[:label])
   end
 
   private

@@ -1,13 +1,8 @@
-$('#percentile_requests_button').prop('type', 'button');
-
-var one_to_100 = [];
-for (var i = 1; i <= 100; i++) {
-  one_to_100.push(i);
-}
+$('#<%= "#{@plot_id}_button" %>').prop('type', 'button');
 
 var result = {
-  x: one_to_100,
-  y: <%= @result_data %>,
+  x: <%= @result_data[:values] %>,
+  y: <%= @result_data[:percentiles] %>,
   name: 'id:<%= params[:result_id] %>',
   mode: 'lines',
   line: {shape: 'spline'},
@@ -15,7 +10,7 @@ var result = {
 };
 
 var layout = {
-  title: 'Percentile of requests',
+  title: 'Response time percentiles',
   xaxis: {
     title: 'Percentile'
   },
@@ -23,4 +18,4 @@ var layout = {
     title: 'Response time, ms'
   }
 };
-Plotly.newPlot('percentile_requests_plot', [result], layout);
+Plotly.newPlot('<%= "#{@plot_id}_div" %>', [result], layout);

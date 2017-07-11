@@ -18,6 +18,10 @@ gem 'carrierwave', '~> 0.11.0'
 
 gem 'filterrific', '~> 2.0'
 
+gem 'rack-mini-profiler', '~> 0.10.5', require: false
+gem 'flamegraph', '~> 0.9.5'
+gem 'stackprof', '~> 0.2.10'
+
 group :development do
   gem 'web-console', '~> 2.0'
   gem 'spring'

@@ -738,12 +738,12 @@ describe Result do
       end
     end
 
-    it 'returns an Array' do
-      expect(Result.percentile_of_values_of_requests(@result.id, @result.time_cutting_percent)).to be_an(Array)
+    it 'returns a Hash' do
+      expect(Result.percentile_of_values_of_requests(@result.id, @result.time_cutting_percent)).to be_an(Hash)
     end
 
     it 'finds percentile for each percent' do
-      expect(Result.percentile_of_values_of_requests(@result.id, @result.time_cutting_percent).size).to eq(100)
+      expect(Result.percentile_of_values_of_requests(@result.id, @result.time_cutting_percent)[:values].size).to eq(12)
     end
   end
 

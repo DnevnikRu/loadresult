@@ -26,7 +26,7 @@
           <tbody>
           <% @result.calculated_requests_results.where.not(label: 'all_requests').order(:label).each do |calculated_result| %>
               <% requests_histogram_uniq_id = Digest::MD5.bubblebabble(calculated_result.label + '1') %>
-              <% requests_seconds_to_values_uniq_id = Digest::MD5.bubblebabble(calculated_result.label + '2') %>
+              <% requests_percentile_of_values_uniq_id = Digest::MD5.bubblebabble(calculated_result.label + '2') %>
               <tr>
                 <td class="labelResult">
                   <% anchor_id = Digest::MD5.bubblebabble(calculated_result.label) %>
@@ -45,23 +45,25 @@
                                     remote: true,
                                     id: "#{requests_histogram_uniq_id}_button",
                                     class: 'btn btn-default btn-xs show-plot requests-histogram-plot-button',
+                                    data: { disable_with: 'Loading..' },
                                     'data-toggle' => 'collapse',
                                     'data-target' => "##{requests_histogram_uniq_id}_div") do %>
                           <i class="fa fa-bar-chart"></i>
                       <% end %>
                     </div>
                     <div class="inline-block">
-                      <%= button_to(result_requests_seconds_to_values_plot_path(
+                      <%= button_to(result_percentile_requests_plot_path(
                                         label: calculated_result.label,
                                         result_id: @result.id,
                                         result_time_cut: @result.time_cutting_percent,
-                                        plot_id: requests_seconds_to_values_uniq_id
+                                        plot_id: requests_percentile_of_values_uniq_id
                                     ),
                                     remote: true,
-                                    id: "#{requests_seconds_to_values_uniq_id}_button",
+                                    id: "#{requests_percentile_of_values_uniq_id}_button",
                                     class: 'btn btn-default btn-xs show-plot requests-time-plot-button',
+                                    data: { disable_with: 'Loading..' },
                                     'data-toggle' => 'collapse',
-                                    'data-target' => "##{requests_seconds_to_values_uniq_id}_div") do %>
+                                    'data-target' => "##{requests_percentile_of_values_uniq_id}_div") do %>
                           <i class="fa fa-area-chart"></i>
                       <% end %>
                     </div>
@@ -82,7 +84,7 @@
               </tr>
               <tr>
                 <td colspan="100" class="hidden-row">
-                  <div class="collapse" id="<%= "#{requests_seconds_to_values_uniq_id}_div" %>"></div>
+                  <div class="collapse" id="<%= "#{requests_percentile_of_values_uniq_id}_div" %>"></div>
                 </td>
               </tr>
           <% end %>

@@ -61,6 +61,7 @@ class ResultsController < ApplicationController
   end
 
   def create
+    params['keep_files'] = 'not_keep' unless params['keep_files']
     result = Result.upload_and_create(params)
     if result.errors.empty?
       redirect_to(results_url, notice: 'Result was successfully created.')

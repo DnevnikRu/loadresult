@@ -5,6 +5,8 @@ class Api::ResultsWithDataIdController < ApiController
 
   def create
     params['project'] = Project.find_by(project_name: params['project']).try(:id)
+    params['keep_files'] = 'keep' if params['keep_files'].nil?
+
     if params['request_file_id']
       request_file = RequestFile.find_by(id: params['request_file_id'].to_i)
       if request_file
@@ -28,10 +30,16 @@ class Api::ResultsWithDataIdController < ApiController
     result = Result.upload_and_create(params)
 
     if result.errors.empty?
+      delete_files(request_file, perfmon_file) if params['keep_files'].eql?('not_keep')
       render json: {result_id: result.id, status: 'created'}
     else
       render json: result.errors.full_messages, :status => :bad_request
     end
+  end
+
+  def delete_files(request_file, perfmon_file)
+    request_file.destroy
+    perfmon_file.destroy if perfmon_file
   end
 
   def get_data(file)

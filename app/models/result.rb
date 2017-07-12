@@ -148,6 +148,11 @@ class Result < ActiveRecord::Base
     unless result.errors.any?
       calc_request_data(result)
       calc_performance_data(result) unless result.performance_results.empty?
+      if params['keep_files'].eql?('not_keep')
+        result.remove_requests_data!
+        result.remove_performance_data!
+        result.save
+      end
     end
 
     result

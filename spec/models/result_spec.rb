@@ -69,7 +69,8 @@ describe Result do
             'test_run_date' => '2016-02-11 11:21',
             'release_date' => '2016-02-11 11:21',
             'requests_data' => requests_data,
-            'performance_data' => performance_data
+            'performance_data' => performance_data,
+            'keep_files' => true
         }
 
         @result = Result.upload_and_create(params)
@@ -286,6 +287,7 @@ describe Result do
             'profile' => 'asd',
             'requests_data' => requests_data,
             'test_run_date' => ''
+
         }
         result = Result.upload_and_create(params)
         expect(result.errors).to match_array(['Test run date must be in a datetime format'])
@@ -738,12 +740,12 @@ describe Result do
       end
     end
 
-    it 'returns an Array' do
-      expect(Result.percentile_of_values_of_requests(@result.id, @result.time_cutting_percent)).to be_an(Array)
+    it 'returns a Hash' do
+      expect(Result.percentile_of_values_of_requests(@result.id, @result.time_cutting_percent)).to be_an(Hash)
     end
 
     it 'finds percentile for each percent' do
-      expect(Result.percentile_of_values_of_requests(@result.id, @result.time_cutting_percent).size).to eq(100)
+      expect(Result.percentile_of_values_of_requests(@result.id, @result.time_cutting_percent)[:values].size).to eq(12)
     end
   end
 

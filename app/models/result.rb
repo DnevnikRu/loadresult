@@ -414,14 +414,17 @@ class Result < ActiveRecord::Base
     return if result.errors.any?
     request_data = CSV.new(File.read(result.requests_data.current_path))
     header = request_data.first
-    # TODO: if file too big, split it and insert values in parallel threads
-    requests_results = request_data.map do |line|
-      "(#{result.id}, #{line[header.index('timeStamp')]},
-       '#{line[header.index('label')]}', '#{line[header.index('responseCode')]}',
-       #{line[header.index('Latency')]}, '#{Time.now}', '#{Time.now}')"
+    tmp_file = File.new("#{File.join(Rails.root, 'tmp')}/save_request_data.csv", 'w+')
+    delimiter = '&'
+    request_data.each do |line|
+      tmp_file.puts "#{result.id}#{delimiter}#{line[header.index('timeStamp')]}#{delimiter}#{line[header.index('label')]}" +
+                     "#{delimiter}#{line[header.index('responseCode')]}#{delimiter}#{line[header.index('Latency')]}"+
+                        "#{delimiter}#{Time.now}#{delimiter}#{Time.now}"
     end
-    ActiveRecord::Base.connection.execute(%(INSERT INTO requests_results (result_id, timestamp, label, response_code, value, created_at, updated_at)
-                                            VALUES #{requests_results.join(', ')}))
+    tmp_file.close
+    ActiveRecord::Base.connection.execute(%(COPY requests_results (result_id, timestamp, label, response_code, value, created_at, updated_at)
+                                            FROM '#{tmp_file.path}' WITH DELIMITER '#{delimiter}' CSV;))
+    File.delete(tmp_file.path)
     result
   end
 

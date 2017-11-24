@@ -10,4 +10,16 @@ class Api::ResultsController < ApiController
       render json: result.errors.full_messages, :status => :bad_request
     end
   end
+
+  def index
+    unless params['project'].to_s.empty?
+      project_id = Project.find_by(project_name: params['project']).try(:id)
+      if project_id
+        results = Result.where(project_id: project_id).limit(10)
+        render json: results.as_json(except: %i[requests_data performance_data])
+        return
+      end
+    end
+    render json: {}
+  end
 end

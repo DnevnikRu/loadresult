@@ -12,14 +12,11 @@ class Api::ResultsController < ApiController
   end
 
   def index
-    unless params['project'].to_s.empty?
-      project_id = Project.find_by(project_name: params['project']).try(:id)
-      if project_id
-        results = Result.where(project_id: project_id).limit(10)
-        render json: results.as_json(except: %i[requests_data performance_data])
-        return
-      end
-    end
-    render json: {}
+    results = Result.all
+    results = ResultFilter.new(results, params).filter
+    render json: results.as_json(except: %i[requests_data performance_data])
   end
+
+
+
 end

@@ -33,11 +33,11 @@ class ResultFilter
       @resources = resources.where(duration: options[:duration])
     end
 
-    @resources = resources.limit(options[:limit] ? options[:limit].to_i : DEFAULT_LIMIT)
-
     if options[:sort_by] == 'version'
       @resources = Result.sort_by_version(resources)
     end
+
+    @resources = resources.limit(options[:limit] ? options[:limit].to_i : DEFAULT_LIMIT)
 
     resources
   end

@@ -133,6 +133,8 @@ describe 'Get results with filters', type: :request do
         create(:result, project_id: @project.id, version: '4.1.1'),
         create(:result, project_id: @project.id, version: '4.1.2'),
         create(:result, project_id: @project.id, version: '4.1.11'),
+        create(:result, project_id: @project.id, version: '4.1.11-load-test'),
+        create(:result, project_id: @project.id, version: 'load-test'),
         create(:result, project_id: @project.id, version: '4.1.11', rps: 1000),
         create(:result, project_id: @project.id, version: '4.1.11', profile: 'test'),
         create(:result, project_id: @project.id, version: '4.1.11', duration: 800)
@@ -171,7 +173,7 @@ describe 'Get results with filters', type: :request do
     expect(results.count).to eql(1)
   end
 
-  fit 'sort by version' do
+  it 'sort by version' do
     get('/api/results', project: @project.project_name, sort_by: 'version')
     results = json_response_body
     expect(response.status).to eq(200)

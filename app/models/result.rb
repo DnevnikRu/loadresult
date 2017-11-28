@@ -31,21 +31,21 @@ class Result < ActiveRecord::Base
       ]
   )
 
-  scope :version_search_query, lambda { |query|
+  scope :version_search_query, lambda {|query|
     return if query.blank?
     terms = query.to_s.downcase.split(/\s+/)
-    terms = terms.map { |e|
+    terms = terms.map {|e|
       ('%' + e.gsub('*', '%') + '%').gsub(/%+/, '%')
     }
     where(
-        terms.map { |term|
+        terms.map {|term|
           "(LOWER(results.version) LIKE ? )"
         }.join(' AND '),
-        *terms.map { |e| [e] }.flatten
+        *terms.map {|e| [e]}.flatten
     )
   }
 
-  scope :sorted_by, lambda { |sort_option|
+  scope :sorted_by, lambda {|sort_option|
     if sort_option =~ /desc$/
       direction = 'desc'
       nulls_pos = 'LAST'
@@ -63,7 +63,7 @@ class Result < ActiveRecord::Base
       when /^id_/
         order("results.id #{ direction }")
       when /^project_/
-        joins(:project).order("projects.project_name #{ direction }, results.project_id #{ direction }" )
+        joins(:project).order("projects.project_name #{ direction }, results.project_id #{ direction }")
       when /^rps_/
         order("results.rps #{ direction }")
       when /^duration_/
@@ -87,28 +87,32 @@ class Result < ActiveRecord::Base
     end
   }
 
-  scope :with_project_id, lambda { |project_id|
+  scope :with_project_id, lambda {|project_id|
     where(projects: {id: project_id}).joins(:project)
   }
 
-  scope :release_date_gte, lambda { |reference_time|
+  scope :release_date_gte, lambda {|reference_time|
     where('results.release_date >= ?', DateTime.parse(reference_time))
   }
 
-  scope :release_date_lt, lambda { |reference_time|
+  scope :release_date_lt, lambda {|reference_time|
     where('results.release_date < ?', DateTime.parse(reference_time))
   }
 
-  scope :test_run_date_gte, lambda { |reference_time|
+  scope :test_run_date_gte, lambda {|reference_time|
     where('results.test_run_date >= ?', DateTime.parse(reference_time))
   }
 
-  scope :test_run_date_lt, lambda { |reference_time|
+  scope :test_run_date_lt, lambda {|reference_time|
     where('results.test_run_date < ?', DateTime.parse(reference_time))
   }
 
   def self.sort_by_version(results)
-    results.sort{|a,b| Gem::Version.new(b.version) <=> Gem::Version.new(a.version)}
+    results.sort do |a, b|
+      a_version = Gem::Version.correct?(a.version) ? Gem::Version.new(a.version) : Gem::Version.new(0)
+      b_version = Gem::Version.correct?(b.version) ? Gem::Version.new(b.version) : Gem::Version.new(0)
+      b_version <=> a_version
+    end
   end
 
   def test_run_date_is_datetime
@@ -223,7 +227,7 @@ class Result < ActiveRecord::Base
     values = values_of_requests(result_id, label, cut_percent)
     result = {}
     result[:percentiles] = (0...100).step(10).to_a.push(95).push(99).sort
-    result[:values] = result[:percentiles].map { |i| Statistics.percentile(values, i) }
+    result[:values] = result[:percentiles].map {|i| Statistics.percentile(values, i)}
     result
   end
 
@@ -233,10 +237,10 @@ class Result < ActiveRecord::Base
 
     records = RequestsResult.where(where_conditional(result_id, label)).order(:timestamp).to_a
     timestamp_min, timestamp_max = cut_timestamp(records.first.timestamp, records.last.timestamp, cut_percent)
-    records = records.select { |record| record.timestamp >= timestamp_min && record.timestamp <= timestamp_max }
-    data[:seconds] = records.map { |record| (record.timestamp - timestamp_min) / 1000 }
+    records = records.select {|record| record.timestamp >= timestamp_min && record.timestamp <= timestamp_max}
+    data[:seconds] = records.map {|record| (record.timestamp - timestamp_min) / 1000}
 
-    values = records.map { |record| record.value }
+    values = records.map {|record| record.value}
     data[:values] = if result.smoothing_percent.to_i != 0
                       interval = Statistics.sma_interval(values, result.smoothing_percent)
                       Statistics.simple_moving_average(values, interval)
@@ -255,7 +259,7 @@ class Result < ActiveRecord::Base
       timestamp_min = records.minimum(:timestamp)
       records = records.where(label: label).order(:timestamp)
       result = Result.find_by(id: result_id)
-      data[label][:seconds] = records.pluck(:timestamp, :value).map { |record| ((record[0] - timestamp_min) / 1000) - record[1] }.sort
+      data[label][:seconds] = records.pluck(:timestamp, :value).map {|record| ((record[0] - timestamp_min) / 1000) - record[1]}.sort
       data[label][:values] = if result.smoothing_percent.to_i != 0
                                interval = Statistics.sma_interval(records.pluck(:value), result.smoothing_percent)
                                Statistics.simple_moving_average(records.pluck(:value), interval)
@@ -278,7 +282,7 @@ class Result < ActiveRecord::Base
     labels = self.calculated_performance_results.pluck(:label)
     label_groups = []
     PerformanceGroup.find_each do |group|
-      labels_in_group = labels.select { |label| !group.labels.pluck(:label).select { |l| label.include? l }.empty? }
+      labels_in_group = labels.select {|label| !group.labels.pluck(:label).select {|l| label.include? l}.empty?}
       next if labels_in_group.empty?
       label_groups.push(name: group.name,
                         labels: labels_in_group,
@@ -398,12 +402,12 @@ class Result < ActiveRecord::Base
   end
 
   def self.validate_requests_data(result)
-    header = File.open(result.requests_data.current_path) { |f| f.readline }
+    header = File.open(result.requests_data.current_path) {|f| f.readline}
     validate_header(result, header, 'request', %w(timeStamp label responseCode Latency))
   end
 
   def self.validate_performance_data(result)
-    header = File.open(result.performance_data.current_path) { |f| f.readline }
+    header = File.open(result.performance_data.current_path) {|f| f.readline}
     validate_header(result, header, 'performance', %w(timeStamp label elapsed))
   end
 
@@ -422,7 +426,7 @@ class Result < ActiveRecord::Base
     delimiter = '&'
     request_data.each do |line|
       tmp_file.puts "#{result.id}#{delimiter}#{line[header.index('timeStamp')]}#{delimiter}#{line[header.index('label')]}" +
-                     "#{delimiter}#{line[header.index('responseCode')]}#{delimiter}#{line[header.index('Latency')]}"+
+                        "#{delimiter}#{line[header.index('responseCode')]}#{delimiter}#{line[header.index('Latency')]}"+
                         "#{delimiter}#{Time.now}#{delimiter}#{Time.now}"
     end
     tmp_file.close

@@ -108,7 +108,7 @@ class Result < ActiveRecord::Base
   }
 
   def self.sort_by_version(results)
-    results.sort{|a,b| Gem::Version.new(a.version) <=> Gem::Version.new(b.version)}
+    results.sort{|a,b| Gem::Version.new(b.version) <=> Gem::Version.new(a.version)}
   end
 
   def test_run_date_is_datetime

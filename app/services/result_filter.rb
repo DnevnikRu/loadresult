@@ -6,7 +6,7 @@ class ResultFilter
 
   def initialize(resources, options)
     @resources = resources
-    @options   = options
+    @options = options
   end
 
   def filter
@@ -37,8 +37,12 @@ class ResultFilter
       @resources = Result.sort_by_version(resources)
     end
 
-    @resources = resources.limit(options[:limit] ? options[:limit].to_i : DEFAULT_LIMIT)
+    limit = options[:limit] ? options[:limit].to_i : DEFAULT_LIMIT
+    if resources.is_a? Array
+      resources[0..limit]
+    else
+      resources.limit(limit).to_a
+    end
 
-    resources
   end
 end

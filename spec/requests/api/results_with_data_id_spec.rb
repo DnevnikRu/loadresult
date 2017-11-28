@@ -6,7 +6,10 @@ describe 'Results API with data id instead of base64 files', type: :request do
   let(:summary_file_name) { File.basename(summary_file) }
   let(:perfmon_file_name) { File.basename(perfmon_file) }
 
-  before { DatabaseCleaner.clean }
+  before do
+    DatabaseCleaner.clean
+    @project = create(:project, project_name: 'Dnevnik')
+  end
 
   it 'upload request file and create result' do
     post '/request_file', :file => Rack::Test::UploadedFile.new(summary_file_path, 'text/csv')

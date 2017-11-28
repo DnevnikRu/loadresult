@@ -22,7 +22,7 @@ Rails.application.routes.draw do
   post 'result/percentile_requests_plot' => 'results#percentile_requests_plot'
 
   namespace :api do
-    resources :results, only: [:create]
+    resources :results, only: [:create, :index]
     resources :results_with_data_id, only: [:create]
   end
 

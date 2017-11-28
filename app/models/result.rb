@@ -107,6 +107,10 @@ class Result < ActiveRecord::Base
     where('results.test_run_date < ?', DateTime.parse(reference_time))
   }
 
+  def self.sort_by_version(results)
+    results.sort{|a,b| Gem::Version.new(b.version) <=> Gem::Version.new(a.version)}
+  end
+
   def test_run_date_is_datetime
     errors.add(:test_run_date, 'must be in a datetime format') if test_run_date.nil?
   end

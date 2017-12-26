@@ -5,6 +5,7 @@ focusAnchor = ->
 
 hideColumns = ->
   request_table = $('div#collapseRequestsData')
+  request_table.find('.line90').hide()
   request_table.find('.min').hide()
   request_table.find('.max').hide()
   request_table.find('.throughput').hide()

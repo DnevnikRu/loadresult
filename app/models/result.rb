@@ -372,6 +372,14 @@ class Result < ActiveRecord::Base
     )
   end
 
+  def self.calc_ninetynine_percentile(result, label)
+    values = Result.values_of_requests(result.id, label, result.time_cutting_percent)
+    calculated_request_result = CalculatedRequestsResult.find_by(result_id: result.id, label: label)
+    calculated_request_result.update_attributes!(
+        ninetynine_percentile: Statistics.percentile(values, 99),
+    )
+  end
+
   def self.calc_performance_data(result)
     bottom_timestamp, top_timestamp = border_timestamps(result.id, PerformanceResult, result.time_cutting_percent)
     labels = PerformanceResult.where(result_id: result.id).pluck(:label).uniq

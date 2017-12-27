@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170704123615) do
+ActiveRecord::Schema.define(version: 20171220142642) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 20170704123615) do
   end
 
   create_table "calculated_requests_results", force: :cascade do |t|
-    t.integer "result_id",         null: false
+    t.integer "result_id",             null: false
     t.string  "label"
     t.float   "mean"
     t.float   "median"
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 20170704123615) do
     t.float   "min"
     t.float   "throughput"
     t.float   "failed_results"
+    t.float   "ninetynine_percentile"
   end
 
   create_table "performance_files", force: :cascade do |t|

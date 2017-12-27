@@ -96,7 +96,7 @@ class TrendReport
 
   def request_data(label)
     data = {}
-    attributes = [:mean, :median, :ninety_percentile, :throughput]
+    attributes = [:mean, :median, :ninetynine_percentile, :throughput]
     attributes.each { |at| data[at] = [] }
     ids.each do |id|
       calc_result = CalculatedRequestsResult.find_by(result_id: id, label: label)

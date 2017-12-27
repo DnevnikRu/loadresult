@@ -34,9 +34,13 @@
                           <input id="btn_show_median" type="checkbox" checked onchange="showColumn('btn_show_median', 'median');">
                           Median
                         </label>
-                        <label class="btn btn-primary active">
-                          <input id="btn_show_90line" type="checkbox" checked onchange="showColumn('btn_show_90line', 'line90');">
+                        <label class="btn btn-primary">
+                          <input id="btn_show_90line" type="checkbox" onchange="showColumn('btn_show_90line', 'line90');">
                           90% Line
+                        </label>
+                        <label class="btn btn-primary active">
+                          <input id="btn_show_99line" type="checkbox" checked onchange="showColumn('btn_show_99line', 'line99');">
+                          99% Line
                         </label>
                         <label class="btn btn-primary">
                           <input id="btn_show_min" type="checkbox" onchange="showColumn('btn_show_min', 'min');">
@@ -76,6 +80,9 @@
             <th class="line90">90% Line id:<%= @compare_report.result1.id %>, msec</th>
             <th class="line90">90% Line id:<%= @compare_report.result2.id %>, msec</th>
             <th class="line90">90% Line trend, %</th>
+            <th class="line99">99% Line id:<%= @compare_report.result1.id %>, msec</th>
+            <th class="line99">99% Line id:<%= @compare_report.result2.id %>, msec</th>
+            <th class="line99">99% Line trend, %</th>
             <th class="min">Min id:<%= @compare_report.result1.id %>, msec</th>
             <th class="min">Min id:<%= @compare_report.result2.id %>, msec</th>
             <th class="max">Max id:<%= @compare_report.result1.id %>, msec</th>
@@ -156,6 +163,9 @@
                 <td class="line90" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version %> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M') %>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).ninety_percentile %></td>
                 <td class="line90" data-toggle="tooltip" title="Version: <%= @compare_report.result2.version %> <br> Test run date: <%= @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M') %>"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).ninety_percentile %></td>
                 <td class="line90 trend"><%= @compare_report.trend(:calculated_requests_results, :ninety_percentile, label) %> </td>
+                <td class="line99" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version %> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M') %>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).ninetynine_percentile %></td>
+                <td class="line99" data-toggle="tooltip" title="Version: <%= @compare_report.result2.version %> <br> Test run date: <%= @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M') %>"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).ninetynine_percentile %></td>
+                <td class="line99 trend"><%= @compare_report.trend(:calculated_requests_results, :ninetynine_percentile, label) %> </td>
                 <td class="min" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version %> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M') %>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).min %></td>
                 <td class="min" data-toggle="tooltip" title="Version: <%= @compare_report.result2.version %> <br> Test run date: <%= @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M') %>"><%= @compare_report.result2.calculated_requests_results.find_by(label: label).min %></td>
                 <td class="max" data-toggle="tooltip" title="Version: <%= @compare_report.result1.version %> <br> Test run date: <%= @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M') %>"><%= @compare_report.result1.calculated_requests_results.find_by(label: label).max %></td>

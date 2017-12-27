@@ -18,8 +18,8 @@ lines.push({
 });
 lines.push({
     x: <%= raw(@ids_with_date) %>,
-    y: <%= @request_data[:ninety_percentile] %>,
-    name: '90%',
+    y: <%= @request_data[:ninetynine_percentile] %>,
+    name: '99%',
     mode: 'lines+markers',
     type: 'scatter',
     yaxis: 'y2'

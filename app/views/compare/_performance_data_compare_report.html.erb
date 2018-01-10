@@ -10,62 +10,90 @@
     <div id="collapsePerfmonData" class="panel-collapse collapse in">
       <div class="panel-body">
         <% @compare_report.performance_groups.each do |group| %>
-            <h4 style="color: #2a6496"><%= group[:name] %></h4>
-            <table class="table table-hover table-striped table-condensed table-responsive table-bordered">
-              <thead>
-              <tr>
-                <th></th>
-                <th>Mean id:<%= @compare_report.result1.id %></th>
-                <th>Mean id:<%= @compare_report.result2.id %></th>
-                <th>Mean trend, %</th>
-                <th>Min id:<%= @compare_report.result1.id %></th>
-                <th>Min id:<%= @compare_report.result2.id %></th>
-                <th>Max id:<%= @compare_report.result1.id %></th>
-                <th>Max id:<%= @compare_report.result2.id %></th>
-              </tr>
-              </thead>
-              <tbody>
-              <% group[:labels].each do |label| %>
+            <% unless group[:metrics_type] == 1 %>
+                <h4 style="color: #2a6496"><%= group[:name] %></h4>
+                <table class="table table-hover table-striped table-condensed table-responsive table-bordered">
+                  <thead>
                   <tr>
-                    <td>
-                      <% anchor_id = Digest::MD5.bubblebabble(label) %>
-                      <%= anchor(anchor_id) %>
-                      <%= label %>
-                      <%= link_to_anchor_on_compare(anchor_id, [@compare_report.result1.id, @compare_report.result2.id]) %>
-                    </td>
-                    <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).mean%></td>
-                    <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).mean%></td>
-                    <td class="mean trend"><%= @compare_report.trend(:calculated_performance_results, :mean, label, group[:trend_limit]) %></td>
-                    <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).min %></td>
-                    <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).min %></td>
-                    <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).max %></td>
-                    <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).max %></td>
+                    <th></th>
+                    <th>Mean id:<%= @compare_report.result1.id %></th>
+                    <th>Mean id:<%= @compare_report.result2.id %></th>
+                    <th>Mean trend, %</th>
+                    <th>Min id:<%= @compare_report.result1.id %></th>
+                    <th>Min id:<%= @compare_report.result2.id %></th>
+                    <th>Max id:<%= @compare_report.result1.id %></th>
+                    <th>Max id:<%= @compare_report.result2.id %></th>
                   </tr>
-              <% end %>
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                  <% group[:labels].each do |label| %>
+                      <tr>
+                        <td>
+                          <% anchor_id = Digest::MD5.bubblebabble(label) %>
+                          <%= anchor(anchor_id) %>
+                          <%= label %>
+                          <%= link_to_anchor_on_compare(anchor_id, [@compare_report.result1.id, @compare_report.result2.id]) %>
+                        </td>
+                        <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).mean %></td>
+                        <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).mean %></td>
+                        <td class="mean trend"><%= @compare_report.trend(:calculated_performance_results, :mean, label, group[:trend_limit]) %></td>
+                        <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).min %></td>
+                        <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).min %></td>
+                        <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).max %></td>
+                        <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).max %></td>
+                      </tr>
+                  <% end %>
+                  </tbody>
+                </table>
 
-            <% label_uniq_id = Digest::MD5.bubblebabble(group[:name]) %>
-            <%= button_to 'Show a plot',
-                compare_performance_plot_path(
-                  group: group,
-                  result1_id: @compare_report.result1.id,
-                  result2_id: @compare_report.result2.id,
-                  result1_time_cut: @compare_report.result1.time_cutting_percent,
-                  result2_time_cut: @compare_report.result2.time_cutting_percent,
-                  version1: @compare_report.result1.version,
-                  version2: @compare_report.result2.version,
-                  test_run_date1: @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M'),
-                  test_run_date2: @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M'),
-                  plot_id: label_uniq_id
-                ),
-                remote: true,
-                id: "#{label_uniq_id}_button",
-                class: 'btn btn-default show-plot bottom20',
-                data: { disable_with: 'Loading..' },
-                'data-toggle' => 'collapse',
-                'data-target' => "##{label_uniq_id}_div" %>
-            <div class="collapse" id="<%= "#{label_uniq_id}_div" %>"></div>
+                <% label_uniq_id = Digest::MD5.bubblebabble(group[:name]) %>
+                <%= button_to 'Show a plot',
+                              compare_performance_plot_path(
+                                  group: group,
+                                  result1_id: @compare_report.result1.id,
+                                  result2_id: @compare_report.result2.id,
+                                  result1_time_cut: @compare_report.result1.time_cutting_percent,
+                                  result2_time_cut: @compare_report.result2.time_cutting_percent,
+                                  version1: @compare_report.result1.version,
+                                  version2: @compare_report.result2.version,
+                                  test_run_date1: @compare_report.result1.test_run_date.strftime('%d.%m.%Y %H:%M'),
+                                  test_run_date2: @compare_report.result2.test_run_date.strftime('%d.%m.%Y %H:%M'),
+                                  plot_id: label_uniq_id
+                              ),
+                              remote: true,
+                              id: "#{label_uniq_id}_button",
+                              class: 'btn btn-default show-plot bottom20',
+                              data: {disable_with: 'Loading..'},
+                              'data-toggle' => 'collapse',
+                              'data-target' => "##{label_uniq_id}_div" %>
+                <div class="collapse" id="<%= "#{label_uniq_id}_div" %>"></div>
+            <% end %>
+            <% if group[:metrics_type] == 1 %>
+                <h4 style="color: #2a6496"><%= group[:name] %></h4>
+                <table class="table table-hover table-striped table-condensed table-responsive table-bordered table-nonfluid">
+                  <thead>
+                  <tr>
+                    <th></th>
+                    <th>Last value id:<%= @compare_report.result1.id %></th>
+                    <th>Last value id:<%= @compare_report.result2.id %></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <% group[:labels].each do |label| %>
+                      <tr>
+                        <td>
+                          <% anchor_id = Digest::MD5.bubblebabble(label) %>
+                          <%= anchor(anchor_id) %>
+                          <%= label %>
+                          <%= link_to_anchor_on_compare(anchor_id, [@compare_report.result1.id, @compare_report.result2.id]) %>
+                        </td>
+                        <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).last_value %></td>
+                        <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).last_value %></td>
+                      </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+            <% end %>
         <% end %>
       </div>
     </div>

@@ -32,7 +32,7 @@ class TrendController < ApplicationController
     @ids_with_date = trend_report.ids_with_date
     @group_name = group[:name]
     @unit = group[:units]
-    @performance_data = trend_report.performance_data(group[:labels])
+    @performance_data = trend_report.performance_data(group[:labels], group[:metrics_type])
   end
 
   def all_requests_stats_plot

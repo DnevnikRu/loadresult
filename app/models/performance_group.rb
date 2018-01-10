@@ -35,7 +35,9 @@ class PerformanceGroup < ActiveRecord::Base
       label_groups.push(name: group.name,
                         labels: labels_in_group,
                         trend_limit: group.trend_limit,
-                        units: group.units)
+                        units: group.units,
+                        metrics_type: group.metrics_type
+      )
     end
     label_groups
   end

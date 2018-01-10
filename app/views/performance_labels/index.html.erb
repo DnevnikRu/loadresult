@@ -21,6 +21,7 @@
         <th class="small">Name</th>
         <th class="small">Units</th>
         <th class="small">Trend limit</th>
+        <th class="small">Metrics type</th>
       </tr>
       </thead>
       <tbody>
@@ -28,6 +29,7 @@
         <td class="name"><%= @group.name %></td>
         <td class="units"><%= @group.units %></td>
         <td class="trend_limit"><%= @group.trend_limit %></td>
+        <td class="trend_limit"><%= 'static' if @group.metrics_type==1 %><%= 'dynamic' if @group.metrics_type==0 %></td>
       </tr>
       </tbody>
     </table>

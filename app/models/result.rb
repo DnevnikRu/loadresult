@@ -382,6 +382,7 @@ class Result < ActiveRecord::Base
     result.performance_groups.each do |group|
       labels.each do |label|
         calculated_performance_result = CalculatedPerformanceResult.find_or_create_by(result_id: result.id, label: label)
+        records_for_last_value = PerformanceResult.where(where_conditional(result.id, label))
         records = PerformanceResult.where(where_conditional(result.id, label, bottom_timestamp, top_timestamp))
         if records
           data = records.pluck(:value)
@@ -390,7 +391,7 @@ class Result < ActiveRecord::Base
               mean: Statistics.average(data).round(2),
               max: data.max,
               min: data.min,
-              last_value: records.order(timestamp: :desc).limit(1).pluck(:value)[0]
+              last_value: records_for_last_value.order(timestamp: :desc).limit(1).pluck(:value)[0]
           )
         end
       end

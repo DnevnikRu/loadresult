@@ -379,21 +379,19 @@ class Result < ActiveRecord::Base
   def self.calc_performance_data(result)
     bottom_timestamp, top_timestamp = border_timestamps(result.id, PerformanceResult, result.time_cutting_percent)
     labels = PerformanceResult.where(result_id: result.id).pluck(:label).uniq
-    result.performance_groups.each do |group|
-      labels.each do |label|
-        calculated_performance_result = CalculatedPerformanceResult.find_or_create_by(result_id: result.id, label: label)
-        records_for_last_value = PerformanceResult.where(where_conditional(result.id, label))
-        records = PerformanceResult.where(where_conditional(result.id, label, bottom_timestamp, top_timestamp))
-        if records
-          data = records.pluck(:value)
-          data = Statistics.simple_moving_average(data, Statistics.sma_interval(data, result.smoothing_percent)) if result.smoothing_percent != 0
-          calculated_performance_result.update_attributes!(
-              mean: Statistics.average(data).round(2),
-              max: data.max,
-              min: data.min,
-              last_value: records_for_last_value.order(timestamp: :desc).limit(1).pluck(:value)[0]
-          )
-        end
+    labels.each do |label|
+      calculated_performance_result = CalculatedPerformanceResult.find_or_create_by(result_id: result.id, label: label)
+      records_for_last_value = PerformanceResult.where(where_conditional(result.id, label))
+      records = PerformanceResult.where(where_conditional(result.id, label, bottom_timestamp, top_timestamp))
+      if records
+        data = records.pluck(:value)
+        data = Statistics.simple_moving_average(data, Statistics.sma_interval(data, result.smoothing_percent)) if result.smoothing_percent != 0
+        calculated_performance_result.update_attributes!(
+            mean: Statistics.average(data).round(2),
+            max: data.max,
+            min: data.min,
+            last_value: records_for_last_value.order(timestamp: :desc).limit(1).pluck(:value)[0]
+        )
       end
     end
   end

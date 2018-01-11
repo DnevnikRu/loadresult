@@ -76,6 +76,7 @@
                     <th></th>
                     <th>Last value id:<%= @compare_report.result1.id %></th>
                     <th>Last value id:<%= @compare_report.result2.id %></th>
+                    <th>Last value trend, %</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -89,6 +90,7 @@
                         </td>
                         <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).last_value %></td>
                         <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).last_value %></td>
+                        <td class="mean trend"><%= @compare_report.trend(:calculated_performance_results, :last_value, label, group[:trend_limit]) %></td>
                       </tr>
                   <% end %>
                   </tbody>

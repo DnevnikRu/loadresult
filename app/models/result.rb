@@ -371,7 +371,7 @@ class Result < ActiveRecord::Base
         mean: Statistics.average(values),
         median: Statistics.median(values),
         ninety_percentile: Statistics.percentile(values, 90),
-        ninetynine_percentile: Statistics.percentile(data, 99),
+        ninetynine_percentile: Statistics.percentile(values, 99),
         throughput: RequestsUtils.throughput(values, bottom_timestamp, top_timestamp)
     )
   end

@@ -29,7 +29,8 @@
         <td class="name"><%= @group.name %></td>
         <td class="units"><%= @group.units %></td>
         <td class="trend_limit"><%= @group.trend_limit %></td>
-        <td class="trend_limit"><%= 'static' if @group.metrics_type==1 %><%= 'dynamic' if @group.metrics_type==0 %></td>
+        <td class="trend_limit"><%= 'static' if @group.metrics_type==PerformanceGroup.define_metrics_type[:static] %>
+          <%= 'dynamic' if @group.metrics_type==PerformanceGroup.define_metrics_type[:dynamic] %></td>
       </tr>
       </tbody>
     </table>

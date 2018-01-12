@@ -1,0 +1,42 @@
+<h4 style="color: #2a6496"><%= group[:name] %></h4>
+<table class="table table-hover table-striped table-condensed table-bordered table-nonfluid">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Mean</th>
+    <th>Min</th>
+    <th>Max</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% group[:labels].each do |label| %>
+      <tr>
+        <td>
+          <% anchor_id = Digest::MD5.bubblebabble(label) %>
+          <%= anchor(anchor_id) %>
+          <%= label %>
+          <%= link_to_anchor_on_report(anchor_id, @result.id) %>
+        </td>
+        <td><%= @result.calculated_performance_results.find_by(label: label).mean%></td>
+        <td><%= @result.calculated_performance_results.find_by(label: label).min %></td>
+        <td><%= @result.calculated_performance_results.find_by(label: label).max %></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<% label_uniq_id = Digest::MD5.bubblebabble(group[:name]) %>
+<%= button_to 'Show a plot',
+              result_performance_plot_path(
+                  group: group,
+                  result_id: @result.id,
+                  result_time_cut: @result.time_cutting_percent,
+                  plot_id: label_uniq_id
+              ),
+              remote: true,
+              id: "#{label_uniq_id}_button",
+              class: 'btn btn-default show-plot bottom20',
+              data: { disable_with: 'Loading..' },
+              'data-toggle' => 'collapse',
+              'data-target' => "##{label_uniq_id}_div" %>
+<div class="collapse" id="<%= "#{label_uniq_id}_div" %>"></div>

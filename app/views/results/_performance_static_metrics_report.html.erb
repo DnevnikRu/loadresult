@@ -1,0 +1,22 @@
+<h4 style="color: #2a6496"><%= group[:name] %></h4>
+<table class="table table-hover table-striped table-condensed table-bordered table-nonfluid">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Last Value</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% group[:labels].each do |label| %>
+      <tr>
+        <td>
+          <% anchor_id = Digest::MD5.bubblebabble(label) %>
+          <%= anchor(anchor_id) %>
+          <%= label %>
+          <%= link_to_anchor_on_report(anchor_id, @result.id) %>
+        </td>
+        <td><%= @result.calculated_performance_results.find_by(label: label).last_value%></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>

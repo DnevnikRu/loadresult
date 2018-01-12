@@ -1,0 +1,26 @@
+<h4 style="color: #2a6496"><%= group[:name] %></h4>
+<table class="table table-hover table-striped table-condensed table-responsive table-bordered table-nonfluid">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Last value id:<%= @compare_report.result1.id %></th>
+    <th>Last value id:<%= @compare_report.result2.id %></th>
+    <th>Last value trend, %</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% group[:labels].each do |label| %>
+      <tr>
+        <td>
+          <% anchor_id = Digest::MD5.bubblebabble(label) %>
+          <%= anchor(anchor_id) %>
+          <%= label %>
+          <%= link_to_anchor_on_compare(anchor_id, [@compare_report.result1.id, @compare_report.result2.id]) %>
+        </td>
+        <td><%= @compare_report.result1.calculated_performance_results.find_by(label: label).last_value %></td>
+        <td><%= @compare_report.result2.calculated_performance_results.find_by(label: label).last_value %></td>
+        <td class="mean trend"><%= @compare_report.trend(:calculated_performance_results, :last_value, label, group[:trend_limit]) %></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>

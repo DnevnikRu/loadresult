@@ -115,7 +115,7 @@ class TrendReport
       results.each do |result|
         performance_result = result.calculated_performance_results.find_by(label: label)
         if performance_result
-          (metrics_type == 1) ? value = performance_result.last_value : value = performance_result.mean
+          value = (metrics_type == PerformanceGroup.define_metrics_type[:static]) ? performance_result.last_value : performance_result.mean
         else
           value = 0
         end

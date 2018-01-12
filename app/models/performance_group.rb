@@ -27,6 +27,10 @@ class PerformanceGroup < ActiveRecord::Base
     group
   end
 
+  def self.define_metrics_type
+    {:dynamic => 0, :static => 1}
+  end
+
   def self.split_labels_by_group(labels)
     label_groups = []
     PerformanceGroup.find_each do |group|

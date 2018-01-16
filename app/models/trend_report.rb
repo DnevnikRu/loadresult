@@ -22,8 +22,8 @@ class TrendReport
 
     result_from, result_to = [result1, result2].sort_by(&:release_date)
     results_between = Result.where(
-      release_date: (result_from.release_date..result_to.release_date),
-      project_id: result1.project_id
+        release_date: (result_from.release_date..result_to.release_date),
+        project_id: result1.project_id
     )
     if results_between.size == 2
       @error = "There are only 2 results between selected results. Can't create a trend"
@@ -37,20 +37,20 @@ class TrendReport
     diff = []
     results.each do |result|
       if diff.empty? ||
-        diff.last[:duration].to_s != result.duration.to_s ||
-        diff.last[:rps].to_s != result.rps.to_s ||
-        diff.last[:profile].to_s != result.profile.to_s ||
-        diff.last[:data_version].to_s != result.data_version.to_s ||
-        diff.last[:time_cutting_percent].to_s != result.time_cutting_percent.to_s ||
-        diff.last[:smoothing_percent].to_s != result.smoothing_percent.to_s
+          diff.last[:duration].to_s != result.duration.to_s ||
+          diff.last[:rps].to_s != result.rps.to_s ||
+          diff.last[:profile].to_s != result.profile.to_s ||
+          diff.last[:data_version].to_s != result.data_version.to_s ||
+          diff.last[:time_cutting_percent].to_s != result.time_cutting_percent.to_s ||
+          diff.last[:smoothing_percent].to_s != result.smoothing_percent.to_s
         diff.push(
-          ids: [result.id],
-          duration: result.duration,
-          rps: result.rps,
-          profile: result.profile,
-          data_version: result.data_version,
-          time_cutting_percent: result.time_cutting_percent,
-          smoothing_percent: result.smoothing_percent
+            ids: [result.id],
+            duration: result.duration,
+            rps: result.rps,
+            profile: result.profile,
+            data_version: result.data_version,
+            time_cutting_percent: result.time_cutting_percent,
+            smoothing_percent: result.smoothing_percent
         )
       else
         diff.last[:ids].push result.id
@@ -86,18 +86,18 @@ class TrendReport
         without_percent.push [label, nil]
       end
     end
-    sort_with_percent = sort_with_percent.sort_by { |arr| arr[1] }.reverse
+    sort_with_percent = sort_with_percent.sort_by {|arr| arr[1]}.reverse
     sort_with_percent + without_percent
   end
 
   def ids_with_date
-    ids.map { |id| "id:#{id} #{Result.find_by(id: id).release_date.to_date}" }
+    ids.map {|id| "id:#{id} #{Result.find_by(id: id).release_date.to_date}"}
   end
 
   def request_data(label)
     data = {}
     attributes = [:mean, :median, :ninetynine_percentile, :throughput]
-    attributes.each { |at| data[at] = [] }
+    attributes.each {|at| data[at] = []}
     ids.each do |id|
       calc_result = CalculatedRequestsResult.find_by(result_id: id, label: label)
       attributes.each do |at|
@@ -108,13 +108,18 @@ class TrendReport
     data
   end
 
-  def performance_data(labels)
-    data =  {}
+  def performance_data(labels, metrics_type)
+    data = {}
     labels.each do |label|
       data[label] = []
       results.each do |result|
         performance_result = result.calculated_performance_results.find_by(label: label)
-        data[label].push performance_result ? performance_result.mean : 0
+        if performance_result
+          value = (metrics_type == PerformanceGroup.define_metrics_type[:static]) ? performance_result.last_value : performance_result.mean
+        else
+          value = 0
+        end
+        data[label].push value
       end
     end
     data
@@ -123,13 +128,13 @@ class TrendReport
   def all_requests_data
     data = {}
     attributes = [:mean, :median, :ninety_percentile, :throughput]
-    attributes.each { |at| data[at] = [] }
+    attributes.each {|at| data[at] = []}
     ids.each do |id|
-      values = Result.values_of_requests(id, nil, @results.find { |e| e.id = id }.time_cutting_percent)
+      values = Result.values_of_requests(id, nil, @results.find {|e| e.id = id}.time_cutting_percent)
       data[:mean].push Statistics.average(values)
       data[:median].push Statistics.median(values)
       data[:ninety_percentile].push Statistics.percentile(values, 90)
-      start_time, end_time = Result.border_timestamps(id, RequestsResult, @results.find { |e| e.id = id }.time_cutting_percent)
+      start_time, end_time = Result.border_timestamps(id, RequestsResult, @results.find {|e| e.id = id}.time_cutting_percent)
       data[:throughput].push RequestsUtils.throughput(values, start_time, end_time)
     end
     data

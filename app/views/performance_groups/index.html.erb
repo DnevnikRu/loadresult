@@ -35,6 +35,7 @@
         <th class="small"><%= :name %></th>
         <th class="small"><%= :units %></th>
         <th class="small"><%= :trend_limit %></th>
+        <th class="small"><%= :metrics_type %></th>
         <th class="small"></th>
       </tr>
       </thead>
@@ -46,6 +47,8 @@
             <td class="name"><%= group.name %></td>
             <td class="units"><%= group.units %></td>
             <td class="trend_limit"><%= group.trend_limit %></td>
+            <td class="trend_limit"><%= 'static' if group.metrics_type==PerformanceGroup.define_metrics_type[:static] %>
+              <%= 'dynamic' if group.metrics_type==PerformanceGroup.define_metrics_type[:dynamic] %></td>
             <td class="actions nostrech">
               <%= link_to '<i class="glyphicon glyphicon-eye-open"></i>'.html_safe,
                           performance_group_performance_labels_path(group),

@@ -286,7 +286,9 @@ class Result < ActiveRecord::Base
       next if labels_in_group.empty?
       label_groups.push(name: group.name,
                         labels: labels_in_group,
-                        units: group.units)
+                        units: group.units,
+                        metrics_type: group.metrics_type
+      )
     end
     label_groups
   end
@@ -352,6 +354,7 @@ class Result < ActiveRecord::Base
             mean: Statistics.average(data).round(2),
             median: Statistics.median(data).round(2),
             ninety_percentile: Statistics.percentile(data, 90).round(2),
+            ninetynine_percentile: Statistics.percentile(data, 99).round(2),
             max: data.max,
             min: data.min,
             throughput: RequestsUtils.throughput(data, bottom_timestamp, top_timestamp).round(2),
@@ -368,15 +371,8 @@ class Result < ActiveRecord::Base
         mean: Statistics.average(values),
         median: Statistics.median(values),
         ninety_percentile: Statistics.percentile(values, 90),
-        throughput: RequestsUtils.throughput(values, bottom_timestamp, top_timestamp)
-    )
-  end
-
-  def self.calc_ninetynine_percentile(result, label)
-    values = Result.values_of_requests(result.id, label, result.time_cutting_percent)
-    calculated_request_result = CalculatedRequestsResult.find_by(result_id: result.id, label: label)
-    calculated_request_result.update_attributes!(
         ninetynine_percentile: Statistics.percentile(values, 99),
+        throughput: RequestsUtils.throughput(values, bottom_timestamp, top_timestamp)
     )
   end
 
@@ -392,11 +388,23 @@ class Result < ActiveRecord::Base
         calculated_performance_result.update_attributes!(
             mean: Statistics.average(data).round(2),
             max: data.max,
-            min: data.min
+            min: data.min,
+            last_value: PerformanceResult.last_value(result, label)
         )
       end
     end
   end
+
+  def self.calculate_last_value(result)
+    labels = PerformanceResult.where(result_id: result.id).pluck(:label).uniq
+    labels.each do |label|
+      calculated_performance_result = CalculatedPerformanceResult.find_or_create_by(result_id: result.id, label: label)
+      calculated_performance_result.update_attributes!(
+          last_value: PerformanceResult.last_value(result, label)
+      )
+    end
+  end
+
 
   def self.file_from_json(params, data)
     file_hash = params[data]

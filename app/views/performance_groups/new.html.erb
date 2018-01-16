@@ -27,6 +27,11 @@
           <%= label_tag :trend_limit, nil, class: "control-label" %>
           <%= text_field_tag :trend_limit, flash[:trend_limit], class: "form-control", placeholder: '0' %>
         </div>
+        <div class="form-group required">
+          <%= label_tag :metrics_type, nil %>
+          <%= select_tag :metrics_type, options_for_select([0,1]), class: "form-control", include_blank: true %>
+          <span id="helpBlock" class="help-block">0 for dynamic type, 1 for static</span>
+        </div>
         <%= button_tag "Create", class: "btn btn-primary", 'data-disable-with' => 'Loading..' %>
     <% end %>
   </div>

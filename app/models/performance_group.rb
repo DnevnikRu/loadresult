@@ -10,7 +10,8 @@ class PerformanceGroup < ActiveRecord::Base
     group = PerformanceGroup.new(
         name: params['name'],
         units: params['units'],
-        trend_limit: params['trend_limit']
+        trend_limit: params['trend_limit'],
+        metrics_type: params['metrics_type']
     )
     group.save
     group
@@ -20,9 +21,14 @@ class PerformanceGroup < ActiveRecord::Base
     group.update(
         name: params[:name],
         units: params[:units],
-        trend_limit: params[:trend_limit]
+        trend_limit: params[:trend_limit],
+        metrics_type: params[:metrics_type]
     )
     group
+  end
+
+  def self.define_metrics_type
+    {:dynamic => 0, :static => 1}
   end
 
   def self.split_labels_by_group(labels)
@@ -33,7 +39,9 @@ class PerformanceGroup < ActiveRecord::Base
       label_groups.push(name: group.name,
                         labels: labels_in_group,
                         trend_limit: group.trend_limit,
-                        units: group.units)
+                        units: group.units,
+                        metrics_type: group.metrics_type
+      )
     end
     label_groups
   end

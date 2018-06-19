@@ -109,10 +109,14 @@ class Result < ActiveRecord::Base
 
   def self.sort_by_version(results)
     results.sort do |a, b|
-      a_version = Gem::Version.correct?(a.version) ? Gem::Version.new(a.version) : Gem::Version.new(0)
-      b_version = Gem::Version.correct?(b.version) ? Gem::Version.new(b.version) : Gem::Version.new(0)
+      a_version = Gem::Version.correct?(normalize_version(a.version)) ? Gem::Version.new(normalize_version(a.version)) : Gem::Version.new(0)
+      b_version = Gem::Version.correct?(normalize_version(b.version)) ? Gem::Version.new(normalize_version(b.version)) : Gem::Version.new(0)
       b_version <=> a_version
     end
+  end
+
+  def normalize_version(version)
+    version.gsub(/[^\d,\.]/, '')
   end
 
   def test_run_date_is_datetime

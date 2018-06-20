@@ -115,7 +115,7 @@ class Result < ActiveRecord::Base
     end
   end
 
-  def normalize_version(version)
+  def self.ormalize_version(version)
     version.gsub(/[^\d,\.]/, '')
   end
 
